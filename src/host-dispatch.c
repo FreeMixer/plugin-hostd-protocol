@@ -29,6 +29,7 @@
 ************************************************************************************************************************
 */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -295,7 +296,7 @@ static void remote_page_get_cb(proto_t *proto)
 }
 
 /* the shortest decimal that reads back to the same double, written as ECMAScript's Number toString does
-   (no exponent from 1e-6 up to 1e21); -0 is written 0 */
+   (no exponent from 1e-6 up to 1e21); -0 is written 0, and NaN and the infinities NaN, Infinity and -Infinity */
 static void format_number(char *buf, size_t size, double value)
 {
     char tmp[40], digits[20];
@@ -305,6 +306,11 @@ static void format_number(char *buf, size_t size, double value)
     if (value == 0.0)
     {
         snprintf(buf, size, "0");
+        return;
+    }
+    if (isnan(value) || isinf(value))
+    {
+        snprintf(buf, size, "%s", isnan(value) ? "NaN" : value < 0 ? "-Infinity" : "Infinity");
         return;
     }
     for (precision = 0; precision < 17; precision++)

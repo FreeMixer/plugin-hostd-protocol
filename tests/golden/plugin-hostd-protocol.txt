@@ -406,6 +406,18 @@
 > param_get 3 gain
 < resp -3
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 0
+> param_info 3 inf
+< resp -3
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 0
+> param_info 3 nan
+< resp -3
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 0
+> param_info 3 -inf
+< resp -3
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 0
 > add http://example.org/plugin 3
 < resp -3
@@ -918,6 +930,18 @@
 > param_get 3 gain
 < resp -4
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 1
+> param_info 3 inf
+< resp -4
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 1
+> param_info 3 nan
+< resp -4
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 1
+> param_info 3 -inf
+< resp -4
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 1
 > add http://example.org/plugin 3
 < resp -4
@@ -1430,6 +1454,18 @@
 > param_get 3 gain
 < resp -101
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 2
+> param_info 3 inf
+< resp -101
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 2
+> param_info 3 nan
+< resp -101
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 2
+> param_info 3 -inf
+< resp -101
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 2
 > add http://example.org/plugin 3
 < resp -101
@@ -1942,6 +1978,18 @@
 > param_get 3 gain
 < resp -902
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 3
+> param_info 3 inf
+< resp -902
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 3
+> param_info 3 nan
+< resp -902
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 3
+> param_info 3 -inf
+< resp -902
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 3
 > add http://example.org/plugin 3
 < resp -902
@@ -2454,6 +2502,18 @@
 > param_get 3 gain
 < resp -205
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 4
+> param_info 3 inf
+< resp -205
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 4
+> param_info 3 nan
+< resp -205
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 4
+> param_info 3 -inf
+< resp -205
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 4
 > add http://example.org/plugin 3
 < resp -205
@@ -2966,6 +3026,18 @@
 > param_get 3 gain
 < resp -105
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 5
+> param_info 3 inf
+< resp -105
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 5
+> param_info 3 nan
+< resp -105
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 5
+> param_info 3 -inf
+< resp -105
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 5
 > add http://example.org/plugin 3
 < resp -105
@@ -3478,6 +3550,18 @@
 > param_get 3 gain
 < resp 0 0.7500
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 6
+> param_info 3 inf
+< resp 0 hz log 20 Infinity 440.125 0 stable
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 6
+> param_info 3 nan
+< resp 0 hz log 20 20000 NaN 0 stable
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 6
+> param_info 3 -inf
+< resp 0 hz log -Infinity 20000 440.125 0 stable
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 6
 > add http://example.org/plugin 3
 < resp 3
@@ -3990,6 +4074,18 @@
 > param_get 3 gain
 < resp -1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 7
+> param_info 3 inf
+< resp -1
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 7
+> param_info 3 nan
+< resp -1
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 7
+> param_info 3 -inf
+< resp -1
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 7
 > add http://example.org/plugin 3
 < resp -1
@@ -4502,6 +4598,18 @@
 > param_get 3 gain
 < resp -2
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 8
+> param_info 3 inf
+< resp -2
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 8
+> param_info 3 nan
+< resp -2
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 8
+> param_info 3 -inf
+< resp -2
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 8
 > add http://example.org/plugin 3
 < resp -2

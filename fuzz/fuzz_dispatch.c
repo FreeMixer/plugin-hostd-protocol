@@ -4,6 +4,7 @@
    Properties: no crash, no leak, and every reply is one NUL-terminated string: "resp <int>", alone or followed
    by the values of the verb, or one of the four protocol error messages. */
 #include "fuzz.h"
+#include <math.h>
 #include <stdio.h>
 #include "../include/host-backend.h"
 #include "../include/host-dispatch.h"
@@ -63,11 +64,17 @@ static int f_remote_page_get(int instance, int page, host_remote_page_t *out)
 }
 static int f_param_info(int instance, const char *symbol, host_param_info_t *info)
 {
-    (void)symbol;
     if (instance < 0)
         return answer(instance);
     info->unit = "hz"; info->scale = "log";
     info->min = 20; info->max = 20000; info->def = 440; info->step = (double)(instance % 3);
+    /* a port's range or default need not be finite: a range times the sample rate can overflow a float */
+    if (strcmp(symbol, "inf") == 0)
+        info->max = INFINITY;
+    else if (strcmp(symbol, "-inf") == 0)
+        info->min = -INFINITY;
+    else if (strcmp(symbol, "nan") == 0)
+        info->def = NAN;
     info->stable_symbol = "stable";
     return SUCCESS;
 }
@@ -148,7 +155,9 @@ static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
         if (instance < 0)
             snprintf(out, size, "resp %i", answer(instance));
         else
-            snprintf(out, size, "resp 0 hz log 20 20000 440 %i stable", instance % 3);
+            snprintf(out, size, "resp 0 hz log %s %s %s %i stable", strcmp(w[2], "-inf") == 0 ? "-Infinity" : "20",
+                     strcmp(w[2], "inf") == 0 ? "Infinity" : "20000", strcmp(w[2], "nan") == 0 ? "NaN" : "440",
+                     instance % 3);
     }
     else if (strcmp(w[0], "param_get") == 0 && n == 3)
     {
@@ -218,7 +227,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     free(msg.data);
 
     /* Each command gets a reply: the callback's, or a protocol error message.
-       mutant: src/host-dispatch.c:69 `protocol_response_int(resp, proto);` -> ``
+       mutant: src/host-dispatch.c:70 `protocol_response_int(resp, proto);` -> ``
        input: scenario-1 */
     if (fuzz_reply_len == 0)
         abort();
@@ -230,10 +239,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     if (memchr(reply, '\0', n) != reply + n - 1)
         abort();
     /* The reply to a command of the verbs above is the whole text the backend's answer makes, value included.
-       mutant: src/host-dispatch.c:143 `resp, value);` -> `resp, 0.0);`
+       mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
        input: param-get
-       mutant: src/host-dispatch.c:376 `info.max` -> `info.min`
-       input: extra-8 */
+       mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
+       input: extra-8
+       mutant: src/host-dispatch.c:311 `isnan(value) || isinf(value)` -> `0`
+       input: param-info-inf */
     if (modeled && strcmp(reply, expect) != 0)
         abort();
     free(copy);

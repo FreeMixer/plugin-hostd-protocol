@@ -78,7 +78,7 @@ TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenari
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-install test-abi version-check
+      test-fixes test-fixes-sabotage test-install test-abi version-check
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
 test-protocol: tests/protocol_test

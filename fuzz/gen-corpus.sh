@@ -55,6 +55,11 @@ SEEDS
 # a verb whose reply carries a value, with a salt that makes the backend succeed
 printf '\006param_get 3 gain' > "$out/dispatch/param-get"
 
+# param_info of a port whose maximum, minimum or default is not finite (the backend's symbols inf, -inf and nan)
+printf '\002param_info 3 inf' > "$out/dispatch/param-info-inf"
+printf '\002param_info 3 -inf' > "$out/dispatch/param-info-neg-inf"
+printf '\002param_info 3 nan' > "$out/dispatch/param-info-nan"
+
 # the scenario file reader: the real file, and its edges
 cp "$scen" "$out/scenario/host-scenarios"
 printf 'add $URI 3 => resp 3\n@state_save remove 3 => resp 0\n' > "$out/scenario/guarded"
