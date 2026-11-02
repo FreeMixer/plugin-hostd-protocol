@@ -64,7 +64,7 @@ install: $(LIB_FILE)
 	ln -sf $(LIB_FILE) $(DESTDIR)$(LIBDIR)/$(LIB_SONAME)
 	ln -sf $(LIB_SONAME) $(DESTDIR)$(LIBDIR)/$(LIB_SO)
 	install -m 644 $(HEADERS) $(DESTDIR)$(INCLUDEDIR)/$(NAME)/
-	install -m 644 tests/host-scenarios.txt $(DESTDIR)$(DATADIR)/$(NAME)/
+	install -m 644 tests/host-scenarios.txt tests/host_scenarios.c doc/protocol.md $(DESTDIR)$(DATADIR)/$(NAME)/
 	sed -e 's,@PREFIX@,$(PREFIX),' -e 's,@LIBDIR@,$(PC_LIBDIR),' -e 's,@INCLUDEDIR@,$(PC_INCLUDEDIR),' \
 	    -e 's,@DATADIR@,$(PC_DATADIR),' -e 's,@VERSION@,$(VERSION),' $(NAME).pc.in > $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc
 	chmod 644 $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc

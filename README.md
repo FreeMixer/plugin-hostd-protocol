@@ -19,8 +19,8 @@ pkg-config --cflags --libs plugin-hostd-protocol
 The headers are installed under `<includedir>/plugin-hostd-protocol/` with the names and the API of
 `libmod-host-protocol` (`protocol.h`, `socket.h`, `host-dispatch.h`, `host-backend.h`, `host-errors.h`,
 `host-scenario.h`, `mod-host.h`, `utils.h`), so a program built against `mod-host-protocol` changes only the package
-name it asks pkg-config for. The scenario corpus every host is tested with is installed too:
-`pkg-config --variable=scenarios plugin-hostd-protocol`.
+name it asks pkg-config for. The scenario corpus every host is tested with, the source of its runner and the protocol
+page are installed too: `pkg-config --variable=scenarios` (`runner`, `protocoldoc`) `plugin-hostd-protocol`.
 
 The commands and the error codes: [doc/protocol.md](doc/protocol.md).
 

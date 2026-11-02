@@ -2,8 +2,12 @@ prefix=@PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 datadir=@DATADIR@
-# the scenario corpus every host answering this protocol is tested with (host_scenario_load(), tests/host_scenarios.c)
+# the scenario corpus every host answering this protocol is tested with, and the source of its runner, built against
+# these headers and this library: <runner> <port> <scenarios> NAME=value ...
 scenarios=${datadir}/plugin-hostd-protocol/host-scenarios.txt
+runner=${datadir}/plugin-hostd-protocol/host_scenarios.c
+# the commands, replies and error codes (doc/protocol.md)
+protocoldoc=${datadir}/plugin-hostd-protocol/protocol.md
 
 Name: plugin-hostd-protocol
 Description: The plugin-hostd protocol: socket server, line protocol and command dispatch, a superset of mod-host's

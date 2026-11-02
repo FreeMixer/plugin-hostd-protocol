@@ -30,7 +30,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../include/host-scenario.h"
+#include "host-scenario.h"
 
 int main(int argc, char **argv)
 {

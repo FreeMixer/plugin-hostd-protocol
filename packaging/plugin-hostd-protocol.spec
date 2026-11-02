@@ -29,7 +29,7 @@ Summary: Build a host that answers the plugin-hostd protocol
 Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
-Headers, the pkg-config file and the scenario corpus of
+Headers, the pkg-config file, the scenario corpus and its runner of
 libplugin-hostd-protocol. The headers have the names and the API of
 libmod-host-protocol's, so a host built against mod-host-protocol changes only
 the package name it asks pkg-config for.
@@ -54,7 +54,6 @@ make test
 %{_libdir}/libplugin-hostd-protocol.so.%{version}
 
 %files devel
-%doc doc/protocol.md
 %{_libdir}/libplugin-hostd-protocol.so
 %{_libdir}/pkgconfig/plugin-hostd-protocol.pc
 %{_includedir}/plugin-hostd-protocol/

@@ -24,7 +24,9 @@ lib=$prefix/lib
 [ "$(readlink "$lib/lib$name.so")" = "lib$name.so.0" ] || fail "development link is wrong"
 readelf -d "$lib/lib$name.so.$version" | grep -q "SONAME.*\[lib$name\.so\.0\]" \
     || fail "the library does not carry the soname lib$name.so.0"
-[ -f "$prefix/share/$name/host-scenarios.txt" ] || fail "no scenario corpus"
+for f in host-scenarios.txt host_scenarios.c protocol.md; do
+    [ -f "$prefix/share/$name/$f" ] || fail "no $f under share/$name"
+done
 
 export PKG_CONFIG_PATH="$lib/pkgconfig"
 cflags=$(pkg-config --cflags $name) || fail "pkg-config does not find $name"
@@ -32,6 +34,8 @@ libs=$(pkg-config --libs $name)
 [ "$(pkg-config --modversion $name)" = "$version" ] || fail "pkg-config says $(pkg-config --modversion $name)"
 [ "$(pkg-config --variable=scenarios $name)" = "$prefix/share/$name/host-scenarios.txt" ] \
     || fail "the scenarios variable does not name the installed corpus"
+[ "$(pkg-config --variable=runner $name)" = "$prefix/share/$name/host_scenarios.c" ] || fail "the runner variable is wrong"
+[ "$(pkg-config --variable=protocoldoc $name)" = "$prefix/share/$name/protocol.md" ] || fail "the protocoldoc variable is wrong"
 
 # every installed header stands alone, and every header the build lists is installed
 for h in host-backend.h host-dispatch.h host-errors.h mod-host.h host-scenario.h protocol.h socket.h utils.h; do
@@ -70,6 +74,11 @@ $CC -std=gnu99 -Wall -Wextra -Werror $cflags -o "$work/consumer" "$work/consumer
 readelf -d "$work/consumer" | grep -q "NEEDED.*\[lib$name\.so\.0\]" || fail "the consumer does not need the soname"
 LD_LIBRARY_PATH="$lib" "$work/consumer" >/dev/null || fail "the consumer does not run"
 
+# the scenario runner builds from what is installed alone
+# shellcheck disable=SC2086
+$CC -std=gnu99 -D_GNU_SOURCE -Wall -Wextra -Werror -o "$work/host_scenarios" "$(pkg-config --variable=runner $name)" $cflags $libs \
+    || fail "the installed scenario runner does not build against the installed library"
+
 # the framing, the 128-command table and the default bind address, against the installed library
 for t in framing-test commands-test bind-check; do
     # shellcheck disable=SC2086
@@ -87,4 +96,4 @@ grep -q "$stage" "$pc" && fail "the .pc file names DESTDIR"
 grep -qx 'prefix=/usr' "$pc" || fail "the staged .pc does not say prefix=/usr"
 grep -qx 'libdir=${prefix}/lib64' "$pc" || fail "the staged .pc does not follow LIBDIR"
 
-echo "install: library, links, headers, corpus, $name.pc, framing, 128 commands and bind address check out"
+echo "install: library, links, headers, corpus, runner, protocol page, $name.pc, framing, 128 commands and bind address check out"
