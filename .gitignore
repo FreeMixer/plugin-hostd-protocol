@@ -1,0 +1,11 @@
+*.o
+/libplugin-hostd-protocol.so*
+/build/
+/tests/protocol_test
+/tests/protocol_commands_test
+/tests/host_scenarios
+/tests/golden-run
+/tests/fixes_test
+/tests/socket-test
+/tests/bind-test
+/tests/utils-test

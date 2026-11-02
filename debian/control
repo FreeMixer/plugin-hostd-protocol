@@ -1,0 +1,32 @@
+Source: plugin-hostd-protocol
+Section: libs
+Priority: optional
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               pkgconf,
+               python3
+Standards-Version: 4.6.2
+Homepage: https://github.com/FreeMixer/plugin-hostd-protocol
+Vcs-Git: https://github.com/FreeMixer/plugin-hostd-protocol.git
+Vcs-Browser: https://github.com/FreeMixer/plugin-hostd-protocol
+Rules-Requires-Root: no
+
+Package: libplugin-hostd-protocol0
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: plugin-hostd protocol library, a superset of mod-host's text protocol
+ The socket server, line protocol and command dispatch that plugin-hostd and
+ omx-clap-host answer their controllers with: mod-host's text protocol, so any
+ mod-host client works unchanged.
+
+Package: libplugin-hostd-protocol-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libplugin-hostd-protocol0 (= ${binary:Version}), ${misc:Depends}
+Description: plugin-hostd protocol library, development files
+ Headers, the pkg-config file and the scenario corpus of
+ libplugin-hostd-protocol. The headers have the names and the API of
+ libmod-host-protocol's, so a host built against mod-host-protocol changes only
+ the package name it asks pkg-config for.

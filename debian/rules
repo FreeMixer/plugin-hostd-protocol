@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+include /usr/share/dpkg/architecture.mk
+
+MAKE_VARS = PREFIX=/usr LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH)
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	dh_auto_build -- $(MAKE_VARS)
+
+override_dh_auto_install:
+	dh_auto_install -- $(MAKE_VARS)
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) $(MAKE_VARS) test
+endif

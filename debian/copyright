@@ -1,0 +1,31 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: plugin-hostd-protocol
+Upstream-Contact: https://github.com/FreeMixer/plugin-hostd-protocol
+Source: https://github.com/FreeMixer/plugin-hostd-protocol
+
+Files: *
+Copyright: 2026 Pau Aliagas <linuxnow@gmail.com>
+License: GPL-3+
+
+Files: src/* include/* tests/protocol_test.c tests/protocol_commands_test.c
+       tests/host_scenarios.c tests/host-scenarios.txt tests/socket-test.c
+       tests/bind-test.c tests/utils-test.c fuzz/* doc/protocol.md
+Copyright: 2013-2026 Filipe Coelho <falktx@falktx.com>
+           2013-2026 MOD Audio UG and the mod-host contributors
+License: GPL-3+
+Comment: mod-host's protocol code (https://github.com/mod-audio/mod-host), from
+ FreeMixer/mod-host, branch freemixer, 013ac7d.
+
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option)
+ any later version.
+ .
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.

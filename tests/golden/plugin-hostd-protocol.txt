@@ -1,0 +1,4608 @@
+# scenario-1 answer 0
+> add urn:golden:amp 3
+< resp -3
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 0
+> add urn:golden:amp 3
+< resp -3
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 0
+> add urn:golden:missing 4
+< resp -4
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 0
+> param_set 3 gain 0.25
+< resp -3
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 0
+> param_get 3 gain
+< resp -3
+= param_get(3,gain)
+# scenario-6 answer 0
+> param_set 3 no_such_symbol 0.5
+< resp -3
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 0
+> param_get 3 no_such_symbol
+< resp -3
+= param_get(3,no_such_symbol)
+# scenario-8 answer 0
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# scenario-10 answer 0
+> bypass 3 1
+< resp -3
+= bypass(3,1)
+# scenario-11 answer 0
+> param_get 3 :bypass
+< resp -3
+= param_get(3,:bypass)
+# scenario-12 answer 0
+> bypass 3 0
+< resp -3
+= bypass(3,0)
+# scenario-13 answer 0
+> param_get 3 :bypass
+< resp -3
+= param_get(3,:bypass)
+# scenario-14 answer 0
+> bypass 9 1
+< resp 0
+= bypass(9,1)
+# scenario-15 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 0
+> state_save /tmp/golden
+< resp -2
+= state_save(/tmp/golden)
+# scenario-17 answer 0
+> remove 3
+< resp -3
+= remove(3)
+# scenario-18 answer 0
+> add urn:golden:amp 3
+< resp -3
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 0
+> state_load /tmp/golden
+< resp -2
+= state_load(/tmp/golden)
+# scenario-20 answer 0
+> connect a:out b:in
+< resp 0
+= connect(a:out,b:in)
+# scenario-21 answer 0
+> disconnect a:out b:in
+< resp 0
+= disconnect(a:out,b:in)
+# scenario-22 answer 0
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 0
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 0
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 0
+> remote_pages 9
+< resp 1
+= remote_pages(9)
+# scenario-26 answer 0
+> remote_page_get 9 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(9,0)
+# scenario-27 answer 0
+> param_info 9 gain
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(9,gain)
+# scenario-28 answer 0
+> param_info 3 no_such_symbol
+< resp -3
+= param_info(3,no_such_symbol)
+# scenario-29 answer 0
+> param_info 3 :bypass
+< resp -3
+= param_info(3,:bypass)
+# scenario-30 answer 0
+> remove 3
+< resp -3
+= remove(3)
+# scenario-31 answer 0
+> remove 3
+< resp -3
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 0
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 0
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 0
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 0
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 0
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 0
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 0
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 0
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 0
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 0
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 0
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 0
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 0
+> %i %s %f
+< resp 0
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 0
+> param_get 99999999999999999999 gain
+< resp -3
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 0
+> param_set -1 gain nan
+< resp -3
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 0
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 0
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -3
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 0
+> track_info 3 x - master
+< resp -3
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 0
+> remote_pages 3
+< resp -3
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 0
+> remote_page_get 3 0
+< resp -3
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 0
+> param_info 3 cutoff
+< resp -3
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 0
+> connect system:capture_1 system:playback_1
+< resp -902
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 0
+> add http://example.org/plugin 3
+< resp -3
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 0
+> param_get 3 no_such_symbol
+< resp -3
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 0
+> param_info 3 :bypass
+< resp -3
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 0
+> param_info 3 no_such_symbol
+< resp -3
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 0
+> param_info 9 gain
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 0
+> param_set 3 gain 0.25
+< resp -3
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 0
+> param_set 3 no_such_symbol 0.5
+< resp -3
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 0
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 0
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 0
+> add urn:no:such:plugin 4
+< resp -4
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 0
+> remote_page_get 9 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 0
+> remote_pages 9
+< resp 1
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 0
+> remove 3
+< resp -3
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 0
+> state_load /tmp/state
+< resp -1
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 0
+> state_save /tmp/state
+< resp -1
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 0
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 0
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 0
+> bypass 3 0
+< resp -3
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 0
+> bypass 3 1
+< resp -3
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 0
+> bypass 9 1
+< resp 0
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 0
+> connect system:capture_1 system:playback_1
+< resp -902
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 0
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 0
+> param_get 3 :bypass
+< resp -3
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 0
+> param_get 3 gain
+< resp -3
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 0
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 0
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 0
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 0
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 0
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 0
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 0
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 0
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 0
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 0
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 0
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 0
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 0
+> %i %s %f
+< resp 0
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 0
+> param_get 99999999999999999999 gain
+< resp -3
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 0
+> param_set -1 gain nan
+< resp -3
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 0
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 0
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -3
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 0
+> track_info 3 x - master
+< resp -3
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 0
+> remote_pages 3
+< resp -3
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 0
+> remote_page_get 3 0
+< resp -3
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 0
+> param_info 3 cutoff
+< resp -3
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 0
+> connect system:capture_1 system:playback_1
+< resp -902
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 0
+> param_get 3 gain
+< resp -3
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 0
+> add http://example.org/plugin 3
+< resp -3
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 0
+> param_get 3 no_such_symbol
+< resp -3
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 0
+> param_info 3 :bypass
+< resp -3
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 0
+> param_info 3 no_such_symbol
+< resp -3
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 0
+> param_info 9 gain
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 0
+> param_set 3 gain 0.25
+< resp -3
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 0
+> param_set 3 no_such_symbol 0.5
+< resp -3
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 0
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 0
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 0
+> add urn:no:such:plugin 4
+< resp -4
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 0
+> remote_page_get 9 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 0
+> remote_pages 9
+< resp 1
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 0
+> remove 3
+< resp -3
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 0
+> state_load /tmp/state
+< resp -1
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 0
+> state_save /tmp/state
+< resp -1
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 0
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 0
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 0
+> bypass 3 0
+< resp -3
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 0
+> bypass 3 1
+< resp -3
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 0
+> bypass 9 1
+< resp 0
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 0
+> connect system:capture_1 system:playback_1
+< resp -902
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 0
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 0
+> param_get 3 :bypass
+< resp -3
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 0
+> param_get 3 gain
+< resp -3
+= param_get(3,gain)
+# scenario-1 answer 1
+> add urn:golden:amp 3
+< resp -4
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 1
+> add urn:golden:amp 3
+< resp -4
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 1
+> add urn:golden:missing 4
+< resp -101
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 1
+> param_set 3 gain 0.25
+< resp -4
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 1
+> param_get 3 gain
+< resp -4
+= param_get(3,gain)
+# scenario-6 answer 1
+> param_set 3 no_such_symbol 0.5
+< resp -4
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 1
+> param_get 3 no_such_symbol
+< resp -4
+= param_get(3,no_such_symbol)
+# scenario-8 answer 1
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
+# scenario-10 answer 1
+> bypass 3 1
+< resp -4
+= bypass(3,1)
+# scenario-11 answer 1
+> param_get 3 :bypass
+< resp -4
+= param_get(3,:bypass)
+# scenario-12 answer 1
+> bypass 3 0
+< resp -4
+= bypass(3,0)
+# scenario-13 answer 1
+> param_get 3 :bypass
+< resp -4
+= param_get(3,:bypass)
+# scenario-14 answer 1
+> bypass 9 1
+< resp -1
+= bypass(9,1)
+# scenario-15 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 1
+> state_save /tmp/golden
+< resp -3
+= state_save(/tmp/golden)
+# scenario-17 answer 1
+> remove 3
+< resp -4
+= remove(3)
+# scenario-18 answer 1
+> add urn:golden:amp 3
+< resp -4
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 1
+> state_load /tmp/golden
+< resp -3
+= state_load(/tmp/golden)
+# scenario-20 answer 1
+> connect a:out b:in
+< resp -1
+= connect(a:out,b:in)
+# scenario-21 answer 1
+> disconnect a:out b:in
+< resp -1
+= disconnect(a:out,b:in)
+# scenario-22 answer 1
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 1
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 1
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 1
+> remote_pages 9
+< resp -1
+= remote_pages(9)
+# scenario-26 answer 1
+> remote_page_get 9 0
+< resp -1
+= remote_page_get(9,0)
+# scenario-27 answer 1
+> param_info 9 gain
+< resp -1
+= param_info(9,gain)
+# scenario-28 answer 1
+> param_info 3 no_such_symbol
+< resp -4
+= param_info(3,no_such_symbol)
+# scenario-29 answer 1
+> param_info 3 :bypass
+< resp -4
+= param_info(3,:bypass)
+# scenario-30 answer 1
+> remove 3
+< resp -4
+= remove(3)
+# scenario-31 answer 1
+> remove 3
+< resp -4
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 1
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 1
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 1
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 1
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 1
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 1
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 1
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 1
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 1
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 1
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 1
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 1
+> %i %s %f
+< resp -1
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 1
+> param_get 99999999999999999999 gain
+< resp 0 -0.2500
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 1
+> param_set -1 gain nan
+< resp 0
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 1
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 1
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -4
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 1
+> track_info 3 x - master
+< resp -4
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 1
+> remote_pages 3
+< resp -4
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 1
+> remote_page_get 3 0
+< resp -4
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 1
+> param_info 3 cutoff
+< resp -4
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 1
+> connect system:capture_1 system:playback_1
+< resp -205
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 1
+> add http://example.org/plugin 3
+< resp -4
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 1
+> param_get 3 no_such_symbol
+< resp -4
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 1
+> param_info 3 :bypass
+< resp -4
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 1
+> param_info 3 no_such_symbol
+< resp -4
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 1
+> param_info 9 gain
+< resp -1
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 1
+> param_set 3 gain 0.25
+< resp -4
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 1
+> param_set 3 no_such_symbol 0.5
+< resp -4
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 1
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 1
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 1
+> add urn:no:such:plugin 4
+< resp -101
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 1
+> remote_page_get 9 0
+< resp -1
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 1
+> remote_pages 9
+< resp -1
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 1
+> remove 3
+< resp -4
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 1
+> state_load /tmp/state
+< resp -2
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 1
+> state_save /tmp/state
+< resp -2
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 1
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 1
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 1
+> bypass 3 0
+< resp -4
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 1
+> bypass 3 1
+< resp -4
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 1
+> bypass 9 1
+< resp -1
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 1
+> connect system:capture_1 system:playback_1
+< resp -205
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 1
+> param_get 3 :bypass
+< resp -4
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 1
+> param_get 3 gain
+< resp -4
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 1
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 1
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 1
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 1
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 1
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 1
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 1
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 1
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 1
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 1
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 1
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 1
+> %i %s %f
+< resp -1
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 1
+> param_get 99999999999999999999 gain
+< resp 0 -0.2500
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 1
+> param_set -1 gain nan
+< resp 0
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 1
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 1
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -4
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 1
+> track_info 3 x - master
+< resp -4
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 1
+> remote_pages 3
+< resp -4
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 1
+> remote_page_get 3 0
+< resp -4
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 1
+> param_info 3 cutoff
+< resp -4
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 1
+> connect system:capture_1 system:playback_1
+< resp -205
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 1
+> param_get 3 gain
+< resp -4
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 1
+> add http://example.org/plugin 3
+< resp -4
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 1
+> param_get 3 no_such_symbol
+< resp -4
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 1
+> param_info 3 :bypass
+< resp -4
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 1
+> param_info 3 no_such_symbol
+< resp -4
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 1
+> param_info 9 gain
+< resp -1
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 1
+> param_set 3 gain 0.25
+< resp -4
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 1
+> param_set 3 no_such_symbol 0.5
+< resp -4
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 1
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 1
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 1
+> add urn:no:such:plugin 4
+< resp -101
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 1
+> remote_page_get 9 0
+< resp -1
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 1
+> remote_pages 9
+< resp -1
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 1
+> remove 3
+< resp -4
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 1
+> state_load /tmp/state
+< resp -2
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 1
+> state_save /tmp/state
+< resp -2
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 1
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 1
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 1
+> bypass 3 0
+< resp -4
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 1
+> bypass 3 1
+< resp -4
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 1
+> bypass 9 1
+< resp -1
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 1
+> connect system:capture_1 system:playback_1
+< resp -205
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 1
+> param_get 3 :bypass
+< resp -4
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 1
+> param_get 3 gain
+< resp -4
+= param_get(3,gain)
+# scenario-1 answer 2
+> add urn:golden:amp 3
+< resp -101
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 2
+> add urn:golden:amp 3
+< resp -101
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 2
+> add urn:golden:missing 4
+< resp -902
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 2
+> param_set 3 gain 0.25
+< resp -101
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 2
+> param_get 3 gain
+< resp -101
+= param_get(3,gain)
+# scenario-6 answer 2
+> param_set 3 no_such_symbol 0.5
+< resp -101
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 2
+> param_get 3 no_such_symbol
+< resp -101
+= param_get(3,no_such_symbol)
+# scenario-8 answer 2
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
+# scenario-10 answer 2
+> bypass 3 1
+< resp -101
+= bypass(3,1)
+# scenario-11 answer 2
+> param_get 3 :bypass
+< resp -101
+= param_get(3,:bypass)
+# scenario-12 answer 2
+> bypass 3 0
+< resp -101
+= bypass(3,0)
+# scenario-13 answer 2
+> param_get 3 :bypass
+< resp -101
+= param_get(3,:bypass)
+# scenario-14 answer 2
+> bypass 9 1
+< resp -2
+= bypass(9,1)
+# scenario-15 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 2
+> state_save /tmp/golden
+< resp -4
+= state_save(/tmp/golden)
+# scenario-17 answer 2
+> remove 3
+< resp -101
+= remove(3)
+# scenario-18 answer 2
+> add urn:golden:amp 3
+< resp -101
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 2
+> state_load /tmp/golden
+< resp -4
+= state_load(/tmp/golden)
+# scenario-20 answer 2
+> connect a:out b:in
+< resp -2
+= connect(a:out,b:in)
+# scenario-21 answer 2
+> disconnect a:out b:in
+< resp -2
+= disconnect(a:out,b:in)
+# scenario-22 answer 2
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 2
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 2
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 2
+> remote_pages 9
+< resp -2
+= remote_pages(9)
+# scenario-26 answer 2
+> remote_page_get 9 0
+< resp -2
+= remote_page_get(9,0)
+# scenario-27 answer 2
+> param_info 9 gain
+< resp -2
+= param_info(9,gain)
+# scenario-28 answer 2
+> param_info 3 no_such_symbol
+< resp -101
+= param_info(3,no_such_symbol)
+# scenario-29 answer 2
+> param_info 3 :bypass
+< resp -101
+= param_info(3,:bypass)
+# scenario-30 answer 2
+> remove 3
+< resp -101
+= remove(3)
+# scenario-31 answer 2
+> remove 3
+< resp -101
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 2
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 2
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 2
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 2
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 2
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 2
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 2
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 2
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 2
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 2
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 2
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 2
+> %i %s %f
+< resp -2
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 2
+> param_get 99999999999999999999 gain
+< resp -1
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 2
+> param_set -1 gain nan
+< resp -1
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 2
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 2
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -101
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 2
+> track_info 3 x - master
+< resp -101
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 2
+> remote_pages 3
+< resp -101
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 2
+> remote_page_get 3 0
+< resp -101
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 2
+> param_info 3 cutoff
+< resp -101
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 2
+> connect system:capture_1 system:playback_1
+< resp -105
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 2
+> add http://example.org/plugin 3
+< resp -101
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 2
+> param_get 3 no_such_symbol
+< resp -101
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 2
+> param_info 3 :bypass
+< resp -101
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 2
+> param_info 3 no_such_symbol
+< resp -101
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 2
+> param_info 9 gain
+< resp -2
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 2
+> param_set 3 gain 0.25
+< resp -101
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 2
+> param_set 3 no_such_symbol 0.5
+< resp -101
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 2
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 2
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 2
+> add urn:no:such:plugin 4
+< resp -902
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 2
+> remote_page_get 9 0
+< resp -2
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 2
+> remote_pages 9
+< resp -2
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 2
+> remove 3
+< resp -101
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 2
+> state_load /tmp/state
+< resp -3
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 2
+> state_save /tmp/state
+< resp -3
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 2
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 2
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 2
+> bypass 3 0
+< resp -101
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 2
+> bypass 3 1
+< resp -101
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 2
+> bypass 9 1
+< resp -2
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 2
+> connect system:capture_1 system:playback_1
+< resp -105
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 2
+> param_get 3 :bypass
+< resp -101
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 2
+> param_get 3 gain
+< resp -101
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 2
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 2
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 2
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 2
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 2
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 2
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 2
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 2
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 2
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 2
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 2
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 2
+> %i %s %f
+< resp -2
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 2
+> param_get 99999999999999999999 gain
+< resp -1
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 2
+> param_set -1 gain nan
+< resp -1
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 2
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 2
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -101
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 2
+> track_info 3 x - master
+< resp -101
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 2
+> remote_pages 3
+< resp -101
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 2
+> remote_page_get 3 0
+< resp -101
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 2
+> param_info 3 cutoff
+< resp -101
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 2
+> connect system:capture_1 system:playback_1
+< resp -105
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 2
+> param_get 3 gain
+< resp -101
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 2
+> add http://example.org/plugin 3
+< resp -101
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 2
+> param_get 3 no_such_symbol
+< resp -101
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 2
+> param_info 3 :bypass
+< resp -101
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 2
+> param_info 3 no_such_symbol
+< resp -101
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 2
+> param_info 9 gain
+< resp -2
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 2
+> param_set 3 gain 0.25
+< resp -101
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 2
+> param_set 3 no_such_symbol 0.5
+< resp -101
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 2
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 2
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 2
+> add urn:no:such:plugin 4
+< resp -902
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 2
+> remote_page_get 9 0
+< resp -2
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 2
+> remote_pages 9
+< resp -2
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 2
+> remove 3
+< resp -101
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 2
+> state_load /tmp/state
+< resp -3
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 2
+> state_save /tmp/state
+< resp -3
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 2
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 2
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 2
+> bypass 3 0
+< resp -101
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 2
+> bypass 3 1
+< resp -101
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 2
+> bypass 9 1
+< resp -2
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 2
+> connect system:capture_1 system:playback_1
+< resp -105
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 2
+> param_get 3 :bypass
+< resp -101
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 2
+> param_get 3 gain
+< resp -101
+= param_get(3,gain)
+# scenario-1 answer 3
+> add urn:golden:amp 3
+< resp -902
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 3
+> add urn:golden:amp 3
+< resp -902
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 3
+> add urn:golden:missing 4
+< resp -205
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 3
+> param_set 3 gain 0.25
+< resp -902
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 3
+> param_get 3 gain
+< resp -902
+= param_get(3,gain)
+# scenario-6 answer 3
+> param_set 3 no_such_symbol 0.5
+< resp -902
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 3
+> param_get 3 no_such_symbol
+< resp -902
+= param_get(3,no_such_symbol)
+# scenario-8 answer 3
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
+# scenario-10 answer 3
+> bypass 3 1
+< resp -902
+= bypass(3,1)
+# scenario-11 answer 3
+> param_get 3 :bypass
+< resp -902
+= param_get(3,:bypass)
+# scenario-12 answer 3
+> bypass 3 0
+< resp -902
+= bypass(3,0)
+# scenario-13 answer 3
+> param_get 3 :bypass
+< resp -902
+= param_get(3,:bypass)
+# scenario-14 answer 3
+> bypass 9 1
+< resp -3
+= bypass(9,1)
+# scenario-15 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 3
+> state_save /tmp/golden
+< resp -101
+= state_save(/tmp/golden)
+# scenario-17 answer 3
+> remove 3
+< resp -902
+= remove(3)
+# scenario-18 answer 3
+> add urn:golden:amp 3
+< resp -902
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 3
+> state_load /tmp/golden
+< resp -101
+= state_load(/tmp/golden)
+# scenario-20 answer 3
+> connect a:out b:in
+< resp -3
+= connect(a:out,b:in)
+# scenario-21 answer 3
+> disconnect a:out b:in
+< resp -3
+= disconnect(a:out,b:in)
+# scenario-22 answer 3
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 3
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 3
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 3
+> remote_pages 9
+< resp -3
+= remote_pages(9)
+# scenario-26 answer 3
+> remote_page_get 9 0
+< resp -3
+= remote_page_get(9,0)
+# scenario-27 answer 3
+> param_info 9 gain
+< resp -3
+= param_info(9,gain)
+# scenario-28 answer 3
+> param_info 3 no_such_symbol
+< resp -902
+= param_info(3,no_such_symbol)
+# scenario-29 answer 3
+> param_info 3 :bypass
+< resp -902
+= param_info(3,:bypass)
+# scenario-30 answer 3
+> remove 3
+< resp -902
+= remove(3)
+# scenario-31 answer 3
+> remove 3
+< resp -902
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 3
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 3
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 3
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 3
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 3
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 3
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 3
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 3
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 3
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 3
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 3
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 3
+> %i %s %f
+< resp -3
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 3
+> param_get 99999999999999999999 gain
+< resp -2
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 3
+> param_set -1 gain nan
+< resp -2
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 3
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 3
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -902
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 3
+> track_info 3 x - master
+< resp -902
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 3
+> remote_pages 3
+< resp -902
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 3
+> remote_page_get 3 0
+< resp -902
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 3
+> param_info 3 cutoff
+< resp -902
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 3
+> connect system:capture_1 system:playback_1
+< resp 0
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 3
+> add http://example.org/plugin 3
+< resp -902
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 3
+> param_get 3 no_such_symbol
+< resp -902
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 3
+> param_info 3 :bypass
+< resp -902
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 3
+> param_info 3 no_such_symbol
+< resp -902
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 3
+> param_info 9 gain
+< resp -3
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 3
+> param_set 3 gain 0.25
+< resp -902
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 3
+> param_set 3 no_such_symbol 0.5
+< resp -902
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 3
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 3
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 3
+> add urn:no:such:plugin 4
+< resp -205
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 3
+> remote_page_get 9 0
+< resp -3
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 3
+> remote_pages 9
+< resp -3
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 3
+> remove 3
+< resp -902
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 3
+> state_load /tmp/state
+< resp -4
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 3
+> state_save /tmp/state
+< resp -4
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 3
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 3
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 3
+> bypass 3 0
+< resp -902
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 3
+> bypass 3 1
+< resp -902
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 3
+> bypass 9 1
+< resp -3
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 3
+> connect system:capture_1 system:playback_1
+< resp 0
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 3
+> param_get 3 :bypass
+< resp -902
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 3
+> param_get 3 gain
+< resp -902
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 3
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 3
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 3
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 3
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 3
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 3
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 3
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 3
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 3
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 3
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 3
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 3
+> %i %s %f
+< resp -3
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 3
+> param_get 99999999999999999999 gain
+< resp -2
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 3
+> param_set -1 gain nan
+< resp -2
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 3
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 3
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -902
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 3
+> track_info 3 x - master
+< resp -902
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 3
+> remote_pages 3
+< resp -902
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 3
+> remote_page_get 3 0
+< resp -902
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 3
+> param_info 3 cutoff
+< resp -902
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 3
+> connect system:capture_1 system:playback_1
+< resp 0
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 3
+> param_get 3 gain
+< resp -902
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 3
+> add http://example.org/plugin 3
+< resp -902
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 3
+> param_get 3 no_such_symbol
+< resp -902
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 3
+> param_info 3 :bypass
+< resp -902
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 3
+> param_info 3 no_such_symbol
+< resp -902
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 3
+> param_info 9 gain
+< resp -3
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 3
+> param_set 3 gain 0.25
+< resp -902
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 3
+> param_set 3 no_such_symbol 0.5
+< resp -902
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 3
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 3
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 3
+> add urn:no:such:plugin 4
+< resp -205
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 3
+> remote_page_get 9 0
+< resp -3
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 3
+> remote_pages 9
+< resp -3
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 3
+> remove 3
+< resp -902
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 3
+> state_load /tmp/state
+< resp -4
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 3
+> state_save /tmp/state
+< resp -4
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 3
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 3
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 3
+> bypass 3 0
+< resp -902
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 3
+> bypass 3 1
+< resp -902
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 3
+> bypass 9 1
+< resp -3
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 3
+> connect system:capture_1 system:playback_1
+< resp 0
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 3
+> param_get 3 :bypass
+< resp -902
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 3
+> param_get 3 gain
+< resp -902
+= param_get(3,gain)
+# scenario-1 answer 4
+> add urn:golden:amp 3
+< resp -205
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 4
+> add urn:golden:amp 3
+< resp -205
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 4
+> add urn:golden:missing 4
+< resp -105
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 4
+> param_set 3 gain 0.25
+< resp -205
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 4
+> param_get 3 gain
+< resp -205
+= param_get(3,gain)
+# scenario-6 answer 4
+> param_set 3 no_such_symbol 0.5
+< resp -205
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 4
+> param_get 3 no_such_symbol
+< resp -205
+= param_get(3,no_such_symbol)
+# scenario-8 answer 4
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
+# scenario-10 answer 4
+> bypass 3 1
+< resp -205
+= bypass(3,1)
+# scenario-11 answer 4
+> param_get 3 :bypass
+< resp -205
+= param_get(3,:bypass)
+# scenario-12 answer 4
+> bypass 3 0
+< resp -205
+= bypass(3,0)
+# scenario-13 answer 4
+> param_get 3 :bypass
+< resp -205
+= param_get(3,:bypass)
+# scenario-14 answer 4
+> bypass 9 1
+< resp -4
+= bypass(9,1)
+# scenario-15 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 4
+> state_save /tmp/golden
+< resp -902
+= state_save(/tmp/golden)
+# scenario-17 answer 4
+> remove 3
+< resp -205
+= remove(3)
+# scenario-18 answer 4
+> add urn:golden:amp 3
+< resp -205
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 4
+> state_load /tmp/golden
+< resp -902
+= state_load(/tmp/golden)
+# scenario-20 answer 4
+> connect a:out b:in
+< resp -4
+= connect(a:out,b:in)
+# scenario-21 answer 4
+> disconnect a:out b:in
+< resp -4
+= disconnect(a:out,b:in)
+# scenario-22 answer 4
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 4
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 4
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 4
+> remote_pages 9
+< resp -4
+= remote_pages(9)
+# scenario-26 answer 4
+> remote_page_get 9 0
+< resp -4
+= remote_page_get(9,0)
+# scenario-27 answer 4
+> param_info 9 gain
+< resp -4
+= param_info(9,gain)
+# scenario-28 answer 4
+> param_info 3 no_such_symbol
+< resp -205
+= param_info(3,no_such_symbol)
+# scenario-29 answer 4
+> param_info 3 :bypass
+< resp -205
+= param_info(3,:bypass)
+# scenario-30 answer 4
+> remove 3
+< resp -205
+= remove(3)
+# scenario-31 answer 4
+> remove 3
+< resp -205
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 4
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 4
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 4
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 4
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 4
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 4
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 4
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 4
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 4
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 4
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 4
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 4
+> %i %s %f
+< resp -4
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 4
+> param_get 99999999999999999999 gain
+< resp -3
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 4
+> param_set -1 gain nan
+< resp -3
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 4
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 4
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -205
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 4
+> track_info 3 x - master
+< resp -205
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 4
+> remote_pages 3
+< resp -205
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 4
+> remote_page_get 3 0
+< resp -205
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 4
+> param_info 3 cutoff
+< resp -205
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 4
+> connect system:capture_1 system:playback_1
+< resp -1
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 4
+> add http://example.org/plugin 3
+< resp -205
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 4
+> param_get 3 no_such_symbol
+< resp -205
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 4
+> param_info 3 :bypass
+< resp -205
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 4
+> param_info 3 no_such_symbol
+< resp -205
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 4
+> param_info 9 gain
+< resp -4
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 4
+> param_set 3 gain 0.25
+< resp -205
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 4
+> param_set 3 no_such_symbol 0.5
+< resp -205
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 4
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 4
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 4
+> add urn:no:such:plugin 4
+< resp -105
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 4
+> remote_page_get 9 0
+< resp -4
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 4
+> remote_pages 9
+< resp -4
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 4
+> remove 3
+< resp -205
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 4
+> state_load /tmp/state
+< resp -101
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 4
+> state_save /tmp/state
+< resp -101
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 4
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 4
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 4
+> bypass 3 0
+< resp -205
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 4
+> bypass 3 1
+< resp -205
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 4
+> bypass 9 1
+< resp -4
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 4
+> connect system:capture_1 system:playback_1
+< resp -1
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 4
+> param_get 3 :bypass
+< resp -205
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 4
+> param_get 3 gain
+< resp -205
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 4
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 4
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 4
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 4
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 4
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 4
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 4
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 4
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 4
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 4
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 4
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 4
+> %i %s %f
+< resp -4
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 4
+> param_get 99999999999999999999 gain
+< resp -3
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 4
+> param_set -1 gain nan
+< resp -3
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 4
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 4
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -205
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 4
+> track_info 3 x - master
+< resp -205
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 4
+> remote_pages 3
+< resp -205
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 4
+> remote_page_get 3 0
+< resp -205
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 4
+> param_info 3 cutoff
+< resp -205
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 4
+> connect system:capture_1 system:playback_1
+< resp -1
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 4
+> param_get 3 gain
+< resp -205
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 4
+> add http://example.org/plugin 3
+< resp -205
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 4
+> param_get 3 no_such_symbol
+< resp -205
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 4
+> param_info 3 :bypass
+< resp -205
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 4
+> param_info 3 no_such_symbol
+< resp -205
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 4
+> param_info 9 gain
+< resp -4
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 4
+> param_set 3 gain 0.25
+< resp -205
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 4
+> param_set 3 no_such_symbol 0.5
+< resp -205
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 4
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 4
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 4
+> add urn:no:such:plugin 4
+< resp -105
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 4
+> remote_page_get 9 0
+< resp -4
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 4
+> remote_pages 9
+< resp -4
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 4
+> remove 3
+< resp -205
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 4
+> state_load /tmp/state
+< resp -101
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 4
+> state_save /tmp/state
+< resp -101
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 4
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 4
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 4
+> bypass 3 0
+< resp -205
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 4
+> bypass 3 1
+< resp -205
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 4
+> bypass 9 1
+< resp -4
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 4
+> connect system:capture_1 system:playback_1
+< resp -1
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 4
+> param_get 3 :bypass
+< resp -205
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 4
+> param_get 3 gain
+< resp -205
+= param_get(3,gain)
+# scenario-1 answer 5
+> add urn:golden:amp 3
+< resp -105
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 5
+> add urn:golden:amp 3
+< resp -105
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 5
+> add urn:golden:missing 4
+< resp 4
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 5
+> param_set 3 gain 0.25
+< resp -105
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 5
+> param_get 3 gain
+< resp -105
+= param_get(3,gain)
+# scenario-6 answer 5
+> param_set 3 no_such_symbol 0.5
+< resp -105
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 5
+> param_get 3 no_such_symbol
+< resp -105
+= param_get(3,no_such_symbol)
+# scenario-8 answer 5
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
+# scenario-10 answer 5
+> bypass 3 1
+< resp -105
+= bypass(3,1)
+# scenario-11 answer 5
+> param_get 3 :bypass
+< resp -105
+= param_get(3,:bypass)
+# scenario-12 answer 5
+> bypass 3 0
+< resp -105
+= bypass(3,0)
+# scenario-13 answer 5
+> param_get 3 :bypass
+< resp -105
+= param_get(3,:bypass)
+# scenario-14 answer 5
+> bypass 9 1
+< resp -101
+= bypass(9,1)
+# scenario-15 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 5
+> state_save /tmp/golden
+< resp -205
+= state_save(/tmp/golden)
+# scenario-17 answer 5
+> remove 3
+< resp -105
+= remove(3)
+# scenario-18 answer 5
+> add urn:golden:amp 3
+< resp -105
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 5
+> state_load /tmp/golden
+< resp -205
+= state_load(/tmp/golden)
+# scenario-20 answer 5
+> connect a:out b:in
+< resp -101
+= connect(a:out,b:in)
+# scenario-21 answer 5
+> disconnect a:out b:in
+< resp -101
+= disconnect(a:out,b:in)
+# scenario-22 answer 5
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 5
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 5
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 5
+> remote_pages 9
+< resp -101
+= remote_pages(9)
+# scenario-26 answer 5
+> remote_page_get 9 0
+< resp -101
+= remote_page_get(9,0)
+# scenario-27 answer 5
+> param_info 9 gain
+< resp -101
+= param_info(9,gain)
+# scenario-28 answer 5
+> param_info 3 no_such_symbol
+< resp -105
+= param_info(3,no_such_symbol)
+# scenario-29 answer 5
+> param_info 3 :bypass
+< resp -105
+= param_info(3,:bypass)
+# scenario-30 answer 5
+> remove 3
+< resp -105
+= remove(3)
+# scenario-31 answer 5
+> remove 3
+< resp -105
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 5
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 5
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 5
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 5
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 5
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 5
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 5
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 5
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 5
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 5
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 5
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 5
+> %i %s %f
+< resp -101
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 5
+> param_get 99999999999999999999 gain
+< resp -4
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 5
+> param_set -1 gain nan
+< resp -4
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 5
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 5
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -105
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 5
+> track_info 3 x - master
+< resp -105
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 5
+> remote_pages 3
+< resp -105
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 5
+> remote_page_get 3 0
+< resp -105
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 5
+> param_info 3 cutoff
+< resp -105
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 5
+> connect system:capture_1 system:playback_1
+< resp -2
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 5
+> add http://example.org/plugin 3
+< resp -105
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 5
+> param_get 3 no_such_symbol
+< resp -105
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 5
+> param_info 3 :bypass
+< resp -105
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 5
+> param_info 3 no_such_symbol
+< resp -105
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 5
+> param_info 9 gain
+< resp -101
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 5
+> param_set 3 gain 0.25
+< resp -105
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 5
+> param_set 3 no_such_symbol 0.5
+< resp -105
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 5
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 5
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 5
+> add urn:no:such:plugin 4
+< resp 4
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 5
+> remote_page_get 9 0
+< resp -101
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 5
+> remote_pages 9
+< resp -101
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 5
+> remove 3
+< resp -105
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 5
+> state_load /tmp/state
+< resp -902
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 5
+> state_save /tmp/state
+< resp -902
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 5
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 5
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 5
+> bypass 3 0
+< resp -105
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 5
+> bypass 3 1
+< resp -105
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 5
+> bypass 9 1
+< resp -101
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 5
+> connect system:capture_1 system:playback_1
+< resp -2
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 5
+> param_get 3 :bypass
+< resp -105
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 5
+> param_get 3 gain
+< resp -105
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 5
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 5
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 5
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 5
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 5
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 5
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 5
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 5
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 5
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 5
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 5
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 5
+> %i %s %f
+< resp -101
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 5
+> param_get 99999999999999999999 gain
+< resp -4
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 5
+> param_set -1 gain nan
+< resp -4
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 5
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 5
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -105
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 5
+> track_info 3 x - master
+< resp -105
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 5
+> remote_pages 3
+< resp -105
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 5
+> remote_page_get 3 0
+< resp -105
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 5
+> param_info 3 cutoff
+< resp -105
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 5
+> connect system:capture_1 system:playback_1
+< resp -2
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 5
+> param_get 3 gain
+< resp -105
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 5
+> add http://example.org/plugin 3
+< resp -105
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 5
+> param_get 3 no_such_symbol
+< resp -105
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 5
+> param_info 3 :bypass
+< resp -105
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 5
+> param_info 3 no_such_symbol
+< resp -105
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 5
+> param_info 9 gain
+< resp -101
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 5
+> param_set 3 gain 0.25
+< resp -105
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 5
+> param_set 3 no_such_symbol 0.5
+< resp -105
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 5
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 5
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 5
+> add urn:no:such:plugin 4
+< resp 4
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 5
+> remote_page_get 9 0
+< resp -101
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 5
+> remote_pages 9
+< resp -101
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 5
+> remove 3
+< resp -105
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 5
+> state_load /tmp/state
+< resp -902
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 5
+> state_save /tmp/state
+< resp -902
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 5
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 5
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 5
+> bypass 3 0
+< resp -105
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 5
+> bypass 3 1
+< resp -105
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 5
+> bypass 9 1
+< resp -101
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 5
+> connect system:capture_1 system:playback_1
+< resp -2
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 5
+> param_get 3 :bypass
+< resp -105
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 5
+> param_get 3 gain
+< resp -105
+= param_get(3,gain)
+# scenario-1 answer 6
+> add urn:golden:amp 3
+< resp 3
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 6
+> add urn:golden:amp 3
+< resp 3
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 6
+> add urn:golden:missing 4
+< resp -1
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 6
+> param_set 3 gain 0.25
+< resp 0
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 6
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
+# scenario-6 answer 6
+> param_set 3 no_such_symbol 0.5
+< resp 0
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 6
+> param_get 3 no_such_symbol
+< resp 0 0.7500
+= param_get(3,no_such_symbol)
+# scenario-8 answer 6
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 6
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
+# scenario-10 answer 6
+> bypass 3 1
+< resp 0
+= bypass(3,1)
+# scenario-11 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
+# scenario-12 answer 6
+> bypass 3 0
+< resp 0
+= bypass(3,0)
+# scenario-13 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
+# scenario-14 answer 6
+> bypass 9 1
+< resp -902
+= bypass(9,1)
+# scenario-15 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 6
+> state_save /tmp/golden
+< resp -105
+= state_save(/tmp/golden)
+# scenario-17 answer 6
+> remove 3
+< resp 0
+= remove(3)
+# scenario-18 answer 6
+> add urn:golden:amp 3
+< resp 3
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 6
+> state_load /tmp/golden
+< resp -105
+= state_load(/tmp/golden)
+# scenario-20 answer 6
+> connect a:out b:in
+< resp -902
+= connect(a:out,b:in)
+# scenario-21 answer 6
+> disconnect a:out b:in
+< resp -902
+= disconnect(a:out,b:in)
+# scenario-22 answer 6
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 6
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 6
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 6
+> remote_pages 9
+< resp -902
+= remote_pages(9)
+# scenario-26 answer 6
+> remote_page_get 9 0
+< resp -902
+= remote_page_get(9,0)
+# scenario-27 answer 6
+> param_info 9 gain
+< resp -902
+= param_info(9,gain)
+# scenario-28 answer 6
+> param_info 3 no_such_symbol
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,no_such_symbol)
+# scenario-29 answer 6
+> param_info 3 :bypass
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,:bypass)
+# scenario-30 answer 6
+> remove 3
+< resp 0
+= remove(3)
+# scenario-31 answer 6
+> remove 3
+< resp 0
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 6
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 6
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 6
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 6
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 6
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 6
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 6
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 6
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 6
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 6
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 6
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 6
+> %i %s %f
+< resp -902
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 6
+> param_get 99999999999999999999 gain
+< resp -101
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 6
+> param_set -1 gain nan
+< resp -101
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 6
+> monitor_output 3 gain
+< resp 1
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 6
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp 0
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 6
+> track_info 3 x - master
+< resp 0
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 6
+> remote_pages 3
+< resp 3
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 6
+> remote_page_get 3 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 6
+> param_info 3 cutoff
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 6
+> connect system:capture_1 system:playback_1
+< resp -3
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 6
+> add http://example.org/plugin 3
+< resp 3
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 6
+> param_get 3 no_such_symbol
+< resp 0 0.7500
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 6
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 6
+> param_info 3 :bypass
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 6
+> param_info 3 no_such_symbol
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 6
+> param_info 9 gain
+< resp -902
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 6
+> param_set 3 gain 0.25
+< resp 0
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 6
+> param_set 3 no_such_symbol 0.5
+< resp 0
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 6
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 6
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 6
+> add urn:no:such:plugin 4
+< resp -1
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 6
+> remote_page_get 9 0
+< resp -902
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 6
+> remote_pages 9
+< resp -902
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 6
+> remove 3
+< resp 0
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 6
+> state_load /tmp/state
+< resp -205
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 6
+> state_save /tmp/state
+< resp -205
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 6
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 6
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 6
+> bypass 3 0
+< resp 0
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 6
+> bypass 3 1
+< resp 0
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 6
+> bypass 9 1
+< resp -902
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 6
+> connect system:capture_1 system:playback_1
+< resp -3
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 6
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 6
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 6
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 6
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 6
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 6
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 6
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 6
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 6
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 6
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 6
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 6
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 6
+> %i %s %f
+< resp -902
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 6
+> param_get 99999999999999999999 gain
+< resp -101
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 6
+> param_set -1 gain nan
+< resp -101
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 6
+> monitor_output 3 gain
+< resp 1
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 6
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp 0
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 6
+> track_info 3 x - master
+< resp 0
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 6
+> remote_pages 3
+< resp 3
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 6
+> remote_page_get 3 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 6
+> param_info 3 cutoff
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 6
+> connect system:capture_1 system:playback_1
+< resp -3
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 6
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 6
+> add http://example.org/plugin 3
+< resp 3
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 6
+> param_get 3 no_such_symbol
+< resp 0 0.7500
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 6
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 6
+> param_info 3 :bypass
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 6
+> param_info 3 no_such_symbol
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 6
+> param_info 9 gain
+< resp -902
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 6
+> param_set 3 gain 0.25
+< resp 0
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 6
+> param_set 3 no_such_symbol 0.5
+< resp 0
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 6
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 6
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 6
+> add urn:no:such:plugin 4
+< resp -1
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 6
+> remote_page_get 9 0
+< resp -902
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 6
+> remote_pages 9
+< resp -902
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 6
+> remove 3
+< resp 0
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 6
+> state_load /tmp/state
+< resp -205
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 6
+> state_save /tmp/state
+< resp -205
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 6
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 6
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 6
+> bypass 3 0
+< resp 0
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 6
+> bypass 3 1
+< resp 0
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 6
+> bypass 9 1
+< resp -902
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 6
+> connect system:capture_1 system:playback_1
+< resp -3
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 6
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
+# scenario-1 answer 7
+> add urn:golden:amp 3
+< resp -1
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 7
+> add urn:golden:amp 3
+< resp -1
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 7
+> add urn:golden:missing 4
+< resp -2
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 7
+> param_set 3 gain 0.25
+< resp -1
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 7
+> param_get 3 gain
+< resp -1
+= param_get(3,gain)
+# scenario-6 answer 7
+> param_set 3 no_such_symbol 0.5
+< resp -1
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 7
+> param_get 3 no_such_symbol
+< resp -1
+= param_get(3,no_such_symbol)
+# scenario-8 answer 7
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
+# scenario-10 answer 7
+> bypass 3 1
+< resp -1
+= bypass(3,1)
+# scenario-11 answer 7
+> param_get 3 :bypass
+< resp -1
+= param_get(3,:bypass)
+# scenario-12 answer 7
+> bypass 3 0
+< resp -1
+= bypass(3,0)
+# scenario-13 answer 7
+> param_get 3 :bypass
+< resp -1
+= param_get(3,:bypass)
+# scenario-14 answer 7
+> bypass 9 1
+< resp -205
+= bypass(9,1)
+# scenario-15 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 7
+> state_save /tmp/golden
+< resp 0
+= state_save(/tmp/golden)
+# scenario-17 answer 7
+> remove 3
+< resp -1
+= remove(3)
+# scenario-18 answer 7
+> add urn:golden:amp 3
+< resp -1
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 7
+> state_load /tmp/golden
+< resp 0
+= state_load(/tmp/golden)
+# scenario-20 answer 7
+> connect a:out b:in
+< resp -205
+= connect(a:out,b:in)
+# scenario-21 answer 7
+> disconnect a:out b:in
+< resp -205
+= disconnect(a:out,b:in)
+# scenario-22 answer 7
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 7
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 7
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 7
+> remote_pages 9
+< resp -205
+= remote_pages(9)
+# scenario-26 answer 7
+> remote_page_get 9 0
+< resp -205
+= remote_page_get(9,0)
+# scenario-27 answer 7
+> param_info 9 gain
+< resp -205
+= param_info(9,gain)
+# scenario-28 answer 7
+> param_info 3 no_such_symbol
+< resp -1
+= param_info(3,no_such_symbol)
+# scenario-29 answer 7
+> param_info 3 :bypass
+< resp -1
+= param_info(3,:bypass)
+# scenario-30 answer 7
+> remove 3
+< resp -1
+= remove(3)
+# scenario-31 answer 7
+> remove 3
+< resp -1
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 7
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 7
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 7
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 7
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 7
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 7
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 7
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 7
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 7
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 7
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 7
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 7
+> %i %s %f
+< resp -205
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 7
+> param_get 99999999999999999999 gain
+< resp -902
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 7
+> param_set -1 gain nan
+< resp -902
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 7
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 7
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -1
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 7
+> track_info 3 x - master
+< resp -1
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 7
+> remote_pages 3
+< resp -1
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 7
+> remote_page_get 3 0
+< resp -1
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 7
+> param_info 3 cutoff
+< resp -1
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 7
+> connect system:capture_1 system:playback_1
+< resp -4
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 7
+> add http://example.org/plugin 3
+< resp -1
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 7
+> param_get 3 no_such_symbol
+< resp -1
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 7
+> param_info 3 :bypass
+< resp -1
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 7
+> param_info 3 no_such_symbol
+< resp -1
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 7
+> param_info 9 gain
+< resp -205
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 7
+> param_set 3 gain 0.25
+< resp -1
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 7
+> param_set 3 no_such_symbol 0.5
+< resp -1
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 7
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 7
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 7
+> add urn:no:such:plugin 4
+< resp -2
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 7
+> remote_page_get 9 0
+< resp -205
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 7
+> remote_pages 9
+< resp -205
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 7
+> remove 3
+< resp -1
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 7
+> state_load /tmp/state
+< resp -105
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 7
+> state_save /tmp/state
+< resp -105
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 7
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 7
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 7
+> bypass 3 0
+< resp -1
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 7
+> bypass 3 1
+< resp -1
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 7
+> bypass 9 1
+< resp -205
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 7
+> connect system:capture_1 system:playback_1
+< resp -4
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 7
+> param_get 3 :bypass
+< resp -1
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 7
+> param_get 3 gain
+< resp -1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 7
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 7
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 7
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 7
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 7
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 7
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 7
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 7
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 7
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 7
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 7
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 7
+> %i %s %f
+< resp -205
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 7
+> param_get 99999999999999999999 gain
+< resp -902
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 7
+> param_set -1 gain nan
+< resp -902
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 7
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 7
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -1
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 7
+> track_info 3 x - master
+< resp -1
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 7
+> remote_pages 3
+< resp -1
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 7
+> remote_page_get 3 0
+< resp -1
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 7
+> param_info 3 cutoff
+< resp -1
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 7
+> connect system:capture_1 system:playback_1
+< resp -4
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 7
+> param_get 3 gain
+< resp -1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 7
+> add http://example.org/plugin 3
+< resp -1
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 7
+> param_get 3 no_such_symbol
+< resp -1
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 7
+> param_info 3 :bypass
+< resp -1
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 7
+> param_info 3 no_such_symbol
+< resp -1
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 7
+> param_info 9 gain
+< resp -205
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 7
+> param_set 3 gain 0.25
+< resp -1
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 7
+> param_set 3 no_such_symbol 0.5
+< resp -1
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 7
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 7
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 7
+> add urn:no:such:plugin 4
+< resp -2
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 7
+> remote_page_get 9 0
+< resp -205
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 7
+> remote_pages 9
+< resp -205
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 7
+> remove 3
+< resp -1
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 7
+> state_load /tmp/state
+< resp -105
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 7
+> state_save /tmp/state
+< resp -105
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 7
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 7
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 7
+> bypass 3 0
+< resp -1
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 7
+> bypass 3 1
+< resp -1
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 7
+> bypass 9 1
+< resp -205
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 7
+> connect system:capture_1 system:playback_1
+< resp -4
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 7
+> param_get 3 :bypass
+< resp -1
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 7
+> param_get 3 gain
+< resp -1
+= param_get(3,gain)
+# scenario-1 answer 8
+> add urn:golden:amp 3
+< resp -2
+= add(urn:golden:amp,3,NULL)
+# scenario-2 answer 8
+> add urn:golden:amp 3
+< resp -2
+= add(urn:golden:amp,3,NULL)
+# scenario-3 answer 8
+> add urn:golden:missing 4
+< resp -3
+= add(urn:golden:missing,4,NULL)
+# scenario-4 answer 8
+> param_set 3 gain 0.25
+< resp -2
+= param_set(3,gain,0x1p-2)
+# scenario-5 answer 8
+> param_get 3 gain
+< resp -2
+= param_get(3,gain)
+# scenario-6 answer 8
+> param_set 3 no_such_symbol 0.5
+< resp -2
+= param_set(3,no_such_symbol,0x1p-1)
+# scenario-7 answer 8
+> param_get 3 no_such_symbol
+< resp -2
+= param_get(3,no_such_symbol)
+# scenario-8 answer 8
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# scenario-9 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
+# scenario-10 answer 8
+> bypass 3 1
+< resp -2
+= bypass(3,1)
+# scenario-11 answer 8
+> param_get 3 :bypass
+< resp -2
+= param_get(3,:bypass)
+# scenario-12 answer 8
+> bypass 3 0
+< resp -2
+= bypass(3,0)
+# scenario-13 answer 8
+> param_get 3 :bypass
+< resp -2
+= param_get(3,:bypass)
+# scenario-14 answer 8
+> bypass 9 1
+< resp -105
+= bypass(9,1)
+# scenario-15 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# scenario-16 answer 8
+> state_save /tmp/golden
+< resp -1
+= state_save(/tmp/golden)
+# scenario-17 answer 8
+> remove 3
+< resp -2
+= remove(3)
+# scenario-18 answer 8
+> add urn:golden:amp 3
+< resp -2
+= add(urn:golden:amp,3,NULL)
+# scenario-19 answer 8
+> state_load /tmp/golden
+< resp -1
+= state_load(/tmp/golden)
+# scenario-20 answer 8
+> connect a:out b:in
+< resp -105
+= connect(a:out,b:in)
+# scenario-21 answer 8
+> disconnect a:out b:in
+< resp -105
+= disconnect(a:out,b:in)
+# scenario-22 answer 8
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# scenario-23 answer 8
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# scenario-24 answer 8
+> track_info 3 Kick - aux
+< resp -902
+= 
+# scenario-25 answer 8
+> remote_pages 9
+< resp -105
+= remote_pages(9)
+# scenario-26 answer 8
+> remote_page_get 9 0
+< resp -105
+= remote_page_get(9,0)
+# scenario-27 answer 8
+> param_info 9 gain
+< resp -105
+= param_info(9,gain)
+# scenario-28 answer 8
+> param_info 3 no_such_symbol
+< resp -2
+= param_info(3,no_such_symbol)
+# scenario-29 answer 8
+> param_info 3 :bypass
+< resp -2
+= param_info(3,:bypass)
+# scenario-30 answer 8
+> remove 3
+< resp -2
+= remove(3)
+# scenario-31 answer 8
+> remove 3
+< resp -2
+= remove(3)
+# fuzz/corpus/protocol/extra-1 answer 8
+> cpu_load
+< not found
+= 
+# fuzz/corpus/protocol/extra-10 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/extra-11 answer 8
+> param_set 3 gain
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-12 answer 8
+> param_set 3 gain 1 2
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-13 answer 8
+> add
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-14 answer 8
+> add urn:x
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-15 answer 8
+> remove
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-16 answer 8
+> remove 3 4
+< many arguments
+= 
+# fuzz/corpus/protocol/extra-17 answer 8
+> unknown_verb 1 2 3
+< not found
+= 
+# fuzz/corpus/protocol/extra-18 answer 8
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# fuzz/corpus/protocol/extra-19 answer 8
+> state_save
+< few arguments
+= 
+# fuzz/corpus/protocol/extra-2 answer 8
+> quit
+< not found
+= 
+# fuzz/corpus/protocol/extra-20 answer 8
+> %i %s %f
+< resp -105
+= add(%s,0,NULL)
+# fuzz/corpus/protocol/extra-21 answer 8
+> param_get 99999999999999999999 gain
+< resp -205
+= param_get(-1,gain)
+# fuzz/corpus/protocol/extra-22 answer 8
+> param_set -1 gain nan
+< resp -205
+= param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-3 answer 8
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-4 answer 8
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -2
+= track_info(3,Lead Vocal,#FF8800,bus)
+# fuzz/corpus/protocol/extra-5 answer 8
+> track_info 3 x - master
+< resp -2
+= track_info(3,x,-,master)
+# fuzz/corpus/protocol/extra-6 answer 8
+> remote_pages 3
+< resp -2
+= remote_pages(3)
+# fuzz/corpus/protocol/extra-7 answer 8
+> remote_page_get 3 0
+< resp -2
+= remote_page_get(3,0)
+# fuzz/corpus/protocol/extra-8 answer 8
+> param_info 3 cutoff
+< resp -2
+= param_info(3,cutoff)
+# fuzz/corpus/protocol/extra-9 answer 8
+> connect system:capture_1 system:playback_1
+< resp -101
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-1 answer 8
+> add http://example.org/plugin 3
+< resp -2
+= add(http://example.org/plugin,3,NULL)
+# fuzz/corpus/protocol/scenario-10 answer 8
+> param_get 3 no_such_symbol
+< resp -2
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-11 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-12 answer 8
+> param_info 3 :bypass
+< resp -2
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 8
+> param_info 3 no_such_symbol
+< resp -2
+= param_info(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 8
+> param_info 9 gain
+< resp -105
+= param_info(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 8
+> param_set 3 gain 0.25
+< resp -2
+= param_set(3,gain,0x1p-2)
+# fuzz/corpus/protocol/scenario-16 answer 8
+> param_set 3 no_such_symbol 0.5
+< resp -2
+= param_set(3,no_such_symbol,0x1p-1)
+# fuzz/corpus/protocol/scenario-17 answer 8
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-18 answer 8
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-19 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-2 answer 8
+> add urn:no:such:plugin 4
+< resp -3
+= add(urn:no:such:plugin,4,NULL)
+# fuzz/corpus/protocol/scenario-20 answer 8
+> remote_page_get 9 0
+< resp -105
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-21 answer 8
+> remote_pages 9
+< resp -105
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-22 answer 8
+> remove 3
+< resp -2
+= remove(3)
+# fuzz/corpus/protocol/scenario-23 answer 8
+> state_load /tmp/state
+< resp 0
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-24 answer 8
+> state_save /tmp/state
+< resp 0
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-25 answer 8
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-26 answer 8
+> track_info 3 Kick - aux
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-3 answer 8
+> bypass 3 0
+< resp -2
+= bypass(3,0)
+# fuzz/corpus/protocol/scenario-4 answer 8
+> bypass 3 1
+< resp -2
+= bypass(3,1)
+# fuzz/corpus/protocol/scenario-5 answer 8
+> bypass 9 1
+< resp -105
+= bypass(9,1)
+# fuzz/corpus/protocol/scenario-6 answer 8
+> connect system:capture_1 system:playback_1
+< resp -101
+= connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-7 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-8 answer 8
+> param_get 3 :bypass
+< resp -2
+= param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-9 answer 8
+> param_get 3 gain
+< resp -2
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-1 answer 8
+> cpu_load
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-10 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/extra-11 answer 8
+> param_set 3 gain
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-12 answer 8
+> param_set 3 gain 1 2
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-13 answer 8
+> add
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-14 answer 8
+> add urn:x
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-15 answer 8
+> remove
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-16 answer 8
+> remove 3 4
+< many arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-17 answer 8
+> unknown_verb 1 2 3
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-18 answer 8
+> patch_set 3 urn:p "a b c"
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/extra-19 answer 8
+> state_save
+< few arguments
+= 
+# dispatch:fuzz/corpus/dispatch/extra-2 answer 8
+> quit
+< not found
+= 
+# dispatch:fuzz/corpus/dispatch/extra-20 answer 8
+> %i %s %f
+< resp -105
+= add(%s,0,NULL)
+# dispatch:fuzz/corpus/dispatch/extra-21 answer 8
+> param_get 99999999999999999999 gain
+< resp -205
+= param_get(-1,gain)
+# dispatch:fuzz/corpus/dispatch/extra-22 answer 8
+> param_set -1 gain nan
+< resp -205
+= param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-3 answer 8
+> monitor_output 3 gain
+< resp 0
+= monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-4 answer 8
+> track_info 3 "Lead Vocal" #FF8800 bus
+< resp -2
+= track_info(3,Lead Vocal,#FF8800,bus)
+# dispatch:fuzz/corpus/dispatch/extra-5 answer 8
+> track_info 3 x - master
+< resp -2
+= track_info(3,x,-,master)
+# dispatch:fuzz/corpus/dispatch/extra-6 answer 8
+> remote_pages 3
+< resp -2
+= remote_pages(3)
+# dispatch:fuzz/corpus/dispatch/extra-7 answer 8
+> remote_page_get 3 0
+< resp -2
+= remote_page_get(3,0)
+# dispatch:fuzz/corpus/dispatch/extra-8 answer 8
+> param_info 3 cutoff
+< resp -2
+= param_info(3,cutoff)
+# dispatch:fuzz/corpus/dispatch/extra-9 answer 8
+> connect system:capture_1 system:playback_1
+< resp -101
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/param-get answer 8
+> param_get 3 gain
+< resp -2
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-1 answer 8
+> add http://example.org/plugin 3
+< resp -2
+= add(http://example.org/plugin,3,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-10 answer 8
+> param_get 3 no_such_symbol
+< resp -2
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-11 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 8
+> param_info 3 :bypass
+< resp -2
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 8
+> param_info 3 no_such_symbol
+< resp -2
+= param_info(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 8
+> param_info 9 gain
+< resp -105
+= param_info(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 8
+> param_set 3 gain 0.25
+< resp -2
+= param_set(3,gain,0x1p-2)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 8
+> param_set 3 no_such_symbol 0.5
+< resp -2
+= param_set(3,no_such_symbol,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 8
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 8
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-2 answer 8
+> add urn:no:such:plugin 4
+< resp -3
+= add(urn:no:such:plugin,4,NULL)
+# dispatch:fuzz/corpus/dispatch/scenario-20 answer 8
+> remote_page_get 9 0
+< resp -105
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 8
+> remote_pages 9
+< resp -105
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 8
+> remove 3
+< resp -2
+= remove(3)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 8
+> state_load /tmp/state
+< resp 0
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 8
+> state_save /tmp/state
+< resp 0
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 8
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 8
+> track_info 3 Kick - aux
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-3 answer 8
+> bypass 3 0
+< resp -2
+= bypass(3,0)
+# dispatch:fuzz/corpus/dispatch/scenario-4 answer 8
+> bypass 3 1
+< resp -2
+= bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-5 answer 8
+> bypass 9 1
+< resp -105
+= bypass(9,1)
+# dispatch:fuzz/corpus/dispatch/scenario-6 answer 8
+> connect system:capture_1 system:playback_1
+< resp -101
+= connect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-7 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-8 answer 8
+> param_get 3 :bypass
+< resp -2
+= param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-9 answer 8
+> param_get 3 gain
+< resp -2
+= param_get(3,gain)

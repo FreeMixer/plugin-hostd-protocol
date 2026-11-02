@@ -1,0 +1,491 @@
+/*
+ * This file is part of mod-host.
+ *
+ * mod-host is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * mod-host is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with mod-host.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+************************************************************************************************************************
+*           INCLUDE FILES
+************************************************************************************************************************
+*/
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#define closesocket close
+#define INVALID_SOCKET -1
+typedef int SOCKET;
+#endif
+
+#include "socket.h"
+
+
+/*
+************************************************************************************************************************
+*           LOCAL DEFINES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL CONSTANTS
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL DATA TYPES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL MACROS
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL GLOBAL VARIABLES
+************************************************************************************************************************
+*/
+
+static unsigned long g_bind_address = INADDR_LOOPBACK;  // in host order
+static SOCKET g_serverfd = INVALID_SOCKET;
+static SOCKET g_fbserverfd = INVALID_SOCKET;
+static SOCKET g_clientfd = INVALID_SOCKET;
+static SOCKET g_fbclientfd = INVALID_SOCKET;
+
+static int g_buffer_size;
+static void (*g_receive_cb)(msg_t *msg);
+static void (*g_idle_cb)(void);
+static int g_idle_interval_ms;
+
+/*
+************************************************************************************************************************
+*           LOCAL FUNCTION PROTOTYPES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL CONFIGURATION ERRORS
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           LOCAL FUNCTIONS
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           GLOBAL FUNCTIONS
+************************************************************************************************************************
+*/
+
+int socket_set_bind_address(const char *address)
+{
+    unsigned long parsed;
+
+    if (address == NULL)
+        return -1;
+#ifdef _WIN32
+    parsed = inet_addr(address);
+    if (parsed == INADDR_NONE)
+        return -1;
+#else
+    struct in_addr in;
+
+    if (inet_pton(AF_INET, address, &in) != 1)
+        return -1;
+    parsed = in.s_addr;
+#endif
+    g_bind_address = ntohl(parsed);
+    return 0;
+}
+
+
+int socket_start(int socket_port, int feedback_port, int buffer_size)
+{
+#ifdef _WIN32
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        perror("WSAStartup");
+        return -1;
+    }
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+    {
+        WSACleanup();
+        perror("WSAStartup  version");
+        return -1;
+    }
+#endif
+
+    g_clientfd = g_fbclientfd = INVALID_SOCKET;
+    g_serverfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    if (g_serverfd == INVALID_SOCKET)
+    {
+        perror("g_serverfd socket error");
+        return -1;
+    }
+
+    if (feedback_port != 0)
+    {
+        g_fbserverfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+        if (g_fbserverfd == INVALID_SOCKET)
+        {
+            perror("g_fbserverfd socket error");
+            return -1;
+        }
+    }
+    else
+    {
+        g_fbserverfd = INVALID_SOCKET;
+    }
+
+#ifndef _WIN32
+    /* Allow the reuse of the socket address */
+    int value = 1;
+    setsockopt(g_serverfd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value));
+    if (feedback_port != 0)
+        setsockopt(g_fbserverfd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value));
+
+    /* increase socket size */
+    value = 131071;
+    setsockopt(g_serverfd, SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
+    if (feedback_port != 0)
+        setsockopt(g_fbserverfd, SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
+#endif
+
+    /* Startup the socket struct */
+    struct sockaddr_in serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(g_bind_address);
+
+    /* Try assign the server address */
+    serv_addr.sin_port = htons(socket_port);
+    if (bind(g_serverfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+    {
+        perror("bind error");
+        return -1;
+    }
+
+    if (feedback_port != 0)
+    {
+        /* Try assign the receiver address */
+        serv_addr.sin_port = htons(feedback_port);
+        if (bind(g_fbserverfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+        {
+            perror("bind error");
+            return -1;
+        }
+    }
+
+    /* Start listen the sockets */
+    if (listen(g_serverfd, -1) < 0)
+    {
+        perror("listen error");
+        return -1;
+    }
+
+    if (feedback_port != 0 && listen(g_fbserverfd, -1) < 0)
+    {
+        perror("listen error");
+        return -1;
+    }
+
+    g_receive_cb = NULL;
+    g_buffer_size = buffer_size;
+
+    return 0;
+}
+
+
+void socket_finish(void)
+{
+    if (g_serverfd == INVALID_SOCKET)
+        return;
+
+    // make local copies so that we can invalidate these vars first
+    const SOCKET serverfd   = g_serverfd;
+    const SOCKET fbserverfd = g_fbserverfd;
+    g_serverfd = g_fbserverfd = INVALID_SOCKET;
+
+    // shutdown clients, but don't close them
+    if (g_fbclientfd != INVALID_SOCKET)
+        shutdown(g_fbclientfd, SHUT_RDWR);
+    shutdown(g_clientfd, SHUT_RDWR);
+
+    // shutdown and close servers
+    if (fbserverfd != INVALID_SOCKET)
+    {
+        shutdown(fbserverfd, SHUT_RDWR);
+        closesocket(fbserverfd);
+    }
+
+    shutdown(serverfd, SHUT_RDWR);
+    closesocket(serverfd);
+
+#ifdef _WIN32
+    WSACleanup();
+#endif
+}
+
+
+void socket_set_receive_cb(void (*receive_cb)(msg_t *msg))
+{
+    g_receive_cb = receive_cb;
+}
+
+void socket_set_idle_cb(void (*idle_cb)(void))
+{
+    g_idle_cb = idle_cb;
+}
+
+void socket_set_idle_interval(int interval_ms)
+{
+    g_idle_interval_ms = interval_ms;
+}
+
+
+int socket_send(int destination, const char *buffer, int size)
+{
+    int ret = -1;
+
+    while (size > 0)
+    {
+        /* a client that went away must not end the host with SIGPIPE */
+#ifdef MSG_NOSIGNAL
+        ret = send(destination, buffer, size, MSG_NOSIGNAL);
+#else
+        ret = send(destination, buffer, size, 0);
+#endif
+        if (ret < 0)
+        {
+            perror("send error");
+            break;
+        }
+        size -= ret;
+        buffer += ret;
+    }
+
+    return ret;
+}
+
+
+int socket_send_feedback(const char *buffer)
+{
+    if (g_fbclientfd == INVALID_SOCKET) return -1;
+
+    return socket_send(g_fbclientfd, buffer, strlen(buffer)+1);
+}
+
+
+void socket_run(int exit_on_failure)
+{
+    SOCKET clientfd, fbclientfd;
+    int count;
+    char *buffer, *newbuffer, *command, *scan, *end;
+    size_t buffer_size, new_size, used;
+    msg_t msg;
+
+    /* Allocates memory to receive buffer */
+    buffer_size = g_buffer_size;
+    used = 0;
+    buffer = malloc(buffer_size);
+    if (buffer == NULL)
+    {
+        if (! exit_on_failure)
+            return;
+
+        perror("malloc error");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Wait for client connection */
+    clientfd = accept(g_serverfd, NULL, NULL);
+    if (clientfd == INVALID_SOCKET)
+    {
+        free(buffer);
+
+        if (! exit_on_failure)
+            return;
+
+        perror("accept error");
+        exit(EXIT_FAILURE);
+    }
+
+    if (g_fbserverfd != INVALID_SOCKET)
+    {
+        fbclientfd = accept(g_fbserverfd, NULL, NULL);
+        if (fbclientfd == INVALID_SOCKET)
+        {
+            free(buffer);
+            closesocket(clientfd);
+
+            if (! exit_on_failure)
+                return;
+
+            perror("accept error");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+    {
+        fbclientfd = INVALID_SOCKET;
+    }
+
+    g_clientfd = clientfd;
+    g_fbclientfd = fbclientfd;
+
+    while (g_serverfd != INVALID_SOCKET)
+    {
+#ifndef _WIN32
+        /* with an idle interval, call the idle callback when no message arrives in it */
+        if (g_idle_interval_ms > 0)
+        {
+            fd_set readfds;
+            struct timeval timeout;
+
+            FD_ZERO(&readfds);
+            FD_SET(clientfd, &readfds);
+            timeout.tv_sec = g_idle_interval_ms / 1000;
+            timeout.tv_usec = (g_idle_interval_ms % 1000) * 1000;
+
+            if (select(clientfd + 1, &readfds, NULL, NULL, &timeout) == 0)
+            {
+                if (g_idle_cb) g_idle_cb();
+                continue;
+            }
+        }
+#endif
+
+        /* Commands end with a NUL byte. A read can hold several of them, or only part of one:
+         * the buffer keeps the unfinished tail for the next read, and one spare byte for a terminator */
+        if (used == buffer_size - 1)
+        {
+            /* the limit below keeps the tail shorter than SOCKET_MSG_MAX_SIZE: this never goes past twice that */
+            new_size = buffer_size * 2;
+            newbuffer = realloc(buffer, new_size);
+            if (newbuffer == NULL)
+            {
+                if (! exit_on_failure)
+                    break;
+
+                perror("realloc error");
+                exit(EXIT_FAILURE);
+            }
+
+            buffer = newbuffer;
+            buffer_size = new_size;
+        }
+
+        count = recv(clientfd, buffer + used, buffer_size - 1 - used, 0);
+
+        if (count > 0) /* Data received */
+        {
+            /* the kept tail has no terminator, look only at the new bytes */
+            command = buffer;
+            scan = buffer + used;
+            used += count;
+            buffer[used] = '\0';
+
+            /* hand over each complete command */
+            while ((end = memchr(scan, '\0', buffer + used - scan)) != NULL)
+            {
+                /* too long: left in the tail, which the limit below refuses */
+                if (end - command >= SOCKET_MSG_MAX_SIZE)
+                    break;
+
+                msg.sender_id = clientfd;
+                msg.data = command;
+                msg.data_size = end - command;
+                if (g_receive_cb) g_receive_cb(&msg);
+
+                command = scan = end + 1;
+            }
+
+            /* keep the unfinished tail */
+            used -= command - buffer;
+            memmove(buffer, command, used);
+            buffer[used] = '\0';
+
+            /* a command that reaches the limit, finished or not, is refused, not read on without end */
+            if (used >= SOCKET_MSG_MAX_SIZE)
+            {
+                fprintf(stderr, "socket error: command longer than %d bytes, closing the connection\n",
+                        SOCKET_MSG_MAX_SIZE);
+                break;
+            }
+
+            if (g_idle_cb) g_idle_cb();
+        }
+        else if (count < 0) /* Error */
+        {
+            if (! exit_on_failure)
+                break;
+
+            perror("read error");
+            exit(EXIT_FAILURE);
+        }
+        else /* Client disconnected */
+        {
+            /* a last command the client did not terminate is still run, as a client that sends no NUL expects */
+            if (used > 0)
+            {
+                msg.sender_id = clientfd;
+                msg.data = buffer;
+                msg.data_size = used;
+                if (g_receive_cb) g_receive_cb(&msg);
+            }
+            break;
+        }
+    }
+
+    if (fbclientfd != INVALID_SOCKET)
+    {
+        g_fbclientfd = INVALID_SOCKET;
+        closesocket(fbclientfd);
+    }
+
+    g_clientfd = INVALID_SOCKET;
+    closesocket(clientfd);
+
+    free(buffer);
+}

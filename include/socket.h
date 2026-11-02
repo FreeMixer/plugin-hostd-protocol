@@ -1,0 +1,107 @@
+/*
+ * This file is part of mod-host.
+ *
+ * mod-host is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * mod-host is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with mod-host.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+************************************************************************************************************************
+*
+************************************************************************************************************************
+*/
+
+#ifndef SOCKET_H
+#define SOCKET_H
+
+/*
+************************************************************************************************************************
+*           INCLUDE FILES
+************************************************************************************************************************
+*/
+
+#include "utils.h"       // just for get the msg_t struct
+
+
+/*
+************************************************************************************************************************
+*           DO NOT CHANGE THESE DEFINES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           CONFIGURATION DEFINES
+************************************************************************************************************************
+*/
+
+// longest command accepted on the socket, NUL included; a longer one closes the connection
+#define SOCKET_MSG_MAX_SIZE     (16 * 1024 * 1024)
+
+/*
+************************************************************************************************************************
+*           DATA TYPES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           GLOBAL VARIABLES
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           MACRO'S
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           FUNCTION PROTOTYPES
+************************************************************************************************************************
+*/
+
+// the address the next socket_start binds both ports to, a dotted IPv4 address; until this is called, the loopback
+// address, so only this machine reaches the ports. "0.0.0.0" is every address of the machine. A controller is not
+// authenticated: widen this only on a network whose hosts are trusted. Answers -1, the setting unchanged, for anything else
+int socket_set_bind_address(const char *address);
+int socket_start(int socket_port, int feedback_port, int buffer_size);
+void socket_finish(void);
+void socket_set_receive_cb(void (*receive_cb)(msg_t *msg));
+void socket_set_idle_cb(void (*idle_cb)(void));
+void socket_set_idle_interval(int interval_ms);
+int socket_send(int destination, const char *buffer, int size);
+int socket_send_feedback(const char *buffer);
+void socket_run(int exit_on_failure);
+
+
+/*
+************************************************************************************************************************
+*           CONFIGURATION ERRORS
+************************************************************************************************************************
+*/
+
+
+/*
+************************************************************************************************************************
+*           END HEADER
+************************************************************************************************************************
+*/
+
+#endif

@@ -1,0 +1,13 @@
+prefix=@PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+datadir=@DATADIR@
+# the scenario corpus every host answering this protocol is tested with (host_scenario_load(), tests/host_scenarios.c)
+scenarios=${datadir}/plugin-hostd-protocol/host-scenarios.txt
+
+Name: plugin-hostd-protocol
+Description: The plugin-hostd protocol: socket server, line protocol and command dispatch, a superset of mod-host's
+Version: @VERSION@
+Cflags: -I${includedir}/plugin-hostd-protocol
+Libs: -L${libdir} -lplugin-hostd-protocol
+Libs.private: -lpthread -lm
