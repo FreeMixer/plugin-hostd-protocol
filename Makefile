@@ -73,7 +73,9 @@ install: $(LIB_FILE)
 # tests: none needs JACK, a plugin or a network beyond 127.0.0.1
 
 TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
-SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer
+# the sources are compiled into the sanitized tests as they are; a distribution's _FORTIFY_SOURCE flags their unchecked
+# write() calls, which mod-host leaves unchecked too
+SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test \
              tests/socket-test tests/bind-test tests/utils-test
 
