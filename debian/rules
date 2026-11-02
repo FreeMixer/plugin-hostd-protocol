@@ -16,5 +16,5 @@ override_dh_auto_install:
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	$(MAKE) $(MAKE_VARS) test
+	$(MAKE) test
 endif

@@ -17,7 +17,7 @@ name=plugin-hostd-protocol
 
 # a plain install under a prefix of its own
 prefix=$work/prefix
-make -s install PREFIX="$prefix" >/dev/null
+make -s install PREFIX="$prefix" LIBDIR="$prefix/lib" INCLUDEDIR="$prefix/include" DATADIR="$prefix/share" >/dev/null
 lib=$prefix/lib
 [ -f "$lib/lib$name.so.$version" ] && [ ! -L "$lib/lib$name.so.$version" ] || fail "no lib$name.so.$version"
 [ "$(readlink "$lib/lib$name.so.0")" = "lib$name.so.$version" ] || fail "soname link is wrong"
@@ -80,7 +80,7 @@ done
 
 # a staged install, as the packages do it: DESTDIR stays out of the .pc file
 stage=$work/stage
-make -s install PREFIX=/usr LIBDIR=/usr/lib64 DESTDIR="$stage" >/dev/null
+make -s install PREFIX=/usr LIBDIR=/usr/lib64 INCLUDEDIR=/usr/include DATADIR=/usr/share DESTDIR="$stage" >/dev/null
 pc=$stage/usr/lib64/pkgconfig/$name.pc
 [ -f "$pc" ] || fail "no .pc under DESTDIR/LIBDIR/pkgconfig"
 grep -q "$stage" "$pc" && fail "the .pc file names DESTDIR"
