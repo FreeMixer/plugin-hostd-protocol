@@ -1,1 +1,4 @@
 # the inputs whose exchanges differ from mod-host-protocol 0.10.6-11.3 on purpose: <input> <issue>
+# "%i %s %f" names no verb; mod-host ran add with the URI "%s" and the instance 0, ours answers "not found"
+fuzz/corpus/protocol/extra-20 plugin-hostd#372
+dispatch:fuzz/corpus/dispatch/extra-20 plugin-hostd#372

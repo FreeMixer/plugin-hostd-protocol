@@ -23,8 +23,8 @@ theirs, ours = blocks(sys.argv[1]), blocks(sys.argv[2])
 with open(sys.argv[3]) as f:
     deviations = {}
     for line in f:
-        line = line.split("#", 1)[0].strip()
-        if line:
+        line = line.strip()
+        if line and not line.startswith("#"):
             name, issue = line.rsplit(None, 1)
             deviations[name] = issue
 

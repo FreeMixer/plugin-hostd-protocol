@@ -17,7 +17,9 @@
  * AddressSanitizer and UndefinedBehaviorSanitizer over the sources (make test-fixes), so a write past an array stops
  * the run as surely as a wrong reply fails it. make test-fixes-sabotage takes each fix out and requires a failure.
  *
- *   plugin-hostd#371  param_info of a port whose range or default is not finite: format_number() wrote past digits[20] */
+ *   plugin-hostd#371  param_info of a port whose range or default is not finite: format_number() wrote past digits[20]
+ *   plugin-hostd#372  a command whose first word names no verb ran the callback of the first command its later words
+ *                     matched (add, for "zzz %s 5") */
 
 #include <math.h>
 #include <stdio.h>
@@ -44,6 +46,18 @@ static int b_add(const char *uri, int instance, const char *client)
     record("add");
     return instance;
 }
+static int b_connect(const char *a, const char *b)
+{
+    (void)a; (void)b;
+    record("connect");
+    return SUCCESS;
+}
+static int b_disconnect(const char *a, const char *b)
+{
+    (void)a; (void)b;
+    record("disconnect");
+    return SUCCESS;
+}
 /* a port's range or default need not be finite: a range times the sample rate can overflow a float */
 static int b_param_info(int instance, const char *symbol, host_param_info_t *info)
 {
@@ -65,7 +79,7 @@ static int b_param_info(int instance, const char *symbol, host_param_info_t *inf
     return SUCCESS;
 }
 
-static const host_backend_t g_backend = { .add = b_add };
+static const host_backend_t g_backend = { .add = b_add, .connect = b_connect, .disconnect = b_disconnect };
 static const host_plugin_info_t g_info = { .param_info = b_param_info };
 
 static void expect(host_scenario_direct_t *direct, const char *issue, const char *command, const char *reply,
@@ -106,6 +120,13 @@ int main(void)
     expect(&direct, "#371", "param_info 3 -inf", "resp 0 hz log -Infinity 20000 440 0 stable", "param_info");
     expect(&direct, "#371", "param_info 3 nan", "resp 0 hz log 20 20000 NaN 0 stable", "param_info");
     expect(&direct, "#371", "param_info 3 gain", "resp 0 hz log 20 20000 440 0 stable", "param_info");
+
+    /* #372: a message runs the callback of the verb it names, or none */
+    expect(&direct, "#372", "zzz %s 5", "not found", "");
+    expect(&direct, "#372", "%i %s %f", "not found", "");
+    expect(&direct, "#372", "connect %s %i", "resp 0", "connect");
+    expect(&direct, "#372", "disconnect %s %s", "resp 0", "disconnect");
+    expect(&direct, "#372", "add urn:x 5", "resp 5", "add");
 
     host_scenario_direct_close(&direct);
     printf("%s\n", g_failures == 0 ? "fixes ok" : "fixes FAILED");

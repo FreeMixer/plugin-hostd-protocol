@@ -11,7 +11,7 @@
 static int g_called;
 
 static const struct { const char *pattern, *verb; uint32_t min, max; } g_table[] = {
-    { "add %s %i",              "add",        3, 3 },
+    { "add %s %i ...",          "add",        3, UINT32_MAX },
     { "remove %i",              "remove",     2, 2 },
     { "param_set %i %s %f",     "param_set",  4, 4 },
     { "param_get %i %s",        "param_get",  3, 3 },
@@ -37,7 +37,9 @@ static void check(proto_t *proto, unsigned row)
         abort();
     /* The callback that runs is the one of the command the input names: its first word is the pattern's.
        mutant: src/protocol.c:216 `g_commands[index].callback(&proto);` -> `g_commands[0].callback(&proto);`
-       input: extra-9 */
+       input: extra-9
+       mutant: src/protocol.c:155 ` && (j == 0 || match > 0)` -> ``
+       input: extra-23 */
     if (proto->list_count == 0 || strcmp(proto->list[0], g_table[row].verb) != 0)
         abort();
     protocol_response_int((int)proto->list_count, proto);
@@ -92,7 +94,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     /* what the input must get, from its words and the table. Left to the callbacks' own checks: a message with a
        quote, a backslash, a "%" or a "..." in it. Quotes join and cut words, and the parser takes a word that is a
-       pattern's own wildcard or "..." for a match, so it may answer by an earlier row than the verb's. */
+       pattern's own wildcard or "..." for a match. */
     size_t first;
     unsigned words = message_words(msg.data, &first);
     int expect_called = 0;

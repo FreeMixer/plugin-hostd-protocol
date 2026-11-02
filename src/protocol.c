@@ -151,8 +151,8 @@ void protocol_parse(msg_t *msg)
     {
         match = 0;
 
-        // checks received protocol
-        for (j = 0; j < proto.list_count && j < g_commands[i].count; j++)
+        // checks received protocol; the first word is the verb, so a command of another verb is not read further
+        for (j = 0; j < proto.list_count && j < g_commands[i].count && (j == 0 || match > 0); j++)
         {
             if (strcmp(g_commands[i].list[j], proto.list[j]) == 0)
             {

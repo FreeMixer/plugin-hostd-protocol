@@ -50,6 +50,7 @@ state_save
 %i %s %f
 param_get 99999999999999999999 gain
 param_set -1 gain nan
+zzz %s 5
 SEEDS
 
 # a verb whose reply carries a value, with a salt that makes the backend succeed

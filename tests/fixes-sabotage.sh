@@ -31,5 +31,6 @@ sabotage() {
 }
 
 sabotage "#371" src/host-dispatch.c 'if (isnan(value) || isinf(value))' 'if (0)'
+sabotage "#372" src/protocol.c ' \&\& (j == 0 || match > 0)' ''
 
 [ "$failed" = 0 ] && echo "fixes sabotage ok" || { echo "fixes sabotage FAILED"; exit 1; }
