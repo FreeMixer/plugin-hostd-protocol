@@ -1,0 +1,33 @@
+name: fuzz
+# The libFuzzer harnesses of fuzz/ (fuzz/README.md), built with clang under AddressSanitizer and
+# UndefinedBehaviorSanitizer and run for 60 s each from their seed corpus. A crashing input is
+# uploaded as the fuzz-findings artifact. make test stays in ci.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  fuzz:
+    name: fuzz the protocol, the dispatcher and the scenarios
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: fedora:44
+    steps:
+      - name: clang, libFuzzer and the sanitizer runtimes
+        run: dnf -y install --setopt=install_weak_deps=False --setopt=retries=10 clang compiler-rt gcc make git
+      - uses: actions/checkout@v4
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Build the harnesses
+        run: make fuzz
+      - name: Fuzz each harness for 60 s
+        run: make fuzz-run FUZZ_TIME=60
+      - name: Upload the crashing inputs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-findings
+          path: build/fuzz/artifacts/
+          if-no-files-found: ignore

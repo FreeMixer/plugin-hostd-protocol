@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: release
+
+# Packages through the shared release workflows of FreeMixer/.github. A tag v<version> builds signed
+# RPMs (Fedora 44, x86_64 and aarch64) and DEBs (Debian bookworm and trixie, amd64 and arm64),
+# publishes them to the OpenMixer channel and attaches them to the GitHub release. A pull request or
+# any other run is a dry run: it builds and lints everything and publishes nothing.
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+jobs:
+  rpm:
+    uses: FreeMixer/.github/.github/workflows/build-rpm.yml@v1
+    with:
+      package-name: plugin-hostd-protocol
+      binary-names: plugin-hostd-protocol plugin-hostd-protocol-devel
+      publish: ${{ github.ref_type == 'tag' }}
+      needs-mod-host: false
+      channel-deps: false
+    secrets: inherit
+
+  # after the RPMs: both publish into one tree, and a push that loses a race is refused
+  deb:
+    needs: rpm
+    if: ${{ !cancelled() }}
+    uses: FreeMixer/.github/.github/workflows/build-deb.yml@v1
+    with:
+      package-name: libplugin-hostd-protocol
+      binary-names: libplugin-hostd-protocol0 libplugin-hostd-protocol-dev
+      publish: ${{ github.ref_type == 'tag' }}
+      dependencies: ''
+      requires: ''
+      channel-deps: false
+    secrets: inherit
