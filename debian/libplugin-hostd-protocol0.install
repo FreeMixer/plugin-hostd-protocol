@@ -1,1 +1,5 @@
 usr/lib/*/libplugin-hostd-protocol.so.*
+usr/share/plugin-hostd-protocol/plugin-hostd-protocol.json
+usr/share/plugin-hostd-protocol/plugin-hostd-protocol.abnf
+usr/share/plugin-hostd-protocol/plugin-hostd.json
+usr/share/plugin-hostd-protocol/mod-host.json

@@ -74,12 +74,22 @@ make test
 %doc README.md
 %{_libdir}/libplugin-hostd-protocol.so.0
 %{_libdir}/libplugin-hostd-protocol.so.%{version}
+# the declared protocol a program reads at run time: the verb table, the grammar, the protocol's JSON and mod-host's
+%dir %{_datadir}/plugin-hostd-protocol
+%{_datadir}/plugin-hostd-protocol/plugin-hostd-protocol.json
+%{_datadir}/plugin-hostd-protocol/plugin-hostd-protocol.abnf
+%{_datadir}/plugin-hostd-protocol/plugin-hostd.json
+%{_datadir}/plugin-hostd-protocol/mod-host.json
 
 %files devel
 %{_libdir}/libplugin-hostd-protocol.so
 %{_libdir}/pkgconfig/plugin-hostd-protocol.pc
 %{_includedir}/plugin-hostd-protocol/
-%{_datadir}/plugin-hostd-protocol/
+%{_datadir}/plugin-hostd-protocol/host-scenarios.txt
+%{_datadir}/plugin-hostd-protocol/host_scenarios.c
+%{_datadir}/plugin-hostd-protocol/protocol.md
+%{_datadir}/plugin-hostd-protocol/plugin-hostd.schema.json
+%{_datadir}/plugin-hostd-protocol/protocol-gen.c
 
 %files contract
 %license COPYING
@@ -99,8 +109,10 @@ make test
   reply of the golden transcript are held to the grammar
 - New package plugin-hostd-protocol-contract: data/verbs.json as the package
   plugin-hostd-protocol of omx-contract's contract directory
-- The devel package installs the headers under plugin-hostd/, and the table, the
-  grammar and the JSON documents, named by pkg-config variables
+- The library package installs the table, the grammar and the JSON of the
+  protocol and of mod-host's, which programs read at run time; the devel package
+  installs the headers under plugin-hostd/, the schema and the generator's
+  source; pkg-config variables name each
 - The library's exported symbols and types are those of 0.1.0
 
 * Mon Nov 02 2026 Pau Aliagas <linuxnow@gmail.com> - 0.1.0-1

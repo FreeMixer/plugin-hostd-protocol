@@ -16,10 +16,12 @@ plugin-hostd-protocol (0.2.0) unstable; urgency=medium
     grammar.
   * New package plugin-hostd-protocol-contract: data/verbs.json as the
     package plugin-hostd-protocol of omx-contract's contract directory.
-  * The development package installs the headers under plugin-hostd/, and
-    the table, the grammar and the JSON documents, named by pkg-config
-    variables (protocoldir, table, grammar, protocoljson, protocolschema,
-    modhostjson).
+  * The library package installs the table, the grammar and the JSON of the
+    protocol and of mod-host's, which programs read at run time; the
+    development package installs the headers under plugin-hostd/, the
+    schema and the generator's source. pkg-config variables name each
+    (protocoldir, table, grammar, protocoljson, protocolschema, modhostjson,
+    protocolgen).
   * The library's exported symbols and types are those of 0.1.0.
 
  -- Pau Aliagas <linuxnow@gmail.com>  Tue, 03 Nov 2026 12:00:00 +0100

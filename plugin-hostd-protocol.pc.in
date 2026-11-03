@@ -18,6 +18,9 @@ grammar=${protocoldir}/plugin-hostd-protocol.abnf
 protocoljson=${protocoldir}/plugin-hostd.json
 protocolschema=${protocoldir}/plugin-hostd.schema.json
 modhostjson=${protocoldir}/mod-host.json
+# the source of the generator of protocoljson: a consumer that checks its own pages against a changed copy of the
+# headers builds it against that copy (cc -I<copy> <omx-contract cflags> protocol-gen.c; protocol-gen json)
+protocolgen=${protocoldir}/protocol-gen.c
 
 Name: plugin-hostd-protocol
 Description: The plugin-hostd protocol: socket server, line protocol and command dispatch, a superset of mod-host's

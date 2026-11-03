@@ -80,6 +80,7 @@ install: $(LIB_FILE)
 	install -m 644 protocol/plugin-hostd.json $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd.json
 	install -m 644 protocol/plugin-hostd.schema.json $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd.schema.json
 	install -m 644 protocol/mod-host.json $(DESTDIR)$(DATADIR)/$(NAME)/mod-host.json
+	install -m 644 tools/protocol-gen.c $(DESTDIR)$(DATADIR)/$(NAME)/protocol-gen.c
 	sed -e 's,@PREFIX@,$(PREFIX),' -e 's,@LIBDIR@,$(PC_LIBDIR),' -e 's,@INCLUDEDIR@,$(PC_INCLUDEDIR),' \
 	    -e 's,@DATADIR@,$(PC_DATADIR),' -e 's,@VERSION@,$(VERSION),' $(NAME).pc.in > $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc
 	chmod 644 $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc
@@ -248,9 +249,11 @@ protocol-doc:
 check-protocol-doc:
 	python3 tools/protocol-doc.py --check
 
-# the host verb table of protocol.h has a row for every verb a controller sends, no more and no fewer
+# the host verb table of protocol.h has a row for every verb a controller sends, no more and no fewer; and each of its
+# rules broken in a scratch copy of the header turns it red
 test-verb-table:
 	python3 tests/verb_table.py
+	python3 tests/verb_table_sabotage.py
 
 # mod-host.json follows its headers: a moved verb, code or message in a scratch copy moves the JSON
 test-mod-host-json:

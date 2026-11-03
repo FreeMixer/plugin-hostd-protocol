@@ -61,11 +61,11 @@ for h in "$prefix/include/$name"/plugin-hostd/*.h; do
 done
 [ "$(pkg-config --variable=protocoldir $name)" = "$prefix/share/$name" ] || fail "the protocoldir variable is wrong"
 for v in table:plugin-hostd-protocol.json grammar:plugin-hostd-protocol.abnf protocoljson:plugin-hostd.json \
-         protocolschema:plugin-hostd.schema.json modhostjson:mod-host.json; do
+         protocolschema:plugin-hostd.schema.json modhostjson:mod-host.json protocolgen:protocol-gen.c; do
     got=$(pkg-config --variable="${v%%:*}" $name)
     [ "$got" = "$prefix/share/$name/${v#*:}" ] || fail "the ${v%%:*} variable says '$got'"
     [ -s "$got" ] || fail "${v#*:} is not installed"
-    cmp -s "$got" "$(find protocol grammar -name "${v#*:}")" || fail "the installed ${v#*:} is not this tree's"
+    cmp -s "$got" "$(find protocol grammar tools -name "${v#*:}")" || fail "the installed ${v#*:} is not this tree's"
 done
 cat > "$work/declared.c" <<'C'
 #include <plugin-hostd/protocol.h>

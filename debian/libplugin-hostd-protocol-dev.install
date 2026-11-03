@@ -1,4 +1,8 @@
 usr/include/plugin-hostd-protocol
 usr/lib/*/libplugin-hostd-protocol.so
 usr/lib/*/pkgconfig/plugin-hostd-protocol.pc
-usr/share/plugin-hostd-protocol
+usr/share/plugin-hostd-protocol/host-scenarios.txt
+usr/share/plugin-hostd-protocol/host_scenarios.c
+usr/share/plugin-hostd-protocol/protocol.md
+usr/share/plugin-hostd-protocol/plugin-hostd.schema.json
+usr/share/plugin-hostd-protocol/protocol-gen.c

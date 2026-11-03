@@ -39,6 +39,8 @@ What plugin-hostd declares of the protocol is installed with the development pac
 - the grammar of a line, in ABNF, generated from that table (`--variable=grammar`);
 - `plugin-hostd.json`, what `protocol.h` declares as JSON, and its schema (`--variable=protocoljson`,
   `--variable=protocolschema`), and `mod-host.json`, mod-host's commands and codes (`--variable=modhostjson`);
+- the source of the generator of `plugin-hostd.json` (`--variable=protocolgen`), for a consumer that checks its own
+  pages against a changed copy of the headers;
 - `data/verbs.json`, as the package plugin-hostd-protocol of omx-contract's contract directory
   (`plugin-hostd-protocol-contract`).
 
@@ -136,7 +138,9 @@ The profiles: `lv2-worker`, an LV2 plugin's worker: mod-host, or omx-clap-host's
 <!-- END GENERATED protocol:host-verbs -->
 
 Packages: `plugin-hostd-protocol`, `plugin-hostd-protocol-devel` and `plugin-hostd-protocol-contract` (RPM),
-`libplugin-hostd-protocol0`, `libplugin-hostd-protocol-dev` and `plugin-hostd-protocol-contract` (DEB).
+`libplugin-hostd-protocol0`, `libplugin-hostd-protocol-dev` and `plugin-hostd-protocol-contract` (DEB). The library
+package carries the table, the grammar and the JSON documents a program reads at run time; the development package the
+headers, the schema, the scenario corpus and its runner, the protocol page and the generator's source.
 
 ## Build and test
 
@@ -163,7 +167,8 @@ omx-contract's C headers (omx-contract-devel, libomx-contract-dev). It runs:
 - the declared protocol: every generated file is what its tool writes from the declarations (`check-generated`,
   `check-protocol-doc`; `make gen` writes them), the host verb table covers every verb (`test-verb-table`),
   `mod-host.json` follows its headers (`test-mod-host-json`), and each generated file edited by hand, or each
-  declaration changed without writing them again, turns those checks red (`test-generated-sabotage`).
+  declaration changed without writing them again, turns those checks red (`test-generated-sabotage`), and so does each
+  rule of the host verb table broken in a scratch copy of the header.
 
 `make check-protocol-tools` runs what needs tools a package build does not carry, as CI does: the rendered headers
 against the installed omx-contract and omx-clap-core-contract (`check-rendered`, and `test-rendered-sabotage`), the
