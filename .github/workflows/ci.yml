@@ -1,0 +1,52 @@
+name: ci
+# A push runs on main only; a pull request already runs its branch.
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    name: build + test (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    # A backstop only.
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ['fedora:44', 'debian:bookworm', 'debian:trixie']
+    container: ${{ matrix.image }}
+    steps:
+      - name: Toolchain
+        run: |
+          if command -v dnf >/dev/null; then
+            dnf -y install gcc make git pkgconf-pkg-config diffutils binutils gawk python3 libasan libubsan
+          else
+            apt-get update && apt-get -y install --no-install-recommends gcc libc6-dev make git pkg-config ca-certificates binutils gawk python3 diffutils
+          fi
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Build
+        run: make
+      - name: Tests (protocol, golden, install, symbols, version)
+        run: make test
+
+  abi:
+    name: ABI check (abidiff against abi/)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: fedora:44
+    steps:
+      - name: Toolchain
+        run: dnf -y install gcc make git pkgconf-pkg-config diffutils binutils gawk libabigail
+      - uses: actions/checkout@v4
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Exported symbols
+        run: make test-abi
+      - name: Types against the baseline
+        run: make abi-check
