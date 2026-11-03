@@ -1,0 +1,5 @@
+# Covered lines each harness's seed corpus reaches (make fuzz-coverage, fuzz/coverage.sh).
+# A harness below its floor turns fuzz-coverage red. harness covered-lines
+protocol 140
+dispatch 296
+scenario 91

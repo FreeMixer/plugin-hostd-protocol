@@ -1,0 +1,16 @@
+Breaks check_callback of fuzz/fuzz_protocol.c:38 (the callback that runs is the one of the verb the command names).
+Caught by the seed input "extra-9" of fuzz_protocol.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..849bf84 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -253,7 +253,7 @@ void protocol_parse(msg_t *msg)
+     {
+         if (g_commands[index].callback)
+         {
+-            g_commands[index].callback(&proto);
++            g_commands[0].callback(&proto);
+             if (proto.response)
+             {
+ #ifndef SKIP_READLINE

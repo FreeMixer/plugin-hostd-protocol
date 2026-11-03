@@ -1,0 +1,16 @@
+Breaks check_messages of fuzz/fuzz_protocol.c:114 (each error code has its own message).
+Caught by the seed input "extra-1" of fuzz_protocol.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..59dc29c 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -339,7 +339,7 @@ const char *protocol_error_message(int code)
+     if (code >= 0 || -code > (int)(sizeof(g_error_messages) / sizeof(g_error_messages[0])))
+         return NULL;
+ 
+-    return g_error_messages[-code-1];
++    return g_error_messages[0];
+ }
+ 
+ void protocol_verbose(int verbose)

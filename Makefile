@@ -361,6 +361,36 @@ fuzz-run: fuzz
 fuzz-corpus:
 	sh fuzz/gen-corpus.sh fuzz/corpus
 
+# each fuzz/sabotage/ patch is a one-line bug the check_<property> it names must catch, and only that one
+fuzz-sabotage:
+	FUZZ_BUILD=$(FUZZ_BUILD) MAKE="$(MAKE)" sh fuzz/sabotage.sh
+
+# every check's comment names a one-line change and the seed on which that check aborts, or why it is not a property;
+# each change is applied alone to the plain harness (fuzz/records.sh)
+fuzz-records:
+	FUZZ_BUILD=$(FUZZ_BUILD) FUZZ_CC=$(FUZZ_CC) sh fuzz/records.sh
+
+# the coverage witness: the same harnesses without sanitizers, instrumented for llvm-cov, each run once over its seed
+# corpus (-runs=0 executes the corpus and nothing else), held to fuzz/coverage-floor.txt (fuzz/coverage.sh)
+FUZZ_COV_BUILD := $(FUZZ_BUILD)/cov
+FUZZ_COV_FLAGS := -O0 -g -std=gnu99 -D_GNU_SOURCE -fprofile-instr-generate -fcoverage-mapping
+LLVM_COV       ?= llvm-cov
+LLVM_PROFDATA  ?= llvm-profdata
+
+$(FUZZ_COV_BUILD)/fuzz_%: fuzz/fuzz_%.c fuzz/fuzz.h $(FUZZ_SRCS)
+	@mkdir -p $(FUZZ_COV_BUILD)
+	$(FUZZ_CC) $(FUZZ_COV_FLAGS) -fsanitize=fuzzer -Iinclude -o $@ $< $(FUZZ_SRCS) -lpthread -lm
+
+fuzz-coverage: $(FUZZ_HARNESSES:%=$(FUZZ_COV_BUILD)/fuzz_%)
+	@set -e; for h in $(FUZZ_HARNESSES); do \
+	  rm -f $(FUZZ_COV_BUILD)/$$h.profraw; \
+	  LLVM_PROFILE_FILE=$(FUZZ_COV_BUILD)/$$h.profraw $(FUZZ_COV_BUILD)/fuzz_$$h -runs=0 fuzz/corpus/$$h/ \
+	      >$(FUZZ_COV_BUILD)/$$h.log 2>&1 || \
+	    { cat $(FUZZ_COV_BUILD)/$$h.log; echo "fuzz-coverage: fuzz_$$h failed on its own corpus"; exit 1; }; \
+	  $(LLVM_PROFDATA) merge -sparse $(FUZZ_COV_BUILD)/$$h.profraw -o $(FUZZ_COV_BUILD)/$$h.profdata; \
+	done
+	@LLVM_COV=$(LLVM_COV) sh fuzz/coverage.sh $(FUZZ_COV_BUILD) $(FUZZ_HARNESSES)
+
 clean:
 	rm -rf src/*.o $(LIB_SO) $(LIB_SONAME) $(LIB_FILE) $(TEST_PROGS) build
 
@@ -369,4 +399,4 @@ clean:
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
         test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi \
-        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus clean
+        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus fuzz-sabotage fuzz-records fuzz-coverage clean

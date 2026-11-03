@@ -1,0 +1,16 @@
+Breaks check_count of fuzz/fuzz_scenario.c:80 (a load answers the number of lines it kept).
+Caught by the seed input "nul" of fuzz_scenario.
+
+diff --git a/src/host-scenario.c b/src/host-scenario.c
+index 9bd252f..8951799 100644
+--- a/src/host-scenario.c
++++ b/src/host-scenario.c
+@@ -239,7 +239,7 @@ int host_scenario_load(const char *path, const host_scenario_var_t *vars, int va
+         sc->guard = guard ? strdup(guard) : NULL;
+     }
+     fclose(fp);
+-    return list->count;
++    return list->count + 1;
+ }
+ 
+ void host_scenario_free(host_scenario_list_t *list)

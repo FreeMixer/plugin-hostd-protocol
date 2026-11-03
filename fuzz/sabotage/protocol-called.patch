@@ -1,0 +1,16 @@
+Breaks check_called of fuzz/fuzz_protocol.c:93 (a command of the table in its row's range runs its callback once).
+Caught by the seed input "extra-1" of fuzz_protocol.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..eeb67f9 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -223,7 +223,7 @@ void protocol_parse(msg_t *msg)
+         else if (proto.list_count > g_commands[i].count && !variable_arguments)
+             result = PROTOCOL_MANY_ARGUMENTS;
+         // arguments match
+-        else if (match == proto.list_count || variable_arguments)
++        else if (0)
+             result = (int32_t)i;
+         // not found
+         else

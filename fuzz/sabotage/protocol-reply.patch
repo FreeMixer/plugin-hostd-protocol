@@ -1,0 +1,16 @@
+Breaks check_reply of fuzz/fuzz_protocol.c:103 (the parser answers the reply its row and word count give).
+Caught by the seed input "extra-14" of fuzz_protocol.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..7d13ffb 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -218,7 +218,7 @@ void protocol_parse(msg_t *msg)
+ 
+         // few arguments
+         if (proto.list_count < (g_commands[i].count - variable_arguments))
+-            result = PROTOCOL_FEW_ARGUMENTS;
++            result = PROTOCOL_MANY_ARGUMENTS;
+         // many arguments
+         else if (proto.list_count > g_commands[i].count && !variable_arguments)
+             result = PROTOCOL_MANY_ARGUMENTS;

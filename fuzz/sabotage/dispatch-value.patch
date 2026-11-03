@@ -1,0 +1,16 @@
+Breaks check_value of fuzz/fuzz_dispatch.c:206 (the reply carries the value the backend answered).
+Caught by the seed input "param-get" of fuzz_dispatch.
+
+diff --git a/src/host-dispatch.c b/src/host-dispatch.c
+index 6f24aae..88dc32d 100644
+--- a/src/host-dispatch.c
++++ b/src/host-dispatch.c
+@@ -141,7 +141,7 @@ static void param_get_cb(proto_t *proto)
+ 
+     char buffer[128];
+     if (resp >= 0)
+-        sprintf(buffer, "resp %i %.04f", resp, value);
++        sprintf(buffer, "resp %i %.04f", resp, 0.0);
+     else
+         sprintf(buffer, "resp %i", resp);
+ 
