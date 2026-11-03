@@ -46,7 +46,9 @@ What plugin-hostd declares of the protocol is installed with the development pac
 
 Every one is written from the declarations by a tool of `tools/`, and `make check-generated` fails when one is not what
 its tool writes. A word added to the protocol never changes a mod-host word: `tools/protocol-table.py` refuses to write
-the table when a verb of another origin does not extend mod-host's command of the same word.
+the table when a verb of another origin neither extends mod-host's command of the same word nor is a second form of it
+told apart by its number of arguments (`preset_show <uri>` is mod-host's, `preset_show <instance> <key>` plugin-hostd's).
+There is no list of exceptions.
 
 What each host profile owes each verb a controller sends:
 

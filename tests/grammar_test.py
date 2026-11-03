@@ -105,25 +105,35 @@ for a in sorted(answers):
 # ---- every verb of the table ----
 with open(TABLE, encoding="utf-8") as f:
     table = json.load(f)
+forms = 0
 for c in table["commands"]:
     rule = "cmd-" + c["verb"].replace("_", "-")
-    line = " ".join([c["verb"]] + [SAMPLE[a] for a in c["args"]])
-    must(rule, line, f"the table's {c['verb']}")
-    must("command", line, f"the table's {c['verb']}")
-    if c["tail"]:
-        must("command", line + " more words", f"the table's {c['verb']}, with its tail")
-    if c["args"]:
-        must_not(rule, " ".join([c["verb"]] + [SAMPLE[a] for a in c["args"][:-1]]), f"the table's {c['verb']}, short")
-        if "int" in c["args"]:
-            i = c["args"].index("int")
-            bad = [SAMPLE[a] for a in c["args"]]
-            bad[i] = "x3"
-            must_not(rule, " ".join([c["verb"]] + bad), f"the table's {c['verb']}, a word for an int")
-        if "float" in c["args"]:
-            i = c["args"].index("float")
-            bad = [SAMPLE[a] for a in c["args"]]
-            bad[i] = "loud"
-            must_not(rule, " ".join([c["verb"]] + bad), f"the table's {c['verb']}, a word for a float")
+    # the numbers of arguments the word takes in any of its forms: a line short of one form may be another
+    taken = {len(f["args"]) for f in c["forms"]}
+    tails = [len(f["args"]) for f in c["forms"] if f["tail"]]
+    for f in c["forms"]:
+        forms += 1
+        line = " ".join([c["verb"]] + [SAMPLE[a] for a in f["args"]])
+        where = f"the table's {c['verb']} ({f['origin']})"
+        must(rule, line, where)
+        must("command", line, where)
+        if f["tail"]:
+            must("command", line + " more words", where + ", with its tail")
+        if f["args"]:
+            short = len(f["args"]) - 1
+            if short not in taken and not any(short >= t for t in tails):
+                must_not(rule, " ".join([c["verb"]] + [SAMPLE[a] for a in f["args"][:-1]]), where + ", short")
+            for kind, wrong in (("int", "x3"), ("float", "loud")):
+                if kind in f["args"]:
+                    bad = [SAMPLE[a] for a in f["args"]]
+                    bad[f["args"].index(kind)] = wrong
+                    # another form of the same length may take a word there
+                    if not any(len(g["args"]) == len(f["args"]) and g is not f for g in c["forms"]):
+                        must_not(rule, " ".join([c["verb"]] + bad), where + ", a word for an " + kind)
+# a word with two forms takes both, and is told apart by the number of its arguments
+must("cmd-preset-show", 'preset_show "urn:preset:a"', "mod-host's preset_show <uri>")
+must("cmd-preset-show", "preset_show 3 factory:1", "plugin-hostd's preset_show <instance> <key>")
+must_not("cmd-preset-show", "preset_show x3 factory:1", "preset_show <instance> <key> with a word for the instance")
 for f_ in table["feedback"]:
     must("feedback", " ".join([f_["line"]] + [SAMPLE[a] for a in (f_["args"] or [])]), f"the table's {f_['line']}")
 for word in table["refused"]:
@@ -145,5 +155,5 @@ for v in ("", "-", "1e", "e3", "Infinityx"):
 if failed:
     sys.exit(1)
 print(f"ok   grammar: {scenarios} scenario lines, {len(answers)} distinct answers of the library, "
-      f"{len(table['commands'])} commands and {len(table['feedback'])} feedback lines of the table, "
+      f"{len(table['commands'])} commands ({forms} forms) and {len(table['feedback'])} feedback lines of the table, "
       f"{checked} parses in all")

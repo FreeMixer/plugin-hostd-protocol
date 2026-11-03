@@ -4,7 +4,8 @@
 #
 # grammar/plugin-hostd-protocol.abnf: the lexical core (grammar/core.abnf, written by hand once) and, after it, the
 # rules generated from the verb table (protocol/plugin-hostd-protocol.json): one rule per command, its words typed as
-# its format line types them, one per feedback line and one per parse refusal. Nothing of a verb is typed here; a verb
+# its format line types them (an alternation where a word has more than one form, told apart by the number of its
+# arguments), one per feedback line and one per parse refusal. Nothing of a verb is typed here; a verb
 # that moves in the table moves the grammar, and `make check-generated` is red until it is written again.
 #
 #   tools/abnf-gen.py            prints grammar/plugin-hostd-protocol.abnf
@@ -72,7 +73,12 @@ def grammar():
         if c["sent_by"] == "daemon":
             note += "; sent by the daemon to a worker"
         w(note)
-        w(f"{rule_name('cmd', c['verb']).ljust(width)}= {body(c['verb'], c['args'], c['tail'])}")
+        forms = [body(c["verb"], f["args"], f["tail"]) for f in c["forms"]]
+        if len(forms) > 1:
+            w("; " + "; ".join(f"form {n + 1}: {f['origin']}" + (f" ({f['declared']})" if f.get("declared") else "")
+                               for n, f in enumerate(c["forms"])))
+        rhs = forms[0] if len(forms) == 1 else " / ".join(f"({x})" for x in forms)
+        w(f"{rule_name('cmd', c['verb']).ljust(width)}= {rhs}")
     w("")
     if table["refused"]:
         w("; words a client of mod-ui may send that no host answers; each is refused and has no rule: "

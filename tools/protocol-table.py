@@ -11,10 +11,12 @@
 #   data/verbs.json               the verbs plugin-hostd adds, as omx-contract declares them (check-rendered)
 #   include/plugin-hostd/omx_clap_core_host_verbs.h   omx-clap-core's verbs, as omx-contract renders them
 #
-# A word of ours never shadows or changes a mod-host word: a verb of another origin that has a mod-host word must take
-# mod-host's arguments, in its types, as its own first arguments, and more only where mod-host's command takes a tail
-# (`...`). One that does not is a conflict, and the table refuses to be written unless the conflict is named in
-# CONFLICTS below with its reason; a named conflict that is no longer one is refused too, so the list only shrinks.
+# A word of ours never shadows or changes a mod-host word. A verb of another origin that has a mod-host word either
+# extends mod-host's command (takes mod-host's arguments, in its types, as its own first arguments, and more only where
+# mod-host's command takes a tail, `...`), or is a second form of the word told apart from mod-host's by its number of
+# arguments: no line mod-host's form takes is a line of the other, so a mod-host client's line is always answered as
+# mod-host answers it (preset_show: `preset_show <uri>` is mod-host's, `preset_show <instance> <key>` plugin-hostd's).
+# Any other is a conflict, and the table is not written; there is no list of exceptions.
 #
 #   tools/protocol-table.py            prints protocol/plugin-hostd-protocol.json
 #   tools/protocol-table.py --check    exits 1 when protocol/plugin-hostd-protocol.json is not what it prints
@@ -26,14 +28,6 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = "protocol/plugin-hostd-protocol.json"
 SHARED_H = "include/plugin-hostd/omx_clap_core_host_verbs.h"
-
-# the words whose declaration of ours does not extend mod-host's command of the same word, each with why it stands.
-# Every one is a word a mod-host client may send and get another answer from than mod-host gives: none may be added
-# without a ruling, and each goes when its declaration is made to extend mod-host's.
-CONFLICTS = {
-    "preset_show": "mod-host's preset_show takes a preset URI; plugin-hostd's takes an instance and a preset key "
-                   "(data/verbs.json presetShow), so a mod-host client's preset_show <uri> is refused by plugin-hostd",
-}
 
 TYPES = {"%i": "int", "%s": "word", "%f": "float"}
 
@@ -55,6 +49,17 @@ def load(rel):
         return json.loads(read(rel))
     except ValueError as e:
         fail(f"{rel}: {e}")
+
+
+def counts(form):
+    """the numbers of arguments a form takes: (least, most), most None for a tail"""
+    return len(form["args"]), (None if form["tail"] else len(form["args"]))
+
+
+def disjoint(a, b):
+    """no number of arguments is taken by both forms"""
+    (alo, ahi), (blo, bhi) = counts(a), counts(b)
+    return (ahi is not None and ahi < blo) or (bhi is not None and bhi < alo)
 
 
 def parse_format(fmt, where):
@@ -131,8 +136,8 @@ def table():
     for c in mod["commands"]:
         commands[c["verb"]] = {
             "verb": c["verb"], "origin": "mod-host", "declared": f"include/mod-host.h {c['name']}",
-            "args": [TYPES[a] for a in c["args"]], "tail": c["optional_tail"], "reply": None, "codes": [],
-            "sent_by": "controller", "extended_by": [],
+            "forms": [{"args": [TYPES[a] for a in c["args"]], "tail": c["optional_tail"], "origin": "mod-host"}],
+            "reply": None, "codes": [], "sent_by": "controller", "extended_by": [],
         }
 
     def ours(word, origin, where, fmt, reply, codes, doc):
@@ -142,8 +147,9 @@ def table():
         said = (meaning.get(word, {}).get("meaning", "") + " " + doc).lower()
         sent_by = "daemon" if "sent by the daemon" in said or "plugin-hostd sends it" in said \
             else "controller"
-        return {"verb": word, "origin": origin, "declared": where, "args": args, "tail": tail, "reply": reply,
-                "codes": codes, "sent_by": sent_by, "extended_by": []}
+        return {"verb": word, "origin": origin, "declared": where,
+                "forms": [{"args": args, "tail": tail, "origin": origin}], "reply": reply, "codes": codes,
+                "sent_by": sent_by, "extended_by": []}
 
     entries = []
     for word, (key, v) in declared.items():
@@ -157,36 +163,36 @@ def table():
         if word not in commands and word not in declared and word not in shared:
             fail(f"protocol/plugin-hostd.json: {word} is declared by protocol.h alone; declare it in data/verbs.json")
 
-    conflicts = {}
     for e in entries:
         word = e["verb"]
         base = commands.get(word)
         if base is None:
             commands[word] = e
             continue
+        mine = e["forms"][0]
         if base["origin"] != "mod-host":
-            if (base["args"], base["tail"]) != (e["args"], e["tail"]):
+            if base["forms"][0]["args"] != mine["args"] or base["forms"][0]["tail"] != mine["tail"]:
                 fail(f"{word}: declared twice with other arguments, by {base['declared']} and {e['declared']}")
             base["extended_by"].append(e["origin"])
             continue
-        n = len(base["args"])
-        extends = e["args"][:n] == base["args"] and (base["tail"] or (len(e["args"]) == n and not e["tail"]))
-        if not extends:
-            conflicts[word] = {"mod-host": {"args": base["args"], "tail": base["tail"]},
-                               e["origin"]: {"args": e["args"], "tail": e["tail"], "declared": e["declared"]}}
-        if e["origin"] not in base["extended_by"]:
-            base["extended_by"].append(e["origin"])
-        base["reply"] = base["reply"] or e["reply"]
-        base["codes"] = base["codes"] or e["codes"]
+        theirs = base["forms"][0]
+        n = len(theirs["args"])
+        extends = mine["args"][:n] == theirs["args"] and (theirs["tail"] or (len(mine["args"]) == n and not mine["tail"]))
+        if extends:
+            if e["origin"] not in base["extended_by"]:
+                base["extended_by"].append(e["origin"])
+            base["reply"] = base["reply"] or e["reply"]
+            base["codes"] = base["codes"] or e["codes"]
+        elif disjoint(theirs, mine):
+            # a second form, told apart by its number of arguments: its reply and refusals are its own
+            base["forms"].append(dict(mine, declared=e["declared"], reply=e["reply"], codes=e["codes"]))
+        else:
+            fail(f"{word}: a word of ours changes mod-host's {word}: mod-host's takes {json.dumps(theirs)}, "
+                 f"{e['declared']} takes {json.dumps(mine)}, which neither extends it nor is told apart from it by its "
+                 "number of arguments; a word added to the protocol never changes a mod-host word")
     # add: plugin-hostd's placement is a word of mod-host's own tail, declared in protocol.h
     if "add" in meaning and "add" in commands and "plugin-hostd" not in commands["add"]["extended_by"]:
         commands["add"]["extended_by"].append("plugin-hostd")
-
-    for word in sorted(set(conflicts) - set(CONFLICTS)):
-        fail(f"{word}: a word of ours changes mod-host's {word} ({json.dumps(conflicts[word])}); a word added to the "
-             "protocol never changes a mod-host word")
-    for word in sorted(set(CONFLICTS) - set(conflicts)):
-        fail(f"{word}: named in CONFLICTS but it extends mod-host's command now; take it out of the list")
 
     feedback = {}
     for f in mod["feedback"]:
@@ -213,7 +219,6 @@ def table():
         "commands": sorted(commands.values(), key=lambda e: (e["origin"] != "mod-host", e["origin"], e["verb"])),
         "refused": mod_ui,
         "feedback": sorted(feedback.values(), key=lambda e: (e["origin"] != "mod-host", e["line"])),
-        "conflicts": [{"verb": w, "reason": CONFLICTS[w], **conflicts[w]} for w in sorted(conflicts)],
         "protocol_errors": mod["protocol_errors"],
     }
 

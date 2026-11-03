@@ -47,6 +47,7 @@ PHD = load("protocol/plugin-hostd.json")
 MOD = load("protocol/mod-host.json")
 VERBS = load("data/verbs.json")
 TABLE = load("protocol/plugin-hostd-protocol.json")
+FORMS = {c["verb"]: c["forms"] for c in TABLE["commands"]}
 GRAMMAR = "grammar/plugin-hostd-protocol.abnf"
 MOD_HOST_PAGE = "doc/mod-host-commands.md"
 SCHEMAS = ["protocol/plugin-hostd.schema.json"]
@@ -269,6 +270,9 @@ def verdict(verb):
         kind = "same"
     if verb in EVIDENCE_ROWS:
         notes.append(f"Path A: {EVIDENCE_ROWS[verb]['difference']}")
+    for f in FORMS.get(verb, [])[1:]:
+        notes.append(f"a second form, `{' '.join([verb] + f['args'])}` ({f['origin']}), told apart by its number of "
+                     "arguments: [The verb table and the grammar](#the-verb-table-and-the-grammar)")
     if verb not in DAEMON_VERBS and verb not in INSTANCE_VERBS:
         notes += rule_notes(verb)
     return kind, notes
@@ -448,16 +452,19 @@ def page():
       "generated from the table by `tools/abnf-gen.py`. Every line of the scenario corpus and every reply the library "
       "writes in the golden transcript is held to it (`make test-grammar`).")
     w("")
-    w("A word of another origin that mod-host also has must extend mod-host's command: take its arguments, in its "
-      "types, first, and more only where mod-host's command takes a tail. The table is not written when one does not, "
-      "unless the word is named below with its reason:")
+    w("A word of another origin that mod-host also has either extends mod-host's command (takes its arguments, in its "
+      "types, first, and more only where mod-host's command takes a tail), or is a second form of the word told apart "
+      "from mod-host's by its number of arguments, so that a line of mod-host's form is always answered as mod-host "
+      "answers it. Any other is refused: the table is not written, and there is no list of exceptions. The words with "
+      "more than one form:")
     w("")
-    if TABLE["conflicts"]:
-        w("\n".join(table(["verb", "mod-host", "ours", "why it stands"],
-                          [[code(c["verb"]), cell(" ".join(c["mod-host"]["args"]) + (" ..." if c["mod-host"]["tail"] else "")),
-                            cell(" ".join(v["args"]) + (" ..." if v["tail"] else "") + f" ({o})"), cell(c["reason"])]
-                           for c in TABLE["conflicts"] for o, v in c.items()
-                           if o not in ("verb", "reason", "mod-host")])))
+    multi = [c for c in TABLE["commands"] if len(c["forms"]) > 1]
+    if multi:
+        w("\n".join(table(["verb", "form", "origin", "reply", "codes"],
+                          [[code(c["verb"]), code(" ".join([c["verb"]] + f["args"] + (["..."] if f["tail"] else []))),
+                            cell(f["origin"]), cell(f.get("reply") or "as mod-host answers it"),
+                            cell(codes_cell(f.get("codes", [])))]
+                           for c in multi for f in c["forms"]])))
     else:
         w("none.")
     w("")

@@ -45,11 +45,12 @@ The verb table and the grammar
 
 `grammar/plugin-hostd-protocol.abnf` is the grammar of a line, in ABNF (RFC 5234, with RFC 7405's case-sensitive strings): the lexical core, written once by hand (`grammar/core.abnf`), and a rule per command, per feedback line and per parse refusal generated from the table by `tools/abnf-gen.py`. Every line of the scenario corpus and every reply the library writes in the golden transcript is held to it (`make test-grammar`).
 
-A word of another origin that mod-host also has must extend mod-host's command: take its arguments, in its types, first, and more only where mod-host's command takes a tail. The table is not written when one does not, unless the word is named below with its reason:
+A word of another origin that mod-host also has either extends mod-host's command (takes its arguments, in its types, first, and more only where mod-host's command takes a tail), or is a second form of the word told apart from mod-host's by its number of arguments, so that a line of mod-host's form is always answered as mod-host answers it. Any other is refused: the table is not written, and there is no list of exceptions. The words with more than one form:
 
-| verb | mod-host | ours | why it stands |
-|---|---|---|---|
-| `preset_show` | word | int word (plugin-hostd) | mod-host's preset_show takes a preset URI; plugin-hostd's takes an instance and a preset key (data/verbs.json presetShow), so a mod-host client's preset_show <uri> is refused by plugin-hostd |
+| verb | form | origin | reply | codes |
+|---|---|---|---|---|
+| `preset_show` | `preset_show word` | mod-host | as mod-host answers it | - |
+| `preset_show` | `preset_show int word` | plugin-hostd | resp 0 <json> | -523 PRESET_NOT_OFFERED; -524 PRESET_INVALID; -3 reply.host.instance-non-exists; -901 reply.host.memory-allocation; -902 reply.host.invalid-operation |
 
 2. mod-host's verbs on plugin-hostd
 -----------------------------------
@@ -68,7 +69,7 @@ mod-host's templates name no reply codes per verb: a relayed verb answers what i
 | `remove` | int | required (every profile) | same | Path A: none; no |
 | `preset_load` | int word | required (every profile) | differs | Path A: LV2: user presets fail after a pedalboard reload; CLAP: yes, presets |
 | `preset_save` | int word word word | required (every profile) | same | Path A: CLAP: user presets cannot be saved |
-| `preset_show` | word | required (every profile) | same | Path A: CLAP: no |
+| `preset_show` | word | required (every profile) | same | Path A: CLAP: no<br>a second form, `preset_show int word` (plugin-hostd), told apart by its number of arguments: [The verb table and the grammar](#the-verb-table-and-the-grammar) |
 | `connect` | word word | required (every profile) | differs | Path A: LV2: 2 replies differ, and the pedalboard's output path through mod-monitor hangs on one worker; CLAP: yes, no audio routing |
 | `disconnect` | word word | required (every profile) | same | - |
 | `bypass` | int int | required (every profile) | same | Path A: none; no |

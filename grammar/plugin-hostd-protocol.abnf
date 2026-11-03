@@ -194,8 +194,9 @@ cmd-patch-set            = %s"patch_set" SP int SP word SP word
 cmd-preset-load          = %s"preset_load" SP int SP word
 ; mod-host: include/mod-host.h EFFECT_PRESET_SAVE
 cmd-preset-save          = %s"preset_save" SP int SP word SP word SP word
-; mod-host: include/mod-host.h EFFECT_PRESET_SHOW; extended by plugin-hostd
-cmd-preset-show          = %s"preset_show" SP word
+; mod-host: include/mod-host.h EFFECT_PRESET_SHOW
+; form 1: mod-host; form 2: plugin-hostd (data/verbs.json PLUGIN_HOSTD_VERBS.presetShow)
+cmd-preset-show          = (%s"preset_show" SP word) / (%s"preset_show" SP int SP word)
 ; mod-host: include/mod-host.h QUIT
 cmd-quit                 = %s"quit"
 ; mod-host: include/mod-host.h REMOTE_PAGE_GET; extended by omx-clap-core

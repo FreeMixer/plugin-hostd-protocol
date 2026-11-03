@@ -3,8 +3,9 @@
 # The checks of the generated files, against a scratch copy of the tree with one thing changed in each arm: a generated
 # file edited by hand, or a declaration it is written from changed without writing it again. check-generated or
 # check-protocol-doc must fail on each, and the copy left as it is must pass, so a check that cannot fail is caught.
-# Two arms hold tools/protocol-table.py's rule that a word of ours never changes a mod-host word: a new such word is
-# refused, and a conflict it names that is one no longer is refused too.
+# Two arms hold tools/protocol-table.py's rule that a word of ours never changes a mod-host word: a new word of ours
+# that takes as many arguments as mod-host's and other types is refused, and so is a second form of a word (preset_show)
+# changed so that a line of mod-host's form is a line of it too. There is no list of exceptions to put either in.
 #
 #   sh tests/generated-sabotage.sh          (make test-generated-sabotage)
 set -eu
@@ -76,10 +77,10 @@ arm "the evidence not generated" doc/evidence/mod-ui-verbs.tsv 'connect' 'konnec
 arm "mod-host's page not generated" doc/mod-host-commands.md 'toggle effect processing' 'toggle processing'
 
 table_arm "a word of ours that changes mod-host's" data/verbs.json \
-    'd["PLUGIN_HOSTD_VERBS"]["verbs"]["bypassAll"] = {"verb": "bypass", "format": "bypass %s", "reply": "resp 0", "implementedBy": {"plugin-hostd": "required"}, "doc": "a word of ours"}' \
+    'd["PLUGIN_HOSTD_VERBS"]["verbs"]["bypassAll"] = {"verb": "bypass", "format": "bypass %s %s", "reply": "resp 0", "implementedBy": {"plugin-hostd": "required"}, "doc": "a word of ours"}' \
     "changes mod-host's bypass"
-table_arm "a named conflict that is none" data/verbs.json \
-    'v = d["PLUGIN_HOSTD_VERBS"]["verbs"]["presetShow"]; v["format"] = "preset_show %s"' \
-    "named in CONFLICTS but it extends"
+table_arm "a second form a mod-host line is a line of" data/verbs.json \
+    'v = d["PLUGIN_HOSTD_VERBS"]["verbs"]["presetShow"]; v["format"] = "preset_show %i"' \
+    "changes mod-host's preset_show"
 
 [ "$failed" = 0 ] && echo "generated sabotage ok" || { echo "generated sabotage FAILED"; exit 1; }
