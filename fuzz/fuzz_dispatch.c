@@ -183,6 +183,54 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
+/* Each command gets a reply: the callback's, or a protocol error message. */
+__attribute__((noinline)) static void check_answered(void)
+{
+    /* mutant: src/host-dispatch.c:70 `protocol_response_int(resp, proto);` -> `(void)resp;`
+       input: scenario-1 */
+    if (fuzz_reply_len == 0)
+        abort();
+}
+
+/* One answer per command, sent with its NUL: the NUL is the last byte and the only one. */
+__attribute__((noinline)) static void check_one_answer(void)
+{
+    /* mutant: src/protocol.c:264 `proto.response_size+1` -> `proto.response_size`
+       input: scenario-1 */
+    if (memchr(fuzz_reply, '\0', fuzz_reply_len) != fuzz_reply + fuzz_reply_len - 1)
+        abort();
+}
+
+/* The reply to a command of the verbs expected_reply() covers is the whole text the backend's answer makes, value
+   included. */
+__attribute__((noinline)) static void check_value(int modeled, const char *expect)
+{
+    /* mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
+       input: param-get
+       mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
+       input: extra-8
+       mutant: src/host-dispatch.c:313 `"Infinity"` -> `"inf"`
+       input: param-info-inf */
+    if (modeled && strcmp(fuzz_reply, expect) != 0)
+        abort();
+}
+
+/* The answer is one of the four protocol error messages, written out here, or "resp" and an integer, then the end or a
+   space. */
+__attribute__((noinline)) static void check_shape(void)
+{
+    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
+    int known = 0;
+    for (int i = 0; i < 4 && !known; i++)
+        known = strcmp(fuzz_reply, texts[i]) == 0;
+    /* mutant: src/protocol.c:342 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
+       input: extra-17
+       mutant: src/protocol.c:318 `"resp %i"` -> `"rsp %i"`
+       input: extra-4 */
+    if (!known && !is_resp_line(fuzz_reply))
+        abort();
+}
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     if (size < 1 || size > FUZZ_MAX_INPUT)
@@ -226,39 +274,10 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     protocol_parse(&msg);
     free(msg.data);
 
-    /* Each command gets a reply: the callback's, or a protocol error message.
-       mutant: src/host-dispatch.c:70 `protocol_response_int(resp, proto);` -> ``
-       input: scenario-1 */
-    if (fuzz_reply_len == 0)
-        abort();
-    const char *reply = fuzz_reply;
-    size_t n = fuzz_reply_len;
-    /* One answer per command, sent with its NUL: the NUL is the last byte and the only one.
-       mutant: src/protocol.c:224 `proto.response_size+1` -> `proto.response_size`
-       input: scenario-1 */
-    if (memchr(reply, '\0', n) != reply + n - 1)
-        abort();
-    /* The reply to a command of the verbs above is the whole text the backend's answer makes, value included.
-       mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
-       input: param-get
-       mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
-       input: extra-8
-       mutant: src/host-dispatch.c:311 `isnan(value) || isinf(value)` -> `0`
-       input: param-info-inf */
-    if (modeled && strcmp(reply, expect) != 0)
-        abort();
+    check_answered();
+    check_one_answer();
+    check_shape();
+    check_value(modeled, expect);
     free(copy);
-    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
-    int known = 0;
-    for (int i = 0; i < 4 && !known; i++)
-        known = strcmp(reply, texts[i]) == 0;
-    /* The answer is one of the four protocol error messages, written out here, or "resp" and an integer, then the end
-       or a space.
-       mutant: src/protocol.c:302 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
-       input: extra-17
-       mutant: src/protocol.c:278 `"resp %i"` -> `"rsp %i"`
-       input: scenario-1 */
-    if (!known && !is_resp_line(reply))
-        abort();
     return 0;
 }
