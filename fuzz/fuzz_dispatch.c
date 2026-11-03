@@ -240,9 +240,9 @@ __attribute__((noinline)) static void check_value(int modeled, const char *expec
 {
     /* mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
        input: param-get
-       mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
+       mutant: src/host-dispatch.c:385 `info.max` -> `info.min`
        input: extra-8
-       mutant: src/host-dispatch.c:313 `"Infinity"` -> `"inf"`
+       mutant: src/host-dispatch.c:316 `"Infinity"` -> `"inf"`
        input: param-info-inf
        mutant: src/utils.c:203 `quote = 0;` -> ``
        input: track-info-quoted
