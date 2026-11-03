@@ -97,6 +97,9 @@ make test
 
 %changelog
 * Tue Nov 03 2026 Pau Aliagas <linuxnow@gmail.com> - 0.2.0-1
+- protocol_parse() reads every form registered for a verb and runs the first whose
+  arguments fit in number and type, so both forms of preset_show dispatch through the
+  library (#5)
 - The whole declared protocol moves here from plugin-hostd: plugin-hostd/protocol.h
   and the headers omx-contract renders for it, data/verbs.json,
   protocol/plugin-hostd.json and its schema, protocol/mod-host.json, and the

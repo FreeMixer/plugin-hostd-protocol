@@ -23,6 +23,9 @@ plugin-hostd-protocol (0.2.0) unstable; urgency=medium
     (protocoldir, table, grammar, protocoljson, protocolschema, modhostjson,
     protocolgen).
   * The library's exported symbols and types are those of 0.1.0.
+  * protocol_parse() reads every form registered for a verb and runs the first
+    whose arguments fit in number and type, so both forms of preset_show
+    dispatch through the library (#5).
 
  -- Pau Aliagas <linuxnow@gmail.com>  Tue, 03 Nov 2026 12:00:00 +0100
 
