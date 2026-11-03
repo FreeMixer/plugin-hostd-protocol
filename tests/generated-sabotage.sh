@@ -73,7 +73,7 @@ arm "the grammar by hand" grammar/plugin-hostd-protocol.abnf '%s"bypass" SP int 
 arm "the grammar's core not generated" grammar/core.abnf 'int              = \["-"\] 1\*DIGIT' 'int              = 1*DIGIT'
 arm "the README region by hand" README.md '| `bypass` | mod-ui | required' '| `bypass` | mod-ui | optional'
 arm "protocol.md by hand" doc/protocol.md 'is a superset of' 'extends'
-arm "the evidence not generated" doc/evidence/mod-ui-verbs.tsv 'connect' 'konnect'
+arm "the evidence not generated" doc/mod-ui-verbs.tsv 'connect' 'konnect'
 arm "mod-host's page not generated" doc/mod-host-commands.md 'toggle effect processing' 'toggle processing'
 
 table_arm "a word of ours that changes mod-host's" data/verbs.json \
