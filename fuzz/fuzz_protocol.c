@@ -66,34 +66,14 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
-/* The words of a message the way the parser counts them when it has no quotes to read: trailing blanks go, a run of
-   spaces is one separator, and a message that starts with a space starts with an empty word. Answers the count and
-   the length of the first word. */
-static unsigned message_words(const char *m, size_t *first)
-{
-    size_t len = strlen(m);
-    unsigned words = 1;
-    while (len > 0 && (m[len - 1] == ' ' || m[len - 1] == '\t' || m[len - 1] == '\r' || m[len - 1] == '\n'))
-        len--;
-    for (size_t i = 0; i < len; i++)
-        if (m[i] == ' ')
-        {
-            words++;
-            while (i + 1 < len && m[i + 1] == ' ')
-                i++;
-        }
-    *first = 0;
-    while (*first < len && m[*first] != ' ')
-        (*first)++;
-    return words;
-}
-
 /* A command that names a verb of the table with a word count in its row's range runs its callback once, and any other
    command runs none. */
 __attribute__((noinline)) static void check_called(int exact, int expect_called)
 {
     /* mutant: src/protocol.c:226 `match == proto.list_count || variable_arguments` -> `0`
-       input: extra-1 */
+       input: extra-1
+       mutant: src/utils.c:203 `quote = 0;` -> ``
+       input: quoted-words */
     if (exact && g_called != expect_called)
         abort();
 }
@@ -139,16 +119,22 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     msg.data_size = strlen(msg.data);
     msg.sender_id = FUZZ_SENDER;
 
-    /* what the input must get, from its words and the table. Left to the callbacks' own checks: a message with a
-       quote, a backslash, a "%" or a "..." in it. Quotes join and cut words, and the parser takes a word that is a
-       pattern's own wildcard or "..." for a match. */
-    size_t first;
-    unsigned words = message_words(msg.data, &first);
+    /* what the input must get, from its words by the quoting rule (fuzz_words) and the table. Left to the callbacks' own
+       checks: a message with a word that holds a "%" or a "...", which the parser may take for a pattern's wildcard. */
+    char *buf = malloc(msg.data_size + 1);
+    char **word = malloc((msg.data_size + 2) * sizeof(*word));
+    /* not a property: the harness's own allocation failed */
+    if (!buf || !word)
+        abort();
+    unsigned words = fuzz_words(msg.data, buf, word, (unsigned)msg.data_size + 2);
+    int exact = 1;
+    for (unsigned i = 0; i < words; i++)
+        exact = exact && !fuzz_wildcard(word[i]);
     int expect_called = 0;
     char expect_reply[32] = "not found";
     for (unsigned row = 0; row < sizeof(g_table) / sizeof(g_table[0]); row++)
     {
-        if (strlen(g_table[row].verb) != first || strncmp(msg.data, g_table[row].verb, first) != 0)
+        if (strcmp(word[0], g_table[row].verb) != 0)
             continue;
         if (words < g_table[row].min)
             strcpy(expect_reply, "few arguments");
@@ -161,7 +147,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         }
     }
 
-    int exact = strpbrk(msg.data, "%\"\\") == NULL && strstr(msg.data, "...") == NULL;
+    free(buf);
+    free(word);
 
     protocol_parse(&msg);
     free(msg.data);

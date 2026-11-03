@@ -85,6 +85,43 @@ static const host_backend_t g_backend = {
 };
 static const host_plugin_info_t g_info = { f_track_info, f_remote_pages, f_remote_page_get, f_param_info };
 
+/* A string of UTF-8 as RFC 3629 section 4 spells it: ASCII, or a lead byte and its tails, with the second byte's range
+   narrowed where the shortest form, the surrogates and U+10FFFF demand it. */
+static int rfc3629(const unsigned char *s)
+{
+    while (*s)
+    {
+        unsigned tails, lo = 0x80, hi = 0xbf;
+        if (*s < 0x80)
+            tails = 0;
+        else if (*s >= 0xc2 && *s <= 0xdf)
+            tails = 1;
+        else if (*s >= 0xe0 && *s <= 0xef)
+        {
+            tails = 2;
+            if (*s == 0xe0)
+                lo = 0xa0;
+            if (*s == 0xed)
+                hi = 0x9f;
+        }
+        else if (*s >= 0xf0 && *s <= 0xf4)
+        {
+            tails = 3;
+            if (*s == 0xf0)
+                lo = 0x90;
+            if (*s == 0xf4)
+                hi = 0x8f;
+        }
+        else
+            return 0;
+        s++;
+        for (unsigned i = 0; i < tails; i++, s++)
+            if (*s < (i == 0 ? lo : 0x80) || *s > (i == 0 ? hi : 0xbf))
+                return 0;
+    }
+    return 1;
+}
+
 /* The whole reply the dispatcher must give for a verb whose answer comes from the backend above alone: the words of the
    command and the salt decide it. Answers 0 for a verb or a word count this does not cover. */
 static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
@@ -117,17 +154,13 @@ static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
     }
     else if (strcmp(w[0], "track_info") == 0 && n >= 4)
     {
-        /* a name of printable ASCII below 256 bytes, a colour "-" or "#" and six hex digits, a kind of bus, return or
-           master, and at most one word after the colour; a name with a byte of 0x80 or more is left to the shape checks */
+        /* a name of UTF-8 (RFC 3629) below 256 bytes with no control character, a colour "-" or "#" and six hex
+           digits, a kind of bus, return or master, and at most one word after the colour */
         const char *name = w[2], *color = w[3], *kind = n > 4 ? w[4] : NULL;
-        int valid = strlen(name) < 256 && n <= 5;
+        int valid = strlen(name) < 256 && n <= 5 && rfc3629((const unsigned char *)name);
         for (const char *c = name; *c; c++)
-        {
-            if ((unsigned char)*c >= 0x80)
-                return 0;
             if ((unsigned char)*c < 0x20 || *c == 0x7f)
                 valid = 0;
-        }
         valid = valid && (strcmp(color, "-") == 0 ||
                           (strlen(color) == 7 && color[0] == '#' && strspn(color + 1, "0123456789abcdefABCDEF") == 6));
         valid = valid && (!kind || strcmp(kind, "bus") == 0 || strcmp(kind, "return") == 0 || strcmp(kind, "master") == 0);
@@ -210,7 +243,11 @@ __attribute__((noinline)) static void check_value(int modeled, const char *expec
        mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
        input: extra-8
        mutant: src/host-dispatch.c:313 `"Infinity"` -> `"inf"`
-       input: param-info-inf */
+       input: param-info-inf
+       mutant: src/utils.c:203 `quote = 0;` -> ``
+       input: track-info-quoted
+       mutant: src/host-dispatch.c:197 ` && *p >= 0xc2` -> ``
+       input: track-info-overlong */
     if (modeled && strcmp(fuzz_reply, expect) != 0)
         abort();
 }
@@ -243,32 +280,22 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     msg.data_size = strlen(msg.data);
     msg.sender_id = FUZZ_SENDER;
 
-    /* the words of the command, split on spaces (a message with a quote, a backslash, a "%" or a "..." in it is left
-       to the shape checks below: quotes join and cut words, and the parser takes a pattern's own wildcard for a match) */
-    char *copy = strdup(msg.data);
+    /* the words of the command by the quoting rule (fuzz_words); a command with a word that holds a "%" or a "..." is
+       left to the shape checks below, since the parser may take it for a pattern's wildcard */
+    char *copy = malloc(msg.data_size + 1);
     char *words[8];
-    unsigned count = 0;
     char expect[256];
     int modeled = 0;
     /* not a property: the harness's own allocation failed */
     if (!copy)
         abort();
-    if (strpbrk(copy, "%\"\\") == NULL && strstr(copy, "...") == NULL)
+    unsigned count = fuzz_words(msg.data, copy, words, 8);
+    if (count < 8)
     {
-        size_t len = strlen(copy);
-        while (len > 0 && (copy[len - 1] == ' ' || copy[len - 1] == '\t' || copy[len - 1] == '\r' || copy[len - 1] == '\n'))
-            copy[--len] = '\0';
-        for (char *p = copy; count < 8;)
-        {
-            words[count++] = p;
-            p = strchr(p, ' ');
-            if (!p)
-                break;
-            *p++ = '\0';
-            while (*p == ' ')
-                p++;
-        }
-        modeled = count < 8 && expected_reply(expect, sizeof(expect), words, count);
+        modeled = 1;
+        for (unsigned i = 0; i < count; i++)
+            modeled = modeled && !fuzz_wildcard(words[i]);
+        modeled = modeled && expected_reply(expect, sizeof(expect), words, count);
     }
 
     protocol_parse(&msg);
