@@ -22,10 +22,12 @@ jobs:
     uses: FreeMixer/.github/.github/workflows/build-rpm.yml@v1
     with:
       package-name: plugin-hostd-protocol
-      binary-names: plugin-hostd-protocol plugin-hostd-protocol-devel
+      binary-names: plugin-hostd-protocol plugin-hostd-protocol-devel plugin-hostd-protocol-contract
       publish: ${{ github.ref_type == 'tag' }}
       needs-mod-host: false
-      channel-deps: false
+      # omx-contract-devel (the declared protocol's generator and the contract directory's install script) is the
+      # channel's
+      channel-deps: true
     secrets: inherit
 
   # after the RPMs: both publish into one tree, and a push that loses a race is refused
@@ -35,9 +37,10 @@ jobs:
     uses: FreeMixer/.github/.github/workflows/build-deb.yml@v1
     with:
       package-name: libplugin-hostd-protocol
-      binary-names: libplugin-hostd-protocol0 libplugin-hostd-protocol-dev
+      binary-names: libplugin-hostd-protocol0 libplugin-hostd-protocol-dev plugin-hostd-protocol-contract
       publish: ${{ github.ref_type == 'tag' }}
       dependencies: ''
       requires: ''
-      channel-deps: false
+      # libomx-contract-dev is the channel's
+      channel-deps: true
     secrets: inherit

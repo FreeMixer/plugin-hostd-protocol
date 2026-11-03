@@ -9,12 +9,19 @@ License: GPL-3+
 
 Files: src/* include/* tests/protocol_test.c tests/protocol_commands_test.c
        tests/host_scenarios.c tests/host-scenarios.txt tests/socket-test.c
-       tests/bind-test.c tests/utils-test.c fuzz/* doc/protocol.md
+       tests/bind-test.c tests/utils-test.c fuzz/* doc/protocol.md doc/mod-host-commands.md
 Copyright: 2013-2026 Filipe Coelho <falktx@falktx.com>
            2013-2026 MOD Audio UG and the mod-host contributors
 License: GPL-3+
 Comment: mod-host's protocol code (https://github.com/mod-audio/mod-host), from
- FreeMixer/mod-host, branch freemixer, 013ac7d.
+ FreeMixer/mod-host, branch freemixer, 013ac7d. doc/protocol.md is written by
+ tools/protocol-doc.py and carries doc/mod-host-commands.md, mod-host's text.
+
+Files: include/plugin-hostd/*
+Copyright: 2026 Pau Aliagas <linuxnow@gmail.com>
+License: GPL-3+
+Comment: plugin-hostd's declared protocol, moved here from
+ FreeMixer/plugin-hostd; the rendered headers are written by omx-contract.
 
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify it

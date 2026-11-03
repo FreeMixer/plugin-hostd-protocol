@@ -1,0 +1,39 @@
+; SPDX-License-Identifier: GPL-3.0-or-later
+; Copyright (C) 2026 Pau Aliagas <linuxnow@gmail.com>
+;
+; The lexical core of the plugin-hostd protocol, in ABNF (RFC 5234; %s"..." is a case-sensitive string, RFC 7405).
+; It is written once, by hand. tools/abnf-gen.py appends to it the rules generated from the verb table
+; (protocol/plugin-hostd-protocol.json): one rule per command, one per feedback line and one per parse refusal, and
+; writes the whole as grammar/plugin-hostd-protocol.abnf.
+;
+; A message is one line of words separated by single spaces, the verb first. On the socket each message ends with a
+; NUL byte (mod-host's framing), which is not part of the line. The library's parser compares the verb and counts the
+; words; the types below are what a sender writes, and what the tests hold every line of the scenario corpus and every
+; line the library answers to.
+
+message          = command / reply / feedback
+
+; a reply: resp, the status, and the words the verb's reply grammar gives; or a parse refusal (generated, as
+; protocol-error), which mod-host writes as the bare message
+reply            = resp-line / protocol-error
+resp-line        = %s"resp" SP status *(SP word)
+status           = int
+
+; the argument types of a format line: %i, %f and %s
+int              = ["-"] 1*DIGIT
+float            = ["-" / "+"] (decimal / non-finite)
+decimal          = 1*DIGIT ["." *DIGIT] [exponent] / "." 1*DIGIT [exponent]
+exponent         = ("e" / "E") ["-" / "+"] 1*DIGIT
+; what param_info writes for a value that is not finite (NaN, Infinity, -Infinity), and what strtod takes, in any case
+non-finite       = "nan" / "infinity" / "inf"
+word             = quoted / bare-word
+; a bare word: no space, no control character and no double quote
+bare-word        = 1*bare-char
+bare-char        = %x21 / %x23-7E / %x80-10FFFF
+; a quoted word may hold spaces (a URI or a path); \" is a quote inside it, and the quotes are not part of the value
+quoted           = DQUOTE *(escaped-quote / quoted-char) DQUOTE
+escaped-quote    = %x5C DQUOTE
+quoted-char      = %x20-21 / %x23-7E / %x80-10FFFF
+
+; the tail of a format line that ends in ...: any further words
+tail             = *(SP word)

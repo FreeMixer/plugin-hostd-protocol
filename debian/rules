@@ -13,6 +13,8 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_auto_install -- $(MAKE_VARS)
+	# data/verbs.json, as the package plugin-hostd-protocol of omx-contract's contract directory
+	$(MAKE) install-contract DESTDIR=$(CURDIR)/debian/tmp PREFIX=/usr
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))

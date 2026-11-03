@@ -3,6 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Build-Depends: debhelper-compat (= 13),
+               libomx-contract-dev (>= 3.4.0~),
                pkgconf,
                python3
 Standards-Version: 4.6.2
@@ -30,3 +31,19 @@ Description: plugin-hostd protocol library, development files
  libplugin-hostd-protocol. The headers have the names and the API of
  libmod-host-protocol's, so a host built against mod-host-protocol changes only
  the package name it asks pkg-config for.
+ .
+ It also carries the declared protocol: plugin-hostd/protocol.h and the
+ headers it includes, the one verb table, the grammar of a line in ABNF, and
+ the protocol as JSON, each named by a pkg-config variable.
+
+Package: plugin-hostd-protocol-contract
+Architecture: all
+Multi-Arch: foreign
+Depends: omx-contract (>= 3.2.0~), ${misc:Depends}
+Breaks: plugin-hostd-contract (<< 0.16.0~)
+Description: plugin-hostd protocol, its verbs in omx-contract's contract directory
+ data/verbs.json of plugin-hostd-protocol, the verbs and reply codes
+ plugin-hostd adds to mod-host's protocol, as the package plugin-hostd-protocol
+ of omx-contract's contract directory, under
+ /usr/share/omx-contract/contract.d/3/plugin-hostd-protocol. plugin-hostd
+ before 0.16.0 carried the same items in its own package.

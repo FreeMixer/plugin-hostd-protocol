@@ -1,7 +1,8 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Checks `make install` the way a consumer meets it: the library, its soname link and development link, the headers,
-# the scenario corpus and plugin-hostd-protocol.pc, installed with no source tree in reach. A program built from
+# the scenario corpus, the declared protocol (plugin-hostd/protocol.h and the headers it includes, the verb table, the
+# grammar and the JSON documents) and plugin-hostd-protocol.pc, installed with no source tree in reach. A program built from
 # `pkg-config --cflags --libs plugin-hostd-protocol` alone must compile against every header, link and run; the
 # framing (mod-audio/mod-host#113), command-table (mod-audio/mod-host#116) and bind-address checks run against the
 # installed library. A DESTDIR install must leave DESTDIR out of the .pc file.
@@ -46,6 +47,41 @@ for h in "$prefix/include/$name"/*.h; do
     # shellcheck disable=SC2086
     $CC -std=gnu99 -Wall -Wextra -Werror $cflags -fsyntax-only "$work/one.c" || fail "$(basename "$h") does not compile alone"
 done
+
+# the declared protocol: each header stands alone under plugin-hostd/, the files the .pc names are the installed ones,
+# and a consumer of protocol.h reads a verb, a reply code and the table of what each host owes each verb
+for h in protocol.h search_paths.h plugin_hostd_protocol_host_verbs.h plugin_hostd_protocol_vocabulary.h \
+         omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h; do
+    [ -f "$prefix/include/$name/plugin-hostd/$h" ] || fail "plugin-hostd/$h is not installed"
+done
+for h in "$prefix/include/$name"/plugin-hostd/*.h; do
+    printf '#include <plugin-hostd/%s>\nint main(void) { return 0; }\n' "$(basename "$h")" > "$work/one.c"
+    # shellcheck disable=SC2086
+    $CC -std=c99 -Wall -Wextra -Werror $cflags -fsyntax-only "$work/one.c" || fail "plugin-hostd/$(basename "$h") does not compile alone"
+done
+[ "$(pkg-config --variable=protocoldir $name)" = "$prefix/share/$name" ] || fail "the protocoldir variable is wrong"
+for v in table:plugin-hostd-protocol.json grammar:plugin-hostd-protocol.abnf protocoljson:plugin-hostd.json \
+         protocolschema:plugin-hostd.schema.json modhostjson:mod-host.json protocolgen:protocol-gen.c; do
+    got=$(pkg-config --variable="${v%%:*}" $name)
+    [ "$got" = "$prefix/share/$name/${v#*:}" ] || fail "the ${v%%:*} variable says '$got'"
+    [ -s "$got" ] || fail "${v#*:} is not installed"
+    cmp -s "$got" "$(find protocol grammar tools -name "${v#*:}")" || fail "the installed ${v#*:} is not this tree's"
+done
+cat > "$work/declared.c" <<'C'
+#include <plugin-hostd/protocol.h>
+#include <stdio.h>
+int main(void)
+{
+    const struct omx_host_verb *v = plugin_hostd_protocol_host_verb_find(OMX_VERB_CHAIN);
+    if (v == NULL || strcmp(OMX_VERB_CHAIN, "chain") != 0 || OMX_REPLY_PLUGIN_HOSTD_NO_SUCH_CHAIN_RESP >= 0)
+        return 1;
+    printf("%s %s %d\n", v->verb, OMX_VERB_CHAIN_FMT, PLUGIN_HOSTD_PROTOCOL_VERSION);
+    return 0;
+}
+C
+# shellcheck disable=SC2086
+$CC -std=c99 -Wall -Wextra -Werror $cflags -o "$work/declared" "$work/declared.c" || fail "a consumer of plugin-hostd/protocol.h does not build"
+"$work/declared" >/dev/null || fail "a consumer of plugin-hostd/protocol.h does not read the declared chain verb"
 
 # a consumer built from pkg-config alone links the library and runs from it
 cat > "$work/consumer.c" <<'C'
@@ -96,4 +132,4 @@ grep -q "$stage" "$pc" && fail "the .pc file names DESTDIR"
 grep -qx 'prefix=/usr' "$pc" || fail "the staged .pc does not say prefix=/usr"
 grep -qx 'libdir=${prefix}/lib64' "$pc" || fail "the staged .pc does not follow LIBDIR"
 
-echo "install: library, links, headers, corpus, runner, protocol page, $name.pc, framing, 128 commands and bind address check out"
+echo "install: library, links, headers, corpus, runner, protocol page, declared protocol, $name.pc, framing, 128 commands and bind address check out"

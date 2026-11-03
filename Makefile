@@ -38,6 +38,14 @@ OBJ = $(SRC:.c=.o)
 HEADERS = include/host-backend.h include/host-dispatch.h include/host-errors.h include/mod-host.h \
           include/host-scenario.h include/protocol.h include/socket.h include/utils.h
 
+# the declared protocol (doc/protocol.md): plugin-hostd's protocol.h and the headers it includes, rendered by
+# omx-contract from data/verbs.json and from omx-clap-core's package of the contract directory; installed under
+# <includedir>/plugin-hostd-protocol/plugin-hostd/, so a consumer includes <plugin-hostd/protocol.h> with this package's
+# Cflags. No source of the library includes them.
+RENDERED = include/plugin-hostd/plugin_hostd_protocol_host_verbs.h include/plugin-hostd/plugin_hostd_protocol_vocabulary.h \
+           include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h
+PROTOCOL_HEADERS = include/plugin-hostd/protocol.h include/plugin-hostd/search_paths.h $(RENDERED)
+
 PC_LIBDIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(LIBDIR))
 PC_INCLUDEDIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(INCLUDEDIR))
 PC_DATADIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(DATADIR))
@@ -65,6 +73,14 @@ install: $(LIB_FILE)
 	ln -sf $(LIB_SONAME) $(DESTDIR)$(LIBDIR)/$(LIB_SO)
 	install -m 644 $(HEADERS) $(DESTDIR)$(INCLUDEDIR)/$(NAME)/
 	install -m 644 tests/host-scenarios.txt tests/host_scenarios.c doc/protocol.md $(DESTDIR)$(DATADIR)/$(NAME)/
+	install -d $(DESTDIR)$(INCLUDEDIR)/$(NAME)/plugin-hostd
+	install -m 644 $(PROTOCOL_HEADERS) $(DESTDIR)$(INCLUDEDIR)/$(NAME)/plugin-hostd/
+	install -m 644 protocol/plugin-hostd-protocol.json $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd-protocol.json
+	install -m 644 grammar/plugin-hostd-protocol.abnf $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd-protocol.abnf
+	install -m 644 protocol/plugin-hostd.json $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd.json
+	install -m 644 protocol/plugin-hostd.schema.json $(DESTDIR)$(DATADIR)/$(NAME)/plugin-hostd.schema.json
+	install -m 644 protocol/mod-host.json $(DESTDIR)$(DATADIR)/$(NAME)/mod-host.json
+	install -m 644 tools/protocol-gen.c $(DESTDIR)$(DATADIR)/$(NAME)/protocol-gen.c
 	sed -e 's,@PREFIX@,$(PREFIX),' -e 's,@LIBDIR@,$(PC_LIBDIR),' -e 's,@INCLUDEDIR@,$(PC_INCLUDEDIR),' \
 	    -e 's,@DATADIR@,$(PC_DATADIR),' -e 's,@VERSION@,$(VERSION),' $(NAME).pc.in > $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc
 	chmod 644 $(DESTDIR)$(LIBDIR)/pkgconfig/$(NAME).pc
@@ -80,7 +96,8 @@ TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenari
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-install test-abi version-check
+      test-fixes test-fixes-sabotage test-install test-abi version-check \
+      check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
 test-protocol: tests/protocol_test
@@ -182,6 +199,124 @@ abi-baseline: abi-stage
 abi-check: abi-stage
 	abidiff --headers-dir2 build/abi/usr/include/$(NAME) $(ABI_BASELINE) build/abi/usr/lib/$(LIB_FILE)
 
+# ---------------------------------------------------------------------------------------------------------------------
+# the declared protocol: the verb table, the JSON of protocol.h, mod-host's commands, the grammar and the protocol page,
+# each written from the declarations by a tool of tools/, never by hand. `make gen` writes them, `make check-generated`
+# and `make check-protocol-doc` fail on any drift.
+#
+#   protocol/plugin-hostd.json            tools/protocol-gen json, compiled against include/plugin-hostd/protocol.h
+#   protocol/mod-host.json                tools/mod-host-json.py, from include/mod-host.h, protocol.h, host-errors.h
+#   protocol/plugin-hostd-protocol.json   tools/protocol-table.py, the one table merged from the three above and
+#                                         data/verbs.json; it refuses a word of ours that changes a mod-host word
+#   grammar/plugin-hostd-protocol.abnf    tools/abnf-gen.py, grammar/core.abnf and a rule per word of the table
+#   README.md                             the region host-verbs, tools/protocol-gen splice
+#   doc/protocol.md                       tools/protocol-doc.py, from all of the above
+#
+# protocol-gen holds the parameter scales of protocol.h to omx-contract's PARAM_SCALES, so it builds against
+# omx-contract's C headers (omx-contract-devel, libomx-contract-dev; CONTRACT_CFLAGS=-I<dir> for headers that are not
+# installed).
+CONTRACT_CFLAGS ?= $(shell $(PKG_CONFIG) --cflags omx-contract 2>/dev/null)
+GEN = build/protocol-gen
+
+$(GEN): tools/protocol-gen.c $(PROTOCOL_HEADERS)
+	@mkdir -p $(dir $@)
+	$(CC) -Wall -Wextra -Werror -std=gnu99 -Iinclude $(CONTRACT_CFLAGS) -o $@ tools/protocol-gen.c
+
+gen: $(GEN)
+	$(GEN) json > protocol/plugin-hostd.json.new && mv protocol/plugin-hostd.json.new protocol/plugin-hostd.json
+	python3 tools/mod-host-json.py include > protocol/mod-host.json.new && mv protocol/mod-host.json.new protocol/mod-host.json
+	python3 tools/protocol-table.py > protocol/plugin-hostd-protocol.json.new && \
+	    mv protocol/plugin-hostd-protocol.json.new protocol/plugin-hostd-protocol.json
+	python3 tools/abnf-gen.py > grammar/plugin-hostd-protocol.abnf.new && \
+	    mv grammar/plugin-hostd-protocol.abnf.new grammar/plugin-hostd-protocol.abnf
+	$(GEN) splice README.md > README.md.new && mv README.md.new README.md
+	$(MAKE) --no-print-directory protocol-doc
+
+check-generated: $(GEN)
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	$(GEN) json > $$tmp/json; cmp $$tmp/json protocol/plugin-hostd.json; \
+	python3 tools/mod-host-json.py include > $$tmp/mod-host.json; cmp $$tmp/mod-host.json protocol/mod-host.json; \
+	python3 tools/protocol-table.py --check; \
+	python3 tools/abnf-gen.py --check; \
+	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
+	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
+	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
+	echo "generated files are current"
+
+protocol-doc:
+	python3 tools/protocol-doc.py > doc/protocol.md.tmp && mv doc/protocol.md.tmp doc/protocol.md
+
+check-protocol-doc:
+	python3 tools/protocol-doc.py --check
+
+# the host verb table of protocol.h has a row for every verb a controller sends, no more and no fewer; and each of its
+# rules broken in a scratch copy of the header turns it red
+test-verb-table:
+	python3 tests/verb_table.py
+	python3 tests/verb_table_sabotage.py
+
+# mod-host.json follows its headers: a moved verb, code or message in a scratch copy moves the JSON
+test-mod-host-json:
+	python3 tests/mod_host_json.py include
+
+# each generated file and each declaration it is written from, changed in a scratch copy of the tree: the checks above
+# must fail on each (tests/generated-sabotage.sh)
+test-generated-sabotage:
+	sh tests/generated-sabotage.sh
+
+# The checks that need tools a package build does not: run by CI (.github/workflows/ci.yml, job protocol).
+#   check-rendered   the four rendered headers are what omx-contract renders from data/verbs.json (staged as the
+#                    package plugin-hostd-protocol of the contract directory) and from omx-clap-core's installed package;
+#                    test-rendered-sabotage holds it to failing
+#   check-contract-dir  that staged package validates with the installed contract directory
+#   check-schema     protocol/plugin-hostd.json against its schema (python3-jsonschema)
+#   test-grammar     the grammar against the scenario corpus, the golden transcript and the table (python abnf)
+OMX_CONTRACT ?= omx-contract
+CONTRACT_SCHEMA_MAJOR = 3
+CONTRACTDIR = $(or $(shell $(PKG_CONFIG) --variable=contractdir omx-contract 2>/dev/null),$(DATADIR)/omx-contract/contract.d)
+INSTALL_CONTRACT_DIR = $(firstword $(wildcard $(shell $(PKG_CONFIG) --variable=datadir omx-contract 2>/dev/null)/install-contract-dir.sh) $(wildcard $(OMX_CONTRACT_DIR)/tools/install-contract-dir.sh))
+
+check-protocol-tools: check-rendered test-rendered-sabotage check-schema test-grammar check-contract-dir
+
+# data/verbs.json as the package plugin-hostd-protocol of omx-contract's contract directory,
+# <contractdir>/<schema major>/plugin-hostd-protocol/, with the MANIFEST.json omx-contract's script writes
+install-contract:
+	@test -n "$(INSTALL_CONTRACT_DIR)" || { echo "install-contract: no install-contract-dir.sh: install omx-contract-devel, or set OMX_CONTRACT_DIR to a checkout" >&2; exit 1; }
+	sh $(INSTALL_CONTRACT_DIR) $(NAME) $(VERSION) $(CONTRACT_SCHEMA_MAJOR) data $(DESTDIR)$(CONTRACTDIR) data
+
+# the staged package validates together with the installed contract directory; an absent omx-contract is red
+check-contract-dir:
+	@command -v $(OMX_CONTRACT) >/dev/null || { echo "$@: no $(OMX_CONTRACT) command: install omx-contract" >&2; exit 1; }
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	$(MAKE) --no-print-directory install-contract DESTDIR=$$tmp >/dev/null; \
+	OMX_CONTRACT_PATH=$$tmp$(CONTRACTDIR)$(if $(OMX_CONTRACT_PATH),:$(OMX_CONTRACT_PATH)):$(CONTRACTDIR) $(OMX_CONTRACT) validate --installed
+
+# check-rendered must fail on a rendered header changed by hand and on verbs.json not rendered again
+test-rendered-sabotage:
+	sh tests/rendered-sabotage.sh
+
+render-verbs check-rendered:
+	@command -v $(OMX_CONTRACT) >/dev/null || { echo "$@: no $(OMX_CONTRACT) command: install omx-contract" >&2; exit 1; }
+	@test -n "$(INSTALL_CONTRACT_DIR)" || { echo "$@: no install-contract-dir.sh: install omx-contract-devel, or set OMX_CONTRACT_DIR to a checkout" >&2; exit 1; }
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	sh $(INSTALL_CONTRACT_DIR) $(NAME) $(VERSION) $(CONTRACT_SCHEMA_MAJOR) data $$tmp data >/dev/null; \
+	OMX_CONTRACT_PATH=$$tmp$(if $(OMX_CONTRACT_PATH),:$(OMX_CONTRACT_PATH)):$(CONTRACTDIR) \
+	  $(OMX_CONTRACT) render --target c --package $(NAME) --installed --out include/plugin-hostd $(if $(filter check-rendered,$@),--check)
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	OMX_CONTRACT_PATH=$(if $(OMX_CONTRACT_PATH),$(OMX_CONTRACT_PATH):)$(CONTRACTDIR) \
+	  $(OMX_CONTRACT) render --target c --package omx-clap-core --installed --out $$tmp; \
+	for f in omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h; do \
+	  $(if $(filter check-rendered,$@),cmp -s $$tmp/$$f include/plugin-hostd/$$f || { echo "include/plugin-hostd/$$f is not the render of omx-clap-core's package" >&2; exit 1; },cp $$tmp/$$f include/plugin-hostd/$$f); \
+	done; echo "the rendered headers are current"
+
+check-schema:
+	python3 tests/protocol_schema.py protocol/plugin-hostd.json protocol/plugin-hostd.schema.json
+
+PYTHON ?= python3
+test-grammar:
+	$(PYTHON) tests/grammar_test.py
+	PYTHON=$(PYTHON) sh tests/grammar-sabotage.sh
+
 # VERSION, the spec's Version and the newest debian/changelog entry say the same (the shared DEB workflow
 # stamps an untagged build 0.1.0~git<sha>; that suffix is not compared)
 version-check:
@@ -218,6 +353,9 @@ fuzz-corpus:
 clean:
 	rm -rf src/*.o $(LIB_SO) $(LIB_SONAME) $(LIB_FILE) $(TEST_PROGS) build
 
+.PHONY: gen check-generated protocol-doc check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage \
+        check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
+        check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
         test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-install test-abi \
         abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus clean
