@@ -182,10 +182,12 @@ abi-baseline: abi-stage
 abi-check: abi-stage
 	abidiff --headers-dir2 build/abi/usr/include/$(NAME) $(ABI_BASELINE) build/abi/usr/lib/$(LIB_FILE)
 
-# VERSION, the spec's Version and the newest debian/changelog entry say the same
+# VERSION, the spec's Version and the newest debian/changelog entry say the same (the shared DEB workflow
+# stamps an untagged build 0.1.0~git<sha>; that suffix is not compared)
 version-check:
 	@spec=$$(sed -n 's/^Version: *//p' packaging/$(NAME).spec); \
 	deb=$$(sed -n '1s/^[^(]*(\([^-)]*\).*/\1/p' debian/changelog); \
+	deb=$${deb%%~git*}; \
 	test "$$spec" = "$(VERSION)" && test "$$deb" = "$(VERSION)" \
 	    || { echo "VERSION $(VERSION), spec $$spec, debian/changelog $$deb"; exit 1; }; \
 	echo "version $(VERSION) in VERSION, the spec and debian/changelog"
