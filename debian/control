@@ -20,6 +20,8 @@ Description: plugin-hostd protocol library, a superset of mod-host's text protoc
  The socket server, line protocol and command dispatch that plugin-hostd and
  omx-clap-host answer their controllers with: mod-host's text protocol, so any
  mod-host client works unchanged.
+ .
+ Its documentation is on openmixer.org.
 
 Package: libplugin-hostd-protocol-dev
 Section: libdevel
@@ -35,6 +37,8 @@ Description: plugin-hostd protocol library, development files
  It also carries the declared protocol: plugin-hostd/protocol.h and the
  headers it includes, the one verb table, the grammar of a line in ABNF, and
  the protocol as JSON, each named by a pkg-config variable.
+ .
+ Its documentation is on openmixer.org.
 
 Package: plugin-hostd-protocol-contract
 Architecture: all
@@ -47,3 +51,5 @@ Description: plugin-hostd protocol, its verbs in omx-contract's contract directo
  of omx-contract's contract directory, under
  /usr/share/omx-contract/contract.d/3/plugin-hostd-protocol. plugin-hostd
  before 0.16.0 carried the same items in its own package.
+ .
+ Its documentation is on openmixer.org.

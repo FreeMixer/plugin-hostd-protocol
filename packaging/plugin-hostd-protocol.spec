@@ -26,6 +26,7 @@ dispatch that plugin-hostd and omx-clap-host answer their controllers with:
 mod-host's text protocol, so any mod-host client works unchanged. A host
 registers its plugin backend and the library listens on the command and
 feedback ports, parses each command and sends the reply.
+Its documentation is on openmixer.org.
 
 %package devel
 Summary: Build a host that answers the plugin-hostd protocol
@@ -36,6 +37,7 @@ Headers, the pkg-config file, the scenario corpus and its runner of
 libplugin-hostd-protocol. The headers have the names and the API of
 libmod-host-protocol's, so a host built against mod-host-protocol changes only
 the package name it asks pkg-config for.
+Its documentation is on openmixer.org.
 
 It also carries the declared protocol: plugin-hostd/protocol.h and the headers
 it includes, the one verb table, the grammar of a line in ABNF, and the
@@ -53,6 +55,7 @@ data/verbs.json of plugin-hostd-protocol, the verbs and reply codes
 plugin-hostd adds to mod-host's protocol, as the package plugin-hostd-protocol
 of omx-contract's contract directory, under
 share/omx-contract/contract.d/3/plugin-hostd-protocol.
+Its documentation is on openmixer.org.
 
 %prep
 %autosetup -p1
@@ -71,7 +74,6 @@ make test
 
 %files
 %license COPYING
-%doc README.md
 %{_libdir}/libplugin-hostd-protocol.so.0
 %{_libdir}/libplugin-hostd-protocol.so.%{version}
 # the declared protocol a program reads at run time: the verb table, the grammar, the protocol's JSON and mod-host's
