@@ -8,6 +8,19 @@ scenarios=${datadir}/plugin-hostd-protocol/host-scenarios.txt
 runner=${datadir}/plugin-hostd-protocol/host_scenarios.c
 # the commands, replies and error codes (doc/protocol.md)
 protocoldoc=${datadir}/plugin-hostd-protocol/protocol.md
+# the declared protocol: the one verb table, the grammar of a line (ABNF), what plugin-hostd/protocol.h declares as JSON
+# and its schema, and mod-host's commands and codes as JSON. The headers are <plugin-hostd/protocol.h> and the ones it
+# includes, found with the Cflags below; data/verbs.json is the package plugin-hostd-protocol of omx-contract's
+# contract directory.
+protocoldir=${datadir}/plugin-hostd-protocol
+table=${protocoldir}/plugin-hostd-protocol.json
+grammar=${protocoldir}/plugin-hostd-protocol.abnf
+protocoljson=${protocoldir}/plugin-hostd.json
+protocolschema=${protocoldir}/plugin-hostd.schema.json
+modhostjson=${protocoldir}/mod-host.json
+# the source of the generator of protocoljson: a consumer that checks its own pages against a changed copy of the
+# headers builds it against that copy (cc -I<copy> <omx-contract cflags> protocol-gen.c; protocol-gen json)
+protocolgen=${protocoldir}/protocol-gen.c
 
 Name: plugin-hostd-protocol
 Description: The plugin-hostd protocol: socket server, line protocol and command dispatch, a superset of mod-host's

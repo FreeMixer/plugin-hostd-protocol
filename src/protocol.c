@@ -23,6 +23,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifndef SKIP_READLINE
@@ -113,6 +114,32 @@ static int is_wildcard(const char *str)
     return 0;
 }
 
+/* the words of a message are of the types of a command's wildcards: %i a whole number, %f a number; any other
+   wildcard takes any word. A verb of one form is read as mod-host reads it, by count alone; the types only choose
+   between the forms of a verb whose arguments fit more than one */
+static int typed(const cmd_t *command, const proto_t *proto)
+{
+    uint32_t j;
+    char *end;
+
+    for (j = 1; j < proto->list_count && j < command->count; j++)
+    {
+        const char *w = command->list[j], *word = proto->list[j];
+
+        if (!strcmp(w, "%i"))
+        {
+            (void)strtol(word, &end, 10);
+            if (*word == '\0' || *end != '\0') return 0;
+        }
+        else if (!strcmp(w, "%f"))
+        {
+            (void)strtod(word, &end);
+            if (*word == '\0' || *end != '\0') return 0;
+        }
+    }
+    return 1;
+}
+
 
 /*
 ************************************************************************************************************************
@@ -142,14 +169,22 @@ void protocol_parse(msg_t *msg)
 
     if (proto.list_count == 0) return;
 
-    unsigned int match, variable_arguments = 0;
+    unsigned int match, variable_arguments;
+    int32_t refusal = PROTOCOL_NOT_FOUND, untyped = 0;
+    int have_untyped = 0, have_refusal = 0;
 
     index = PROTOCOL_NOT_FOUND;
 
-    // loop all registered commands
+    // loop all registered commands: a verb may have more than one form, told apart by its number of arguments (the
+    // plugin-hostd protocol's verb table), so every command of the verb is read, not only the first. The first form
+    // the arguments fit, in number and in types, is run; else the first that fits in number, as mod-host reads a
+    // wildcard; else the first form's refusal, which is mod-host's answer for a verb of one form
     for (i = 0; i < g_command_count; i++)
     {
+        int32_t result;
+
         match = 0;
+        variable_arguments = 0;
 
         // checks received protocol; the first word is the verb, so a command of another verb is not read further
         for (j = 0; j < proto.list_count && j < g_commands[i].count && (j == 0 || match > 0); j++)
@@ -172,41 +207,46 @@ void protocol_parse(msg_t *msg)
             }
         }
 
-        if (match > 0)
+        if (match == 0)
+            continue;
+
+        // checks if the last argument is ...
+        if (j < g_commands[i].count)
         {
-            // checks if the last argument is ...
-            if (j < g_commands[i].count)
-            {
-                if (strcmp(g_commands[i].list[j], "...") == 0) variable_arguments = 1;
-            }
+            if (strcmp(g_commands[i].list[j], "...") == 0) variable_arguments = 1;
+        }
 
-            // few arguments
-            if (proto.list_count < (g_commands[i].count - variable_arguments))
-            {
-                index = PROTOCOL_FEW_ARGUMENTS;
-            }
+        // few arguments
+        if (proto.list_count < (g_commands[i].count - variable_arguments))
+            result = PROTOCOL_FEW_ARGUMENTS;
+        // many arguments
+        else if (proto.list_count > g_commands[i].count && !variable_arguments)
+            result = PROTOCOL_MANY_ARGUMENTS;
+        // arguments match
+        else if (match == proto.list_count || variable_arguments)
+            result = (int32_t)i;
+        // not found
+        else
+            result = PROTOCOL_NOT_FOUND;
 
-            // many arguments
-            else if (proto.list_count > g_commands[i].count && !variable_arguments)
-            {
-                index = PROTOCOL_MANY_ARGUMENTS;
-            }
-
-            // arguments match
-            else if (match == proto.list_count || variable_arguments)
-            {
-                index = i;
-            }
-
-            // not found
-            else
-            {
-                index = PROTOCOL_NOT_FOUND;
-            }
-
+        if (result >= 0 && typed(&g_commands[i], &proto))
+        {
+            index = result;
             break;
         }
+        if (result >= 0 && !have_untyped)
+        {
+            untyped = result;
+            have_untyped = 1;
+        }
+        else if (result < 0 && !have_refusal)
+        {
+            refusal = result;
+            have_refusal = 1;
+        }
     }
+    if (index < 0)
+        index = have_untyped ? untyped : refusal;
 
     // Protocol OK
     if (index >= 0)

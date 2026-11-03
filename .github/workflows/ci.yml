@@ -26,14 +26,51 @@ jobs:
             apt-get update && apt-get -y install --no-install-recommends gcc libc6-dev make git pkg-config ca-certificates binutils gawk python3 diffutils
           fi
       - uses: actions/checkout@v4
+      # omx-contract's C headers, which the declared protocol's generator is built against, are the OpenMixer channel's
+      - name: Add the OpenMixer channel
+        uses: FreeMixer/.github/.github/actions/add-openmixer@v1
+      - name: omx-contract's headers
+        run: |
+          if command -v dnf >/dev/null; then dnf -y install 'omx-contract-devel >= 3.4.0'; else apt-get -y install --no-install-recommends libomx-contract-dev; fi
+          pkg-config --exists omx-contract
         with:
           fetch-depth: 0
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build
         run: make
-      - name: Tests (protocol, golden, install, symbols, version)
+      - name: Tests (protocol, golden, install, symbols, version, the generated protocol and its sabotage)
         run: make test
+
+  # The declared protocol with the tools a package build does not carry: the rendered headers are what the installed
+  # omx-contract renders from data/verbs.json and from omx-clap-core's package (and a header changed by hand is red), the
+  # staged contract package validates, protocol/plugin-hostd.json satisfies its schema, and the grammar holds the
+  # scenario corpus, the golden transcript and the table, read by python's abnf parser (and a broken rule is red).
+  # plugin-hostd-contract before 0.16.0 declares the same items, so it is not installed here.
+  protocol:
+    name: declared protocol (render, contract directory, schema, grammar)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: fedora:44
+    steps:
+      - name: Toolchain
+        run: dnf -y install gcc make git pkgconf-pkg-config diffutils python3 python3-jsonschema
+      - uses: actions/checkout@v4
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Add the OpenMixer channel
+        uses: FreeMixer/.github/.github/actions/add-openmixer@v1
+      - name: omx-contract and omx-clap-core's package of the contract directory
+        run: |
+          set -euo pipefail
+          dnf -y install 'omx-contract >= 3.4.0' 'omx-contract-devel >= 3.4.0' omx-clap-core-contract
+          if rpm -q plugin-hostd-contract; then echo "plugin-hostd-contract is installed: it declares the same items"; exit 1; fi
+      - name: The python ABNF parser
+        run: |
+          python3 -m venv /opt/abnf
+          /opt/abnf/bin/pip install 'abnf>=2.2'
+      - name: make check-protocol-tools
+        run: make check-protocol-tools PYTHON=/opt/abnf/bin/python
 
   abi:
     name: ABI check (abidiff against abi/)

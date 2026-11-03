@@ -1,3 +1,34 @@
+plugin-hostd-protocol (0.2.0) unstable; urgency=medium
+
+  * The whole declared protocol moves here from plugin-hostd:
+    plugin-hostd/protocol.h and the headers omx-contract renders for it
+    (plugin_hostd_protocol_host_verbs.h, plugin_hostd_protocol_vocabulary.h,
+    omx_clap_core_host_verbs.h, omx_clap_core_vocabulary.h), data/verbs.json,
+    protocol/plugin-hostd.json and its schema, protocol/mod-host.json, and
+    the generators and checks that keep them current.
+  * One verb table, protocol/plugin-hostd-protocol.json: every command, each
+    once, with its origin, its argument types, its reply and its refusals,
+    and every feedback line. A word of ours that changes a mod-host word is
+    refused.
+  * The grammar of a line in ABNF, generated from the table, and
+    doc/protocol.md, generated from the table and the declarations; the
+    scenario corpus and every reply of the golden transcript are held to the
+    grammar.
+  * New package plugin-hostd-protocol-contract: data/verbs.json as the
+    package plugin-hostd-protocol of omx-contract's contract directory.
+  * The library package installs the table, the grammar and the JSON of the
+    protocol and of mod-host's, which programs read at run time; the
+    development package installs the headers under plugin-hostd/, the
+    schema and the generator's source. pkg-config variables name each
+    (protocoldir, table, grammar, protocoljson, protocolschema, modhostjson,
+    protocolgen).
+  * The library's exported symbols and types are those of 0.1.0.
+  * protocol_parse() reads every form registered for a verb and runs the first
+    whose arguments fit in number and type, so both forms of preset_show
+    dispatch through the library (#5).
+
+ -- Pau Aliagas <linuxnow@gmail.com>  Tue, 03 Nov 2026 12:00:00 +0100
+
 plugin-hostd-protocol (0.1.0) unstable; urgency=medium
 
   * First release: mod-host's socket server, line protocol and command
