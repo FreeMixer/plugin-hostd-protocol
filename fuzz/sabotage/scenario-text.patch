@@ -1,0 +1,16 @@
+Breaks check_text of fuzz/fuzz_scenario.c:102 (the command and the reply are the text on each side of "=>").
+Caught by the seed input "guarded" of fuzz_scenario.
+
+diff --git a/src/host-scenario.c b/src/host-scenario.c
+index 9bd252f..6c7a2d1 100644
+--- a/src/host-scenario.c
++++ b/src/host-scenario.c
+@@ -235,7 +235,7 @@ int host_scenario_load(const char *path, const host_scenario_var_t *vars, int va
+         }
+         sc = &list->lines[list->count++];
+         sc->command = substitute(trim(text), vars, var_count);
+-        sc->reply = substitute(trim(arrow + 2), vars, var_count);
++        sc->reply = substitute(trim(text), vars, var_count);
+         sc->guard = guard ? strdup(guard) : NULL;
+     }
+     fclose(fp);

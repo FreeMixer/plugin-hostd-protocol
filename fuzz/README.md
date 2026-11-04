@@ -16,7 +16,37 @@ apt-get install -y clang      # plus libclang-rt-<N>-dev where the distribution 
 make fuzz                     # build/fuzz/fuzz_*
 make fuzz-run FUZZ_TIME=60    # each harness for 60 s over a scratch copy of its corpus
 make fuzz-corpus              # regenerate fuzz/corpus from tests/host-scenarios.txt and fuzz/gen-corpus.sh
+make fuzz-records             # every check's mutant: record makes that check abort on its input: seed
+make fuzz-sabotage            # every fuzz/sabotage/ patch is caught by the check it names, and only by it
+make fuzz-coverage            # llvm-cov over each corpus, held to fuzz/coverage-floor.txt (needs llvm)
 ```
+
+## The checks
+
+Each property is an `if` that calls `abort()` in a `noinline` function `check_<property>` of its harness, so a
+stack trace names the property that broke. The comment of each check holds one or more records, the form the
+OSS Verify build contract reads:
+
+```
+mutant: <path>:<line> `<old>` -> `<new>`
+input: <a seed of the harness's corpus>
+```
+
+a one-line change of the library and the seed on which that check aborts. A stop that is no property (the
+harness's own allocation failing) has one line `not a property: <reason>` in its place. `fuzz/checks.awk` reads
+the records and refuses a check with neither; `make fuzz-records` applies each change alone and requires that
+check, and no other, to abort on its seed.
+
+`fuzz/sabotage/<harness>-<property>.patch` is a one-line bug per property. Its first two lines name the check
+it breaks and a seed that catches it; `git apply` skips them. `make fuzz-sabotage` applies each, rebuilds the
+sanitizer harness and runs every seed: at least one must abort, and every one that does must abort in that
+`check_<property>`.
+
+`fuzz/coverage-floor.txt` holds the lines each corpus covers in the functions its harness drives. A harness
+below its floor, or a check no seed reaches, turns `make fuzz-coverage` red. Raise a floor when coverage rises;
+lower one only with the change that removed the lines.
+
+When a change to `src/` moves a line a record names, `make fuzz-records` names the record; fix its line there.
 
 One harness by hand: `build/fuzz/fuzz_dispatch fuzz/corpus/dispatch` (add `-max_total_time=60`).
 A crash leaves its input in `build/fuzz/artifacts/`; run the harness on that file to reproduce it.

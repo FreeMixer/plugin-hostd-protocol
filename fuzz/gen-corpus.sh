@@ -51,10 +51,25 @@ state_save
 param_get 99999999999999999999 gain
 param_set -1 gain nan
 zzz %s 5
+add urn:x 5 ... c
 SEEDS
 
 # a verb whose reply carries a value, with a salt that makes the backend succeed
 printf '\006param_get 3 gain' > "$out/dispatch/param-get"
+
+# quotes join words (the example of doc/protocol.md for track_info), and names of UTF-8: valid ones of two, three and
+# four bytes, and an overlong form, a surrogate, a code point past U+10FFFF, a lead byte with no tail and the C1 control
+# characters U+0080 and U+009F, each refused
+printf 'connect "a b" c' > "$out/protocol/quoted-words"
+printf '\002track_info 0 "Kick In" #FF8000' > "$out/dispatch/track-info-quoted"
+printf '\002track_info 0 "Voz \303\251 \342\202\254 \360\237\216\270" #FF8000' > "$out/dispatch/track-info-utf8"
+printf '\002track_info 0 \301\277 #FF8000' > "$out/dispatch/track-info-overlong"
+printf '\002track_info 0 \340\200\257 #FF8000' > "$out/dispatch/track-info-overlong3"
+printf '\002track_info 0 \355\240\200 #FF8000' > "$out/dispatch/track-info-surrogate"
+printf '\002track_info 0 \364\220\200\200 #FF8000' > "$out/dispatch/track-info-beyond"
+printf '\002track_info 0 Kick\303 #FF8000' > "$out/dispatch/track-info-no-tail"
+printf '\002track_info 0 \302\200 #FF8000' > "$out/dispatch/track-info-c1"
+printf '\002track_info 0 a\302\237b #FF8000' > "$out/dispatch/track-info-c1-inside"
 
 # param_info of a port whose maximum, minimum or default is not finite (the backend's symbols inf, -inf and nan)
 printf '\002param_info 3 inf' > "$out/dispatch/param-info-inf"

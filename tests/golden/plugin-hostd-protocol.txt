@@ -186,6 +186,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 0
+> add urn:x 5 ... c
+< resp -101
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
@@ -214,6 +218,10 @@
 > connect system:capture_1 system:playback_1
 < resp -902
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 0
+> connect "a b" c
+< resp -4
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 0
 > add http://example.org/plugin 3
 < resp -3
@@ -382,6 +390,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 0
+> add urn:x 5 ... c
+< resp -101
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
@@ -530,6 +542,42 @@
 > param_get 3 gain
 < resp -3
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 0
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 0
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 0
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 0
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 0
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 0
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 0
+> track_info 0 "Kick In" #FF8000
+< resp 0
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 0
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 0
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp 0
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 1
 > add urn:golden:amp 3
 < resp -4
@@ -718,6 +766,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 1
+> add urn:x 5 ... c
+< resp -902
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
@@ -746,6 +798,10 @@
 > connect system:capture_1 system:playback_1
 < resp -205
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 1
+> connect "a b" c
+< resp -101
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 1
 > add http://example.org/plugin 3
 < resp -4
@@ -914,6 +970,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 1
+> add urn:x 5 ... c
+< resp -902
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
@@ -1062,6 +1122,42 @@
 > param_get 3 gain
 < resp -4
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 1
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 1
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 1
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 1
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 1
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 1
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 1
+> track_info 0 "Kick In" #FF8000
+< resp -1
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 1
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 1
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -1
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 2
 > add urn:golden:amp 3
 < resp -101
@@ -1250,6 +1346,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 2
+> add urn:x 5 ... c
+< resp -205
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
@@ -1278,6 +1378,10 @@
 > connect system:capture_1 system:playback_1
 < resp -105
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 2
+> connect "a b" c
+< resp -902
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 2
 > add http://example.org/plugin 3
 < resp -101
@@ -1446,6 +1550,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 2
+> add urn:x 5 ... c
+< resp -205
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
@@ -1594,6 +1702,42 @@
 > param_get 3 gain
 < resp -101
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 2
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 2
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 2
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 2
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 2
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 2
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 2
+> track_info 0 "Kick In" #FF8000
+< resp -2
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 2
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 2
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -2
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 3
 > add urn:golden:amp 3
 < resp -902
@@ -1782,6 +1926,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 3
+> add urn:x 5 ... c
+< resp -105
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
@@ -1810,6 +1958,10 @@
 > connect system:capture_1 system:playback_1
 < resp 0
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 3
+> connect "a b" c
+< resp -205
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 3
 > add http://example.org/plugin 3
 < resp -902
@@ -1978,6 +2130,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 3
+> add urn:x 5 ... c
+< resp -105
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
@@ -2126,6 +2282,42 @@
 > param_get 3 gain
 < resp -902
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 3
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 3
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 3
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 3
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 3
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 3
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 3
+> track_info 0 "Kick In" #FF8000
+< resp -3
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 3
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 3
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -3
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 4
 > add urn:golden:amp 3
 < resp -205
@@ -2314,6 +2506,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 4
+> add urn:x 5 ... c
+< resp 5
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
@@ -2342,6 +2538,10 @@
 > connect system:capture_1 system:playback_1
 < resp -1
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 4
+> connect "a b" c
+< resp -105
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 4
 > add http://example.org/plugin 3
 < resp -205
@@ -2510,6 +2710,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 4
+> add urn:x 5 ... c
+< resp 5
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
@@ -2658,6 +2862,42 @@
 > param_get 3 gain
 < resp -205
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 4
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 4
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 4
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 4
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 4
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 4
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 4
+> track_info 0 "Kick In" #FF8000
+< resp -4
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 4
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 4
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -4
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 5
 > add urn:golden:amp 3
 < resp -105
@@ -2846,6 +3086,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 5
+> add urn:x 5 ... c
+< resp -1
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
@@ -2874,6 +3118,10 @@
 > connect system:capture_1 system:playback_1
 < resp -2
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 5
+> connect "a b" c
+< resp 0
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 5
 > add http://example.org/plugin 3
 < resp -105
@@ -3042,6 +3290,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 5
+> add urn:x 5 ... c
+< resp -1
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
@@ -3190,6 +3442,42 @@
 > param_get 3 gain
 < resp -105
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 5
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 5
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 5
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 5
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 5
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 5
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 5
+> track_info 0 "Kick In" #FF8000
+< resp -101
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 5
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 5
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -101
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 6
 > add urn:golden:amp 3
 < resp 3
@@ -3378,6 +3666,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 6
+> add urn:x 5 ... c
+< resp -2
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
@@ -3406,6 +3698,10 @@
 > connect system:capture_1 system:playback_1
 < resp -3
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 6
+> connect "a b" c
+< resp -1
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 6
 > add http://example.org/plugin 3
 < resp 3
@@ -3574,6 +3870,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 6
+> add urn:x 5 ... c
+< resp -2
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
@@ -3722,6 +4022,42 @@
 > param_get 3 gain
 < resp 0 0.7500
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 6
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 6
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 6
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 6
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 6
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 6
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 6
+> track_info 0 "Kick In" #FF8000
+< resp -902
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 6
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 6
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -902
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 7
 > add urn:golden:amp 3
 < resp -1
@@ -3910,6 +4246,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 7
+> add urn:x 5 ... c
+< resp -3
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
@@ -3938,6 +4278,10 @@
 > connect system:capture_1 system:playback_1
 < resp -4
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 7
+> connect "a b" c
+< resp -2
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 7
 > add http://example.org/plugin 3
 < resp -1
@@ -4106,6 +4450,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 7
+> add urn:x 5 ... c
+< resp -3
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
@@ -4254,6 +4602,42 @@
 > param_get 3 gain
 < resp -1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 7
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 7
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 7
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 7
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 7
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 7
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 7
+> track_info 0 "Kick In" #FF8000
+< resp -205
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 7
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 7
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -205
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)
 # scenario-1 answer 8
 > add urn:golden:amp 3
 < resp -2
@@ -4442,6 +4826,10 @@
 > zzz %s 5
 < not found
 = 
+# fuzz/corpus/protocol/extra-24 answer 8
+> add urn:x 5 ... c
+< resp -4
+= add(urn:x,5,...)
 # fuzz/corpus/protocol/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
@@ -4470,6 +4858,10 @@
 > connect system:capture_1 system:playback_1
 < resp -101
 = connect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/quoted-words answer 8
+> connect "a b" c
+< resp -3
+= connect(a b,c)
 # fuzz/corpus/protocol/scenario-1 answer 8
 > add http://example.org/plugin 3
 < resp -2
@@ -4638,6 +5030,10 @@
 > zzz %s 5
 < not found
 = 
+# dispatch:fuzz/corpus/dispatch/extra-24 answer 8
+> add urn:x 5 ... c
+< resp -4
+= add(urn:x,5,...)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
@@ -4786,3 +5182,39 @@
 > param_get 3 gain
 < resp -2
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/track-info-beyond answer 8
+> track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 8
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 8
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 8
+> track_info 0 Kick\xc3 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong answer 8
+> track_info 0 \xc1\xbf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-overlong3 answer 8
+> track_info 0 \xe0\x80\xaf #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-quoted answer 8
+> track_info 0 "Kick In" #FF8000
+< resp -105
+= track_info(0,Kick In,#FF8000,NULL)
+# dispatch:fuzz/corpus/dispatch/track-info-surrogate answer 8
+> track_info 0 \xed\xa0\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-utf8 answer 8
+> track_info 0 "Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8" #FF8000
+< resp -105
+= track_info(0,Voz \xc3\xa9 \xe2\x82\xac \xf0\x9f\x8e\xb8,#FF8000,NULL)

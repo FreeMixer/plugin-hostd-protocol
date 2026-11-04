@@ -67,6 +67,46 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
+/* A load keeps the lines that are neither blank nor a comment, and answers -1 for a line it cannot read. */
+__attribute__((noinline)) static void check_kept(int in_domain, int n, int want)
+{
+    /* mutant: src/host-scenario.c:207 `*text == '#'` -> `*text == '#' || *text == '@'`
+       input: guarded */
+    if (in_domain && n != want)
+        abort();
+}
+
+/* A load answers the number of lines it kept, and never keeps more than the list holds. */
+__attribute__((noinline)) static void check_count(int n, const host_scenario_list_t *list)
+{
+    /* mutant: src/host-scenario.c:242 `return list->count;` -> `return list->count + 1;`
+       input: nul */
+    if (n != list->count || n > HOST_SCENARIO_MAX_LINES)
+        abort();
+}
+
+/* Each line kept has its command and its reply. */
+__attribute__((noinline)) static void check_whole(int n, const host_scenario_list_t *list)
+{
+    int whole = 0;
+    for (int i = 0; i < n; i++)
+        whole += list->lines[i].command != NULL && list->lines[i].reply != NULL;
+    /* mutant: src/host-scenario.c:238 `sc->reply = substitute(trim(arrow + 2), vars, var_count);` -> `sc->reply = NULL;`
+       input: host-scenarios */
+    if (whole != n)
+        abort();
+}
+
+/* The command is the text before the first "=>" (after a guard word) and the reply the text after it, each trimmed, with
+   $URI, $PORT_A and $EMPTY replaced. */
+__attribute__((noinline)) static void check_text(const host_scenario_t *line, const char *command, const char *reply)
+{
+    /* mutant: src/host-scenario.c:238 `trim(arrow + 2)` -> `trim(text)`
+       input: guarded */
+    if (strcmp(line->command, command) != 0 || strcmp(line->reply, reply) != 0)
+        abort();
+}
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     static const host_scenario_var_t vars[] = {
@@ -124,35 +164,14 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     int want = bad ? -1 : kept;
 
     int n = host_scenario_load(g_path, vars, 3, &list);
-    /* A load keeps the lines that are neither blank nor a comment, and answers -1 for a line it cannot read.
-       mutant: src/host-scenario.c:207 `*text == '#'` -> `*text == '#' || *text == '@'`
-       input: guarded */
-    if (in_domain && n != want)
-        abort();
+    if (n >= 0)
+        check_count(n, &list);
+    check_kept(in_domain, n, want);
     if (n >= 0)
     {
-        /* A load answers the number of lines it kept, and never keeps more than the list holds.
-           mutant: src/host-scenario.c:242 `return list->count;` -> `return list->count + 1;`
-           input: nul */
-        if (n != list.count || n > HOST_SCENARIO_MAX_LINES)
-            abort();
-        int whole = 0;
-        for (int i = 0; i < n; i++)
-            whole += list.lines[i].command != NULL && list.lines[i].reply != NULL;
-        /* Each line kept has its command and its reply.
-           mutant: src/host-scenario.c:238 `sc->reply = substitute(trim(arrow + 2), vars, var_count);` -> `sc->reply = NULL;`
-           input: host-scenarios */
-        if (whole != n)
-            abort();
+        check_whole(n, &list);
         for (int i = 0; i < n && in_domain; i++)
-        {
-            /* The command is the text before the first "=>" (after a guard word) and the reply the text after it, each
-               trimmed, with $URI, $PORT_A and $EMPTY replaced.
-               mutant: src/host-scenario.c:238 `trim(arrow + 2)` -> `trim(text)`
-               input: guarded */
-            if (strcmp(list.lines[i].command, want_command[i]) != 0 || strcmp(list.lines[i].reply, want_reply[i]) != 0)
-                abort();
-        }
+            check_text(&list.lines[i], want_command[i], want_reply[i]);
         host_scenario_free(&list);
     }
     for (int i = 0; i < kept; i++)
