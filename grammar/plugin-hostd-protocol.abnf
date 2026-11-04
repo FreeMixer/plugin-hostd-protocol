@@ -382,9 +382,52 @@ fb-xruns                   = %s"xruns" tail
 
 ; the extensions hello grants, and hello's reply: the daemon's version, then each extension it grants, once and in
 ; this order
-extension        = ext-tags
+extension        = ext-tags / ext-errors
 ext-tags         = %s"tags"
-hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags]
+ext-errors       = %s"errors"
+hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags] [SP ext-errors]
+
+; a refusal in a session granted errors: its number, then the code the table declares for that number
+error-reply      = %s"resp -1 reply.host.instance-invalid"
+                 / %s"resp -3 reply.host.instance-non-exists"
+                 / %s"resp -103 reply.host.param-symbol-invalid"
+                 / %s"resp -501 reply.plugin-hostd.placement-invalid"
+                 / %s"resp -502 reply.plugin-hostd.no-backend"
+                 / %s"resp -503 reply.plugin-hostd.worker-spawn"
+                 / %s"resp -504 reply.plugin-hostd.replay"
+                 / %s"resp -505 reply.plugin-hostd.gave-up"
+                 / %s"resp -506 reply.plugin-hostd.no-such-worker"
+                 / %s"resp -507 reply.plugin-hostd.verb-dropped"
+                 / %s"resp -508 reply.host.pin-absent"
+                 / %s"resp -509 reply.plugin-hostd.pin-binary-mismatch"
+                 / %s"resp -510 reply.host.pin-layout-mismatch"
+                 / %s"resp -511 reply.host.no-param-contract"
+                 / %s"resp -512 reply.plugin-hostd.lv2-adapter-refused"
+                 / %s"resp -513 reply.host.no-note-input"
+                 / %s"resp -514 reply.host.notes-by-jack"
+                 / %s"resp -515 reply.plugin-hostd.no-preset-list"
+                 / %s"resp -516 reply.plugin-hostd.pin-refused"
+                 / %s"resp -517 reply.host.note-queue-full"
+                 / %s"resp -518 reply.plugin-hostd.chain-unknown-instance"
+                 / %s"resp -519 reply.plugin-hostd.chain-duplicate"
+                 / %s"resp -520 reply.plugin-hostd.chain-instance-busy"
+                 / %s"resp -521 reply.plugin-hostd.chain-mixed-format"
+                 / %s"resp -522 reply.plugin-hostd.no-such-chain"
+                 / %s"resp -523 reply.plugin-hostd.preset-not-offered"
+                 / %s"resp -524 reply.plugin-hostd.preset-invalid"
+                 / %s"resp -525 reply.plugin-hostd.preset-needs-state"
+                 / %s"resp -526 reply.plugin-hostd.preset-plugin-changed"
+                 / %s"resp -527 reply.plugin-hostd.load-refused"
+                 / %s"resp -528 reply.plugin-hostd.dir-not-writable"
+                 / %s"resp -529 reply.plugin-hostd.descriptor-absent"
+                 / %s"resp -530 reply.plugin-hostd.descriptor-pending"
+                 / %s"resp -531 reply.plugin-hostd.descriptor-scan-failed"
+                 / %s"resp -532 reply.plugin-hostd.no-such-plan"
+                 / %s"resp -533 reply.plugin-hostd.no-record"
+                 / %s"resp -534 reply.plugin-hostd.no-cell"
+                 / %s"resp -535 reply.plugin-hostd.unknown-plugin"
+                 / %s"resp -901 reply.host.memory-allocation"
+                 / %s"resp -902 reply.host.invalid-operation"
 
 ; mod-host's parse refusals, written as their message
 protocol-error   = %s"not found" / %s"many arguments" / %s"few arguments" / %s"invalid argument"

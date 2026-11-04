@@ -34,6 +34,7 @@
 #include "utils.h"
 #include "host-errors.h"
 #include "session.h"
+#include "reply-words.h"
 // the declared protocol: the protocol version, hello's line and the extensions it grants (data/verbs.json)
 #include "plugin-hostd/protocol.h"
 
@@ -207,6 +208,36 @@ static void hello_cb(proto_t *proto)
             pos += snprintf(buffer + pos, size - pos, " %s", g_extensions[i]);
     protocol_response(buffer, proto);
     FREE(buffer);
+}
+
+/* in a session granted errors, a refusal "resp <n>" alone is followed by the error word the protocol declares for n,
+   when it declares one; any other answer goes out as it is */
+static void error_word(proto_t *proto)
+{
+    char bare[32], *line;
+    size_t i, size;
+    int resp;
+
+    if (sscanf(proto->response, "resp %d", &resp) != 1 || resp >= 0)
+        return;
+    snprintf(bare, sizeof(bare), "resp %d", resp);
+    if (strcmp(bare, proto->response) != 0)
+        return;
+    for (i = 0; i < sizeof(g_reply_words) / sizeof(g_reply_words[0]); i++)
+    {
+        if (g_reply_words[i].resp != resp)
+            continue;
+        size = proto->response_size + 1 + strlen(g_reply_words[i].code) + 1;
+        line = MALLOC(size);
+        /* with no memory for the word the refusal goes out bare: its number says it */
+        if (!line)
+            return;
+        snprintf(line, size, "%s %s", proto->response, g_reply_words[i].code);
+        FREE(proto->response);
+        proto->response = line;
+        proto->response_size = size - 1;
+        return;
+    }
 }
 
 /* a character of a request tag: a letter, a digit, '-', '_' or '.' (grammar/core.abnf, tag-char) */
@@ -387,6 +418,8 @@ void protocol_parse(msg_t *msg)
             g_commands[index].callback(&proto);
             if (proto.response)
             {
+                if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))
+                    error_word(&proto);
                 answer(msg, tag, tag_size, proto.response, proto.response_size+1);
                 if (g_verbose) printf("PROTOCOL: response '%s'\n", proto.response);
 

@@ -33,5 +33,6 @@ arm "no parse refusal" '%s"few arguments" / ' ''
 arm "no tagged request" 'request          = \[tag SP\] command' 'request          = command'
 arm "a tag takes an @" 'tag-char         = ALPHA' 'tag-char         = "@" / ALPHA'
 arm "hello grants one twice" 'hello-reply      = %s"resp" SP %s"0" SP int' 'hello-reply      = %s"resp" SP %s"0" SP int *(SP extension)'
+arm "an error word of another number" 'error-reply      = %s"resp -1 ' 'error-reply      = %s"resp -3 '
 
 [ "$failed" = 0 ] && echo "grammar sabotage ok" || { echo "grammar sabotage FAILED"; exit 1; }

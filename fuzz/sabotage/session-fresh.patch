@@ -1,10 +1,10 @@
-Breaks check_fresh of fuzz/fuzz_session.c:109 (a new connection starts with nothing granted).
+Breaks check_fresh of fuzz/fuzz_session.c:128 (a new connection starts with nothing granted).
 Caught by the seed input "tags" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c
 --- a/src/protocol.c
 +++ b/src/protocol.c
-@@ -153,7 +153,7 @@
+@@ -154,7 +154,7 @@
  /* a new session: nothing granted, every line answered as mod-host answers it */
  static void session_start(void)
  {

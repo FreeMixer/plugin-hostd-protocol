@@ -11,6 +11,7 @@ host_scenario_direct_open
 host_scenario_free
 host_scenario_load
 host_scenario_run
+host_scenario_set_host
 host_scenario_socket_exchange
 host_scenario_socket_open
 protocol_add_command

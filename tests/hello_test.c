@@ -12,6 +12,8 @@
  *     no tag has, is no tag;
  *   - a hello that drops tags is answered with the tag it was sent with, and the next tagged line is no tag;
  *   - an event a tagged request causes goes out on the feedback port untagged;
+ *   - a session granted errors reads a refusal's error word after its number, for a number the protocol declares a
+ *     code for and for nothing else;
  *   - a new connection starts with nothing granted.
  *
  * Copyright (C) 2026 Pau Aliagas <linuxnow@gmail.com>
@@ -59,6 +61,16 @@ static void emit_cb(proto_t *proto)
 {
     host_dispatch_remote_pages_changed(atoi(proto->list[1]));
     protocol_response_int(SUCCESS, proto);
+}
+
+/* refuse <n> [<word>]: resp <n>, and the word after it when one is given */
+static void refuse_cb(proto_t *proto)
+{
+    char reply[128];
+
+    snprintf(reply, sizeof(reply), "resp %d%s%s", atoi(proto->list[1]), proto->list_count > 2 ? " " : "",
+             proto->list_count > 2 ? proto->list[2] : "");
+    protocol_response(reply, proto);
 }
 
 static void *server_thread(void *arg)
@@ -162,6 +174,7 @@ static void expect_feedback(conn_t *c, const char *what, const char *want)
 static const char *const g_plain[] = {
     "param_get 3 gain", "param_get 9 gain", "remove", "remove 3 4", "frobnicate 1", "@t1 param_get 3 gain", "@t1",
     "@ param_get 3 gain", "@a@b remove 3", "emit 3", "help", "\"param_get\" 3 gain", "param_get  3   gain", "",
+    "refuse -3", "refuse -902",
 };
 #define PLAIN_COUNT (sizeof(g_plain) / sizeof(g_plain[0]))
 
@@ -192,6 +205,7 @@ static void register_host(int hello)
     host_dispatch_register(&g_backend);
     host_dispatch_register_unsupported();
     protocol_add_command("emit %i", emit_cb);
+    protocol_add_command("refuse %i ...", refuse_cb);
     if (hello)
         protocol_add_hello();
 }
@@ -261,6 +275,21 @@ int main(void)
     expect(&c, "tagged hello", "@t6 hello 1", "@t6 resp 0 1");
     expect(&c, "tags dropped", "@t7 param_get 3 gain", "not found");
     expect(&c, "hello", "hello 1 tags", "resp 0 1 tags");
+    expect(&c, "no error word", "refuse -3", "resp -3");
+
+    /* -- error words */
+    expect(&c, "hello", "hello 1 errors", "resp 0 1 errors");
+    expect(&c, "an error word", "param_get 9 gain", "resp -3 reply.host.instance-non-exists");
+    expect(&c, "an error word", "refuse -902", "resp -902 reply.host.invalid-operation");
+    expect(&c, "no word declared", "refuse -2", "resp -2");
+    expect(&c, "a refusal with values", "refuse -3 extra", "resp -3 extra");
+    expect(&c, "a success", "param_get 3 gain", "resp 0 0.2500");
+    expect(&c, "a parse refusal", "remove", "few arguments");
+    expect(&c, "a refused hello", "hello 0", "resp -902 reply.host.invalid-operation");
+    expect(&c, "hello", "hello 1 errors tags", "resp 0 1 tags errors");
+    expect(&c, "tagged, with an error word", "@e1 param_get 9 gain", "@e1 resp -3 reply.host.instance-non-exists");
+    expect(&c, "hello", "hello 1 tags", "resp 0 1 tags");
+    expect(&c, "words dropped", "param_get 9 gain", "resp -3");
     close_session(&c);
 
     /* -- a new connection starts with nothing granted */

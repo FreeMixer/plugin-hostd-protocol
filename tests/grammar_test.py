@@ -101,7 +101,7 @@ def table_version():
         return json.load(f)["version"]
 
 
-hello_answers = 0
+hello_answers = error_answers = 0
 answers = set()
 with open(os.path.join(ROOT, "tests", "golden", "plugin-hostd-protocol.txt"), encoding="utf-8") as f:
     for line in f:
@@ -176,6 +176,20 @@ for line in ("@ resp 0", "@a7resp 0"):
 must_not("feedback", "@a7 " + " ".join([table["feedback"][0]["line"]] + [SAMPLE[a] for a in (table["feedback"][0]["args"] or [])]),
          "a tagged feedback line")
 
+codes = table["reply_codes"]
+for c in codes:
+    must("error-reply", f"resp {c['resp']} {c['code']}", "a refusal with its error word")
+    must("reply", f"resp {c['resp']} {c['code']}", "a refusal with its error word is a reply")
+must_not("error-reply", f"resp {codes[0]['resp']} {codes[1]['code']}", "a refusal with another number's word")
+must_not("error-reply", f"resp {codes[0]['resp']}", "a refusal without its word")
+for a in answers:
+    words_ = a.split(" ")
+    if len(words_) == 3 and words_[0] == "resp" and words_[2].startswith("reply."):
+        must("error-reply", a, "golden transcript, a refusal with its error word")
+        error_answers += 1
+if error_answers == 0:
+    fail("the golden transcript holds no refusal with its error word")
+
 # ---- refusals the grammar names ----
 for line in ("", "zzz 3", "add", "remove x", "set_bpm loud", "param_set 3 gain", "bypass 3", "Add urn:golden:amp 3",
              "remove  3", "remove 3 "):
@@ -193,6 +207,7 @@ if failed:
     sys.exit(1)
 if hello_answers == 0:
     fail("the golden transcript holds no answer to hello")
-print(f"ok   grammar: {scenarios} scenario lines, {len(answers)} distinct answers of the library ({hello_answers} to hello), "
+print(f"ok   grammar: {scenarios} scenario lines, {len(answers)} distinct answers of the library ({hello_answers} to hello, "
+      f"{error_answers} with an error word), "
       f"{len(table['commands'])} commands ({forms} forms) and {len(table['feedback'])} feedback lines of the table, "
       f"{checked} parses in all")

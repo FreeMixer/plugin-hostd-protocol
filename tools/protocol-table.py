@@ -115,12 +115,20 @@ def table():
     shared = shared_verbs()
 
     vocab = read("include/plugin-hostd/omx_clap_core_vocabulary.h")
-    host_codes = {}
-    for m in re.finditer(r'#define OMX_REPLY_HOST_([A-Z0-9_]+) "[^"]+"(?: ///< .*)?\n#define OMX_REPLY_HOST_\1_RESP \((-?\d+)\)',
+    host_codes, words = {}, {}
+    for m in re.finditer(r'#define OMX_REPLY_HOST_([A-Z0-9_]+) "([^"]+)"(?: ///< .*)?\n#define OMX_REPLY_HOST_\1_RESP \((-?\d+)\)',
                          vocab):
         parts = m.group(1).lower().split("_")
-        host_codes[parts[0] + "".join(x.capitalize() for x in parts[1:])] = int(m.group(2))
+        host_codes[parts[0] + "".join(x.capitalize() for x in parts[1:])] = int(m.group(3))
+        words.setdefault(int(m.group(3)), set()).add(m.group(2))
     phd_codes = {k: v["resp"] for k, v in verbs["PLUGIN_HOSTD_REPLY_CODES"]["codes"].items()}
+    for v in verbs["PLUGIN_HOSTD_REPLY_CODES"]["codes"].values():
+        words.setdefault(v["resp"], set()).add(v["code"])
+    # the word an error word answer carries after a refusal's number: one word a number, or the table is not written
+    for resp, w in words.items():
+        if len(w) > 1:
+            fail(f"resp {resp} is declared as more than one code: {', '.join(sorted(w))}")
+    reply_codes = [{"resp": r, "code": next(iter(w))} for r, w in sorted(words.items(), reverse=True)]
 
     def resolve(ref):
         group, name = ref.split(".", 1)
@@ -227,6 +235,8 @@ def table():
         "refused": mod_ui,
         "feedback": sorted(feedback.values(), key=lambda e: (e["origin"] != "mod-host", e["line"])),
         "protocol_errors": mod["protocol_errors"],
+        # every refusal number the protocol declares a code for, and that code: the error word of the extension errors
+        "reply_codes": reply_codes,
         # what hello can grant, in the order its reply names them
         "extensions": [{"word": w["word"], "doc": w.get("doc", "")}
                        for w in verbs["PLUGIN_HOSTD_PROTOCOL_EXTENSIONS"]["words"].values()],

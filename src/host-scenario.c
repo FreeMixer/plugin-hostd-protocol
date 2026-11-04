@@ -42,6 +42,9 @@
 #include "protocol.h"
 #include "socket.h"
 #include "utils.h"
+// the declared verbs and what each host owes them (data/verbs.json, omx-clap-core's package)
+#include "plugin-hostd/plugin_hostd_protocol_host_verbs.h"
+#include "plugin-hostd/omx_clap_core_host_verbs.h"
 
 
 /*
@@ -113,6 +116,33 @@ static char *substitute(const char *text, const host_scenario_var_t *vars, int v
     }
     out[len] = '\0';
     return out;
+}
+
+/* the host whose levels decide a verb answered "not found" (OMX_HOST_VERB_HOSTS_INIT), or NULL for every host */
+static const char *g_host;
+
+enum { VERB_UNDECLARED, VERB_REQUIRED, VERB_NOT_REQUIRED };
+
+/* what the host owes a declared verb: required of it (of any host, with none named), or not; or not declared, as
+   mod-host's own verbs and a word that is no verb are not */
+static int verb_level(const char *verb)
+{
+    static const char *const hosts[] = OMX_HOST_VERB_HOSTS_INIT;
+    const struct omx_host_verb *tables[] = { plugin_hostd_protocol_host_verbs(), omx_clap_core_host_verbs() };
+    const unsigned counts[] = { PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT, OMX_CLAP_CORE_HOST_VERB_COUNT };
+    unsigned t, i, h;
+
+    for (t = 0; t < 2; t++)
+        for (i = 0; i < counts[t]; i++)
+        {
+            if (strcmp(tables[t][i].verb, verb) != 0)
+                continue;
+            for (h = 0; h < OMX_HOST_VERB_HOST_COUNT; h++)
+                if ((!g_host || strcmp(hosts[h], g_host) == 0) && tables[t][i].level[h] == OMX_HOST_VERB_REQUIRED)
+                    return VERB_REQUIRED;
+            return VERB_NOT_REQUIRED;
+        }
+    return VERB_UNDECLARED;
 }
 
 static const char *verb_of(const char *command, char *verb, size_t size)
@@ -261,7 +291,7 @@ int host_scenario_run(const host_scenario_list_t *list, host_scenario_exchange_t
     char absent[HOST_SCENARIO_MAX_ABSENT][32];
     int absent_count = 0;
     int failures = 0;
-    int i, j;
+    int i, j, level;
 
     for (i = 0; i < list->count; i++)
     {
@@ -289,9 +319,17 @@ int host_scenario_run(const host_scenario_list_t *list, host_scenario_exchange_t
             return -1;
         }
 
-        /* a verb the host does not serve: refused with -902, or one it does not know, as mod-host answers hello */
+        /* a verb the host does not serve: refused with -902, or one it does not know that it is not required to
+           (as mod-host answers hello); a required verb it does not know is a failure */
         verb_of(sc->command, verb, sizeof(verb));
-        if ((strcmp(reply, "resp -902") == 0 || strcmp(reply, "not found") == 0) && absent_count < HOST_SCENARIO_MAX_ABSENT)
+        level = strcmp(reply, "not found") == 0 ? verb_level(verb) : VERB_UNDECLARED;
+        if (level == VERB_REQUIRED)
+        {
+            printf("FAIL '%s': not found, and %s is required of %s\n", sc->command, verb, g_host ? g_host : "a host");
+            failures++;
+            continue;
+        }
+        if ((strcmp(reply, "resp -902") == 0 || level == VERB_NOT_REQUIRED) && absent_count < HOST_SCENARIO_MAX_ABSENT)
         {
             for (j = 0; j < absent_count; j++)
             {
@@ -324,6 +362,11 @@ int host_scenario_run(const host_scenario_list_t *list, host_scenario_exchange_t
         printf("ok   '%s' -> '%s'\n", sc->command, reply);
     }
     return failures;
+}
+
+void host_scenario_set_host(const char *host)
+{
+    g_host = host;
 }
 
 int host_scenario_socket_open(const char *host, int port)

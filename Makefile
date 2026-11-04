@@ -52,7 +52,7 @@ PC_DATADIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(DATADIR))
 
 all: $(LIB_SO)
 
-$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h src/reply-words.h
 
 src/%.o: src/%.c
 	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
@@ -93,11 +93,11 @@ TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
 # write() calls, which mod-host leaves unchecked too
 SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test tests/forms_test \
-             tests/hello_test \
+             tests/hello_test tests/runner_test \
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-hello-sabotage test-install test-abi version-check \
+      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
@@ -186,6 +186,14 @@ HELLO_PORT ?= 15590
 test-hello: tests/hello_test
 	HELLO_PORT=$(HELLO_PORT) ./tests/hello_test
 
+# the scenario runner reads "not found" by the host's levels (tests/runner_test.c): a verb not required of the host is
+# one it does not serve, a required one fails; test-hello-sabotage breaks this too
+test-runner: tests/runner_test
+	./tests/runner_test
+
+tests/runner_test: tests/runner_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
+
 test-hello-sabotage:
 	HELLO_PORT=$(HELLO_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
 
@@ -233,6 +241,7 @@ abi-check: abi-stage
 #   protocol/plugin-hostd-protocol.json   tools/protocol-table.py, the one table merged from the three above and
 #                                         data/verbs.json; it refuses a word of ours that changes a mod-host word
 #   grammar/plugin-hostd-protocol.abnf    tools/abnf-gen.py, grammar/core.abnf and a rule per word of the table
+#   src/reply-words.h                     tools/reply-words.py, the error word of each refusal number of the table
 #   README.md                             the region host-verbs, tools/protocol-gen splice
 #   doc/protocol.md                       tools/protocol-doc.py, from all of the above
 #
@@ -253,6 +262,7 @@ gen: $(GEN)
 	    mv protocol/plugin-hostd-protocol.json.new protocol/plugin-hostd-protocol.json
 	python3 tools/abnf-gen.py > grammar/plugin-hostd-protocol.abnf.new && \
 	    mv grammar/plugin-hostd-protocol.abnf.new grammar/plugin-hostd-protocol.abnf
+	python3 tools/reply-words.py > src/reply-words.h.new && mv src/reply-words.h.new src/reply-words.h
 	$(GEN) splice README.md > README.md.new && mv README.md.new README.md
 	$(MAKE) --no-print-directory protocol-doc
 
@@ -262,6 +272,7 @@ check-generated: $(GEN)
 	python3 tools/mod-host-json.py include > $$tmp/mod-host.json; cmp $$tmp/mod-host.json protocol/mod-host.json; \
 	python3 tools/protocol-table.py --check; \
 	python3 tools/abnf-gen.py --check; \
+	python3 tools/reply-words.py --check; \
 	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
 	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
 	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
@@ -381,5 +392,5 @@ clean:
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
-        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-hello-sabotage test-install test-abi \
+        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi \
         abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus clean

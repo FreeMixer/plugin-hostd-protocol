@@ -59,16 +59,18 @@ A client that never sends `hello` is answered exactly as mod-host answers it: th
 
 ```abnf
 cmd-hello                = %s"hello" SP int tail
-hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags]
-extension        = ext-tags
+hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags] [SP ext-errors]
+extension        = ext-tags / ext-errors
 ext-tags         = %s"tags"
+ext-errors       = %s"errors"
 request          = [tag SP] command
 answer           = [tag SP] reply
 tag              = "@" 1*tag-char
 tag-char         = ALPHA / DIGIT / "-" / "_" / "."
+error-reply      = %s"resp -1 reply.host.instance-invalid" / ...
 ```
 
-- The client names the protocol version it speaks and the extensions it asks for: `hello 1 tags`. The daemon answers with its own protocol version and, of the extensions asked for, the ones it grants, each once and in the order of the table below: `resp 0 1 tags`. An extension the daemon does not know is not granted, and is no error.
+- The client names the protocol version it speaks and the extensions it asks for: `hello 1 tags errors`. The daemon answers with its own protocol version and, of the extensions asked for, the ones it grants, each once and in the order of the table below: `resp 0 1 tags errors`. An extension the daemon does not know is not granted, and is no error.
 - The version is the one the protocol JSON carries. It changes only when a word, a code or the shape of a verb changes incompatibly; what is added comes as a new extension. A client checks the version and uses only the extensions granted.
 - A version that is not a whole number of 1 or more is refused with -902, and nothing changes.
 - Each `hello` replaces what the one before it granted, so `hello 1` alone goes back to mod-host mode. A new connection starts with nothing granted.
@@ -77,6 +79,7 @@ tag-char         = ALPHA / DIGIT / "-" / "_" / "."
 | extension | what it grants |
 |---|---|
 | `tags` | request tags: a line may start with @<tag>, and its answer then starts with the same @<tag> |
+| `errors` | error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one |
 
 ### Request tags
 
@@ -94,6 +97,19 @@ In a session granted `tags`, a request may start with a tag: `@` and one or more
 - A first word that starts with `@` but is not a tag (`@` alone, or with any other character) is read as a verb, and answered `not found`. So is every line that starts with `@` in a session not granted `tags`, as mod-host answers it.
 - The answer to a tagged `hello` carries its tag, also when that `hello` drops `tags`.
 - Events and feedback lines go out on the feedback port as before and never carry a tag, also when a tagged request caused them.
+
+### Error words
+
+In a session granted `errors`, a refusal `resp <n>` is followed by one more word, the code the protocol declares for that number: a stable word that is never reworded, which a client can match and translate without a table of numbers. The number stays first, so a client that reads only the number reads it as before:
+
+```
+> param_get 9 gain
+< resp -3 reply.host.instance-non-exists
+```
+
+- The words are those of the [reply codes](#reply-codes), 40 numbers in all; a number the protocol declares no code for goes out bare.
+- Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse refusal (`not found`, `few arguments`, which are words already) go out as they are.
+- With `tags` as well, the tag comes first: `@a9 resp -3 reply.host.instance-non-exists`.
 
 2. mod-host's verbs on plugin-hostd
 -----------------------------------

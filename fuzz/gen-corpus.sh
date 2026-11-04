@@ -69,6 +69,8 @@ printf 'hello 1 tags\n@a param_get 3 gain\n@a.b-c_d frobnicate 1\n@ remove 3\n@x
     > "$out/session/tags"
 printf 'param_get 3 gain\n@a param_get 3 gain\nhello 1 tags tags zzz\n@a@b remove 3\nhello 2\nhello -1 tags\n' \
     > "$out/session/mixed"
+printf 'refuse -3\nhello 1 errors\nrefuse -3\nrefuse -2\nrefuse -3 x\nrefuse -902\nhello 1 tags errors\n@a refuse -103\nrefuse 0\nhello 0\n' \
+    > "$out/session/errors"
 
 # the scenario file reader: the real file, and its edges
 cp "$scen" "$out/scenario/host-scenarios"

@@ -417,6 +417,8 @@ def sessions(w):
     for line in grammar_rules(["cmd-hello", "hello-reply", "extension"] + [f"ext-{e['word']}" for e in exts]
                               + ["request", "answer", "tag", "tag-char"]):
         w(line)
+    if any(e["word"] == "errors" for e in exts):
+        w("error-reply      = " + " / ".join(grammar_rules(["error-reply"])[0].split("= ", 1)[1:]) + " / ...")
     w("```")
     w("")
     w(f"- The client names the protocol version it speaks and the extensions it asks for: `hello {version} "
@@ -457,6 +459,26 @@ def sessions(w):
         w("- The answer to a tagged `hello` carries its tag, also when that `hello` drops `tags`.")
         w("- Events and feedback lines go out on the feedback port as before and never carry a tag, also when a tagged "
           "request caused them.")
+        w("")
+    if any(e["word"] == "errors" for e in exts):
+        codes = TABLE["reply_codes"]
+        w("### Error words")
+        w("")
+        w("In a session granted `errors`, a refusal `resp <n>` is followed by one more word, the code the protocol "
+          "declares for that number: a stable word that is never reworded, which a client can match and translate "
+          "without a table of numbers. The number stays first, so a client that reads only the number reads it as before:")
+        w("")
+        w("```")
+        w("> param_get 9 gain")
+        ex = next(c for c in codes if c["resp"] == -3)
+        w(f"< resp -3 {ex['code']}")
+        w("```")
+        w("")
+        w(f"- The words are those of the [reply codes](#reply-codes), {len(codes)} numbers in all; a number the protocol "
+          "declares no code for goes out bare.")
+        w("- Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse "
+          "refusal (`not found`, `few arguments`, which are words already) go out as they are.")
+        w("- With `tags` as well, the tag comes first: `@a9 resp -3 " + ex["code"] + "`.")
         w("")
 
 

@@ -786,6 +786,10 @@
       "tags": {
         "word": "tags",
         "doc": "request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>"
+      },
+      "errors": {
+        "word": "errors",
+        "doc": "error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one"
       }
     }
   }
