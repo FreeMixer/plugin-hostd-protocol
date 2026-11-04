@@ -20,6 +20,8 @@
  *   plugin-hostd#371  param_info of a port whose range or default is not finite: format_number() wrote past digits[20]
  *   plugin-hostd#372  a command whose first word names no verb ran the callback of the first command its later words
  *                     matched (add, for "zzz %s 5")
+ *   #12               a word "..." at the "..." of a pattern was read as a fixed word, so the words after it were
+ *                     refused (many arguments, for "add urn:x 5 ... c")
  *   #11               a track_info name of a C1 control character (U+0080..U+009F, C2 80..C2 9F) was taken: "no control
  *                     character" is Unicode's class Cc, U+0000..U+001F, U+007F and U+0080..U+009F */
 
@@ -135,6 +137,9 @@ int main(void)
     expect(&direct, "#372", "connect %s %i", "resp 0", "connect");
     expect(&direct, "#372", "disconnect %s %s", "resp 0", "disconnect");
     expect(&direct, "#372", "add urn:x 5", "resp 5", "add");
+
+    /* #12: a word "..." at the "..." of a pattern leaves the words after it to the pattern */
+    expect(&direct, "#12", "add urn:x 5 ... c", "resp 5", "add");
 
     /* #11: a name refuses the C1 control characters as it refuses C0 and DEL; U+00A0, the first code point after them,
        and a name of no control character are taken */
