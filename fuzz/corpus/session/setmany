@@ -1,0 +1,8 @@
+param_set_many 3 a 0.5 bb 0.25
+param_get_many 3 a bb
+param_set_many 3 a 0.1 xbad 0.2 bb 0.3
+param_get_many 3 a bb
+param_set_many 3 a 0.1 bb 2000
+param_set_many 9 a 1
+param_set_many 3 a notanumber
+param_set_many 3 a 1 bb

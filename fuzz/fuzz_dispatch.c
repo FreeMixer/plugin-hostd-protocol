@@ -85,6 +85,67 @@ static const host_backend_t g_backend = {
 };
 static const host_plugin_info_t g_info = { f_track_info, f_remote_pages, f_remote_page_get, f_param_info };
 
+/* A string of UTF-8 as RFC 3629 section 4 spells it: ASCII, or a lead byte and its tails, with the second byte's range
+   narrowed where the shortest form, the surrogates and U+10FFFF demand it. */
+static int rfc3629(const unsigned char *s)
+{
+    while (*s)
+    {
+        unsigned tails, lo = 0x80, hi = 0xbf;
+        if (*s < 0x80)
+            tails = 0;
+        else if (*s >= 0xc2 && *s <= 0xdf)
+            tails = 1;
+        else if (*s >= 0xe0 && *s <= 0xef)
+        {
+            tails = 2;
+            if (*s == 0xe0)
+                lo = 0xa0;
+            if (*s == 0xed)
+                hi = 0x9f;
+        }
+        else if (*s >= 0xf0 && *s <= 0xf4)
+        {
+            tails = 3;
+            if (*s == 0xf0)
+                lo = 0x90;
+            if (*s == 0xf4)
+                hi = 0x8f;
+        }
+        else
+            return 0;
+        s++;
+        for (unsigned i = 0; i < tails; i++, s++)
+            if (*s < (i == 0 ? lo : 0x80) || *s > (i == 0 ? hi : 0xbf))
+                return 0;
+    }
+    return 1;
+}
+
+/* A string of RFC 3629 UTF-8 that holds a control character of Unicode's class Cc: a code point below U+0020, U+007F, or
+   U+0080..U+009F (C2 80..C2 9F), each decoded from the string rather than read off a byte. */
+static int has_control(const unsigned char *s)
+{
+    while (*s)
+    {
+        unsigned long cp;
+        unsigned tails;
+        if (*s < 0x80)
+            cp = *s, tails = 0;
+        else if (*s < 0xe0)
+            cp = *s & 0x1f, tails = 1;
+        else if (*s < 0xf0)
+            cp = *s & 0x0f, tails = 2;
+        else
+            cp = *s & 0x07, tails = 3;
+        for (s++; tails > 0 && *s; tails--, s++)
+            cp = (cp << 6) | (*s & 0x3f);
+        if (cp < 0x20 || (cp >= 0x7f && cp <= 0x9f))
+            return 1;
+    }
+    return 0;
+}
+
 /* The whole reply the dispatcher must give for a verb whose answer comes from the backend above alone: the words of the
    command and the salt decide it. Answers 0 for a verb or a word count this does not cover. */
 static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
@@ -117,17 +178,12 @@ static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
     }
     else if (strcmp(w[0], "track_info") == 0 && n >= 4)
     {
-        /* a name of printable ASCII below 256 bytes, a colour "-" or "#" and six hex digits, a kind of bus, return or
-           master, and at most one word after the colour; a name with a byte of 0x80 or more is left to the shape checks */
+        /* a name of UTF-8 (RFC 3629) below 256 bytes with no control character of Unicode's class Cc (U+0000..U+001F,
+           U+007F, U+0080..U+009F), a colour "-" or "#" and six hex digits, a kind of bus, return or master, and at
+           most one word after the colour */
         const char *name = w[2], *color = w[3], *kind = n > 4 ? w[4] : NULL;
-        int valid = strlen(name) < 256 && n <= 5;
-        for (const char *c = name; *c; c++)
-        {
-            if ((unsigned char)*c >= 0x80)
-                return 0;
-            if ((unsigned char)*c < 0x20 || *c == 0x7f)
-                valid = 0;
-        }
+        int valid = strlen(name) < 256 && n <= 5 && rfc3629((const unsigned char *)name) &&
+                    !has_control((const unsigned char *)name);
         valid = valid && (strcmp(color, "-") == 0 ||
                           (strlen(color) == 7 && color[0] == '#' && strspn(color + 1, "0123456789abcdefABCDEF") == 6));
         valid = valid && (!kind || strcmp(kind, "bus") == 0 || strcmp(kind, "return") == 0 || strcmp(kind, "master") == 0);
@@ -183,6 +239,60 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
+/* Each command gets a reply: the callback's, or a protocol error message. */
+__attribute__((noinline)) static void check_answered(void)
+{
+    /* mutant: src/host-dispatch.c:72 `protocol_response_int(resp, proto);` -> `(void)resp;`
+       input: scenario-1 */
+    if (fuzz_reply_len == 0)
+        abort();
+}
+
+/* One answer per command, sent with its NUL: the NUL is the last byte and the only one. */
+__attribute__((noinline)) static void check_one_answer(void)
+{
+    /* mutant: src/protocol.c:440 `proto.response_size+1` -> `proto.response_size`
+       input: scenario-1 */
+    if (memchr(fuzz_reply, '\0', fuzz_reply_len) != fuzz_reply + fuzz_reply_len - 1)
+        abort();
+}
+
+/* The reply to a command of the verbs expected_reply() covers is the whole text the backend's answer makes, value
+   included. */
+__attribute__((noinline)) static void check_value(int modeled, const char *expect)
+{
+    /* mutant: src/host-dispatch.c:146 `resp, value);` -> `resp, 0.0);`
+       input: param-get
+       mutant: src/host-dispatch.c:503 `info.max` -> `info.min`
+       input: extra-8
+       mutant: src/host-dispatch.c:434 `"Infinity"` -> `"inf"`
+       input: param-info-inf
+       mutant: src/utils.c:203 `quote = 0;` -> ``
+       input: track-info-quoted
+       mutant: src/host-dispatch.c:312 ` && *p >= 0xc2` -> ``
+       input: track-info-overlong
+       mutant: src/host-dispatch.c:324 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
+       input: track-info-c1 */
+    if (modeled && strcmp(fuzz_reply, expect) != 0)
+        abort();
+}
+
+/* The answer is one of the four protocol error messages, written out here, or "resp" and an integer, then the end or a
+   space. */
+__attribute__((noinline)) static void check_shape(void)
+{
+    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
+    int known = 0;
+    for (int i = 0; i < 4 && !known; i++)
+        known = strcmp(fuzz_reply, texts[i]) == 0;
+    /* mutant: src/protocol.c:523 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
+       input: extra-17
+       mutant: src/protocol.c:489 `"resp %i"` -> `"rsp %i"`
+       input: extra-4 */
+    if (!known && !is_resp_line(fuzz_reply))
+        abort();
+}
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     if (size < 1 || size > FUZZ_MAX_INPUT)
@@ -195,70 +305,31 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     msg.data_size = strlen(msg.data);
     msg.sender_id = FUZZ_SENDER;
 
-    /* the words of the command, split on spaces (a message with a quote, a backslash, a "%" or a "..." in it is left
-       to the shape checks below: quotes join and cut words, and the parser takes a pattern's own wildcard for a match) */
-    char *copy = strdup(msg.data);
+    /* the words of the command by the quoting rule (fuzz_words); a command with a word that holds a "%" or a "..." is
+       left to the shape checks below, since the parser may take it for a pattern's wildcard */
+    char *copy = malloc(msg.data_size + 1);
     char *words[8];
-    unsigned count = 0;
     char expect[256];
     int modeled = 0;
     /* not a property: the harness's own allocation failed */
     if (!copy)
         abort();
-    if (strpbrk(copy, "%\"\\") == NULL && strstr(copy, "...") == NULL)
+    unsigned count = fuzz_words(msg.data, copy, words, 8);
+    if (count < 8)
     {
-        size_t len = strlen(copy);
-        while (len > 0 && (copy[len - 1] == ' ' || copy[len - 1] == '\t' || copy[len - 1] == '\r' || copy[len - 1] == '\n'))
-            copy[--len] = '\0';
-        for (char *p = copy; count < 8;)
-        {
-            words[count++] = p;
-            p = strchr(p, ' ');
-            if (!p)
-                break;
-            *p++ = '\0';
-            while (*p == ' ')
-                p++;
-        }
-        modeled = count < 8 && expected_reply(expect, sizeof(expect), words, count);
+        modeled = 1;
+        for (unsigned i = 0; i < count; i++)
+            modeled = modeled && !fuzz_wildcard(words[i]);
+        modeled = modeled && expected_reply(expect, sizeof(expect), words, count);
     }
 
     protocol_parse(&msg);
     free(msg.data);
 
-    /* Each command gets a reply: the callback's, or a protocol error message.
-       mutant: src/host-dispatch.c:70 `protocol_response_int(resp, proto);` -> ``
-       input: scenario-1 */
-    if (fuzz_reply_len == 0)
-        abort();
-    const char *reply = fuzz_reply;
-    size_t n = fuzz_reply_len;
-    /* One answer per command, sent with its NUL: the NUL is the last byte and the only one.
-       mutant: src/protocol.c:224 `proto.response_size+1` -> `proto.response_size`
-       input: scenario-1 */
-    if (memchr(reply, '\0', n) != reply + n - 1)
-        abort();
-    /* The reply to a command of the verbs above is the whole text the backend's answer makes, value included.
-       mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
-       input: param-get
-       mutant: src/host-dispatch.c:382 `info.max` -> `info.min`
-       input: extra-8
-       mutant: src/host-dispatch.c:311 `isnan(value) || isinf(value)` -> `0`
-       input: param-info-inf */
-    if (modeled && strcmp(reply, expect) != 0)
-        abort();
+    check_answered();
+    check_one_answer();
+    check_shape();
+    check_value(modeled, expect);
     free(copy);
-    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
-    int known = 0;
-    for (int i = 0; i < 4 && !known; i++)
-        known = strcmp(reply, texts[i]) == 0;
-    /* The answer is one of the four protocol error messages, written out here, or "resp" and an integer, then the end
-       or a space.
-       mutant: src/protocol.c:302 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
-       input: extra-17
-       mutant: src/protocol.c:278 `"resp %i"` -> `"rsp %i"`
-       input: scenario-1 */
-    if (!known && !is_resp_line(reply))
-        abort();
     return 0;
 }

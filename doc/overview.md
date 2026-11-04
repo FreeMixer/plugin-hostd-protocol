@@ -186,11 +186,22 @@ the grammar against the scenario corpus, the golden transcript and the table (`t
   range or default is not finite (plugin-hostd#371).
 - `protocol_parse()` runs the callback of the command the message names, and no other: `zzz %s 5` is not found, where
   it ran `add` (plugin-hostd#372).
+- `protocol_parse()` reads a word `...` at the `...` of a pattern as one of the words the `...` takes: `add urn:x 5 ... c`
+  runs `add`, where it answered `many arguments` (#12).
 - A verb may have more than one form, told apart by its number of arguments (`preset_show <uri>` is mod-host's,
   `preset_show <instance> <key>` plugin-hostd's): `protocol_parse()` reads every command registered for the verb and
   runs the first whose arguments fit, in number and then in types (`%i` a whole number, `%f` a number), where it read
   only the first one registered. A line no form takes is refused as the first form refuses it, so a verb of one form
   answers as mod-host answers it (`make test-forms`, and `test-forms-sabotage` puts the first-form reading back).
+- A host that calls `protocol_add_hello()` answers `hello`, which names the protocol version and grants extensions:
+  request tags (a line may start with `@<tag>`, and its answer then carries the tag) and error words (a refusal's
+  number is followed by its declared code) ([doc/protocol.md](protocol.md), Sessions). A client that never sends
+  `hello` is answered as mod-host answers it, and a new connection starts with nothing granted (`make test-hello`, and
+  `test-hello-sabotage` breaks each rule).
+- The scenario runner reads a declared verb a host answers `not found` by what that host owes it
+  (`host_scenario_set_host()`, `HOST=<host>` for `tests/host_scenarios.c`): one not required of it is a verb it does
+  not serve, as `resp -902` is, so the lines after `hello` are skipped against mod-host; a required one fails
+  (`make test-runner`).
 
 ## Credit
 

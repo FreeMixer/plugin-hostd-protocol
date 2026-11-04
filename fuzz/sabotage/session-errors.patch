@@ -1,0 +1,15 @@
+Breaks check_errors of fuzz/fuzz_session.c:245 (a refusal carries its error word only in a session granted errors).
+Caught by the seed input "errors" of fuzz_session.
+
+diff --git a/src/protocol.c b/src/protocol.c
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -435,7 +435,7 @@
+             g_commands[index].callback(&proto);
+             if (proto.response)
+             {
+-                if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))
++                if (1)
+                     error_word(&proto);
+                 answer(msg, tag, tag_size, proto.response, proto.response_size+1);
+                 if (g_verbose) printf("PROTOCOL: response '%s'\n", proto.response);

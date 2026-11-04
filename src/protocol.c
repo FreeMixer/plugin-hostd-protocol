@@ -32,6 +32,11 @@
 
 #include "protocol.h"
 #include "utils.h"
+#include "host-errors.h"
+#include "session.h"
+#include "reply-words.h"
+// the declared protocol: the protocol version, hello's line and the extensions it grants (data/verbs.json)
+#include "plugin-hostd/protocol.h"
 
 
 /*
@@ -87,6 +92,13 @@ static int g_verbose = 0;
 static unsigned int g_command_count = 0;
 static cmd_t g_commands[PROTOCOL_MAX_COMMANDS];
 
+// the extensions hello grants, in the order its reply names them, and which of them this connection was granted
+static const char *const g_extensions[] = OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_INIT;
+#define EXTENSION_COUNT (sizeof(g_extensions) / sizeof(g_extensions[0]))
+static unsigned char g_granted[EXTENSION_COUNT];
+// the number of the last feedback line of a session granted seq; feedback may go out from any thread
+static unsigned long g_seq;
+
 
 /*
 ************************************************************************************************************************
@@ -141,6 +153,146 @@ static int typed(const cmd_t *command, const proto_t *proto)
 }
 
 
+/* a new session: nothing granted, every line answered as mod-host answers it */
+static void session_start(void)
+{
+    memset(g_granted, 0, sizeof(g_granted));
+    __atomic_store_n(&g_seq, 0, __ATOMIC_SEQ_CST);
+}
+
+static int granted(const char *extension)
+{
+    size_t i;
+
+    for (i = 0; i < EXTENSION_COUNT; i++)
+        if (strcmp(g_extensions[i], extension) == 0)
+            return g_granted[i];
+    return 0;
+}
+
+/* hello <version> [<extension> ...]: the version a whole number of 1 or more, else -902 and nothing changes. The
+   extensions asked for that the library knows are granted, every other one is not; the reply names the protocol's
+   version and the ones granted, once each, in the order of the declared list */
+static void hello_cb(proto_t *proto)
+{
+    unsigned char want[EXTENSION_COUNT];
+    char *end, *buffer;
+    size_t i, size, pos;
+    uint32_t j;
+    long version;
+
+    version = strtol(proto->list[1], &end, 10);
+    if (*proto->list[1] == '\0' || *end != '\0' || version < 1)
+    {
+        protocol_response_int(ERR_INVALID_OPERATION, proto);
+        return;
+    }
+
+    size = 32;
+    for (i = 0; i < EXTENSION_COUNT; i++)
+    {
+        want[i] = 0;
+        for (j = 2; j < proto->list_count; j++)
+            if (strcmp(proto->list[j], g_extensions[i]) == 0)
+                want[i] = 1;
+        size += strlen(g_extensions[i]) + 1;
+    }
+
+    buffer = MALLOC(size);
+    if (!buffer)
+    {
+        protocol_response_int(ERR_MEMORY_ALLOCATION, proto);
+        return;
+    }
+    /* the numbers start again at 1 after a hello that grants seq */
+    (void)__atomic_exchange_n(&g_seq, 0, __ATOMIC_SEQ_CST);
+    memcpy(g_granted, want, sizeof(g_granted));
+    pos = snprintf(buffer, size, "resp 0 %d", PLUGIN_HOSTD_PROTOCOL_VERSION);
+    for (i = 0; i < EXTENSION_COUNT; i++)
+        if (g_granted[i])
+            pos += snprintf(buffer + pos, size - pos, " %s", g_extensions[i]);
+    protocol_response(buffer, proto);
+    FREE(buffer);
+}
+
+/* what a feedback line starts with: "#<n> " in a session granted seq, n one more than the line before; else nothing */
+static size_t feedback_prefix(char *buf, size_t size)
+{
+    unsigned long n;
+
+    buf[0] = '\0';
+    if (!granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_SEQ))
+        return 0;
+    n = __atomic_add_fetch(&g_seq, 1, __ATOMIC_SEQ_CST);
+    return (size_t)snprintf(buf, size, "#%lu ", n);
+}
+
+/* in a session granted errors, a refusal "resp <n>" alone is followed by the error word the protocol declares for n,
+   when it declares one; any other answer goes out as it is */
+static void error_word(proto_t *proto)
+{
+    char bare[32], *line;
+    size_t i, size;
+    int resp;
+
+    if (sscanf(proto->response, "resp %d", &resp) != 1 || resp >= 0)
+        return;
+    snprintf(bare, sizeof(bare), "resp %d", resp);
+    if (strcmp(bare, proto->response) != 0)
+        return;
+    for (i = 0; i < sizeof(g_reply_words) / sizeof(g_reply_words[0]); i++)
+    {
+        if (g_reply_words[i].resp != resp)
+            continue;
+        size = proto->response_size + 1 + strlen(g_reply_words[i].code) + 1;
+        line = MALLOC(size);
+        /* with no memory for the word the refusal goes out bare: its number says it */
+        if (!line)
+            return;
+        snprintf(line, size, "%s %s", proto->response, g_reply_words[i].code);
+        FREE(proto->response);
+        proto->response = line;
+        proto->response_size = size - 1;
+        return;
+    }
+}
+
+/* a character of a request tag: a letter, a digit, '-', '_' or '.' (grammar/core.abnf, tag-char) */
+static int tag_char(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_' ||
+           c == '.';
+}
+
+/* sends an answer of size bytes, its NUL included; after "<tag> " when the request was tagged */
+static void answer(const msg_t *msg, const char *tag, size_t tag_size, const char *text, size_t size)
+{
+    char *line = NULL;
+
+    if (tag)
+    {
+        line = MALLOC(tag_size + 1 + size);
+        /* with no memory for the tag the answer goes out bare, in its place: answers keep the order of requests */
+        if (line)
+        {
+            memcpy(line, tag, tag_size);
+            line[tag_size] = ' ';
+            memcpy(line + tag_size + 1, text, size);
+            text = line;
+            size += tag_size + 1;
+        }
+    }
+#ifndef SKIP_READLINE
+    if (msg->sender_id == STDOUT_FILENO)
+        write(msg->sender_id, text, size);
+    else
+#endif
+        socket_send(msg->sender_id, text, size);
+    if (line)
+        FREE(line);
+}
+
+
 /*
 ************************************************************************************************************************
 *           GLOBAL FUNCTIONS
@@ -152,14 +304,31 @@ void protocol_parse(msg_t *msg)
     uint32_t i, j;
     int32_t index;
     proto_t proto;
+    char *data = msg->data, *tag = NULL;
+    size_t tag_size = 0;
 
-    proto.list = strarr_split(msg->data);
+    // a session granted tags: a first word "@<tag>" is the request's tag, and the command follows it after one space
+    if (data[0] == '@' && granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS))
+    {
+        size_t n = 1;
+
+        while (tag_char(data[n]))
+            n++;
+        if (n > 1 && (data[n] == ' ' || data[n] == '\0'))
+        {
+            tag = data;
+            tag_size = n;
+            data += data[n] == ' ' ? n + 1 : n;
+        }
+    }
+
+    proto.list = strarr_split(data);
     proto.list_count = strarr_length(proto.list);
     proto.response = NULL;
 
     if (g_verbose)
     {
-        printf("PROTOCOL: received '%s'", msg->data);
+        printf("PROTOCOL: received '%s'", data);
         for (i = 1; i < proto.list_count; i++)
             printf(" '%s'", proto.list[i]);
         printf("\n");
@@ -167,7 +336,17 @@ void protocol_parse(msg_t *msg)
 
     // TODO: check invalid argumets (wildcards)
 
-    if (proto.list_count == 0) return;
+    // an empty line is not answered; an empty tagged one is answered, so every tagged request has its answer
+    if (proto.list_count == 0)
+    {
+        if (tag)
+        {
+            const char *error = protocol_error_message(PROTOCOL_NOT_FOUND);
+            answer(msg, tag, tag_size, error, strlen(error)+1);
+        }
+        FREE(proto.list);
+        return;
+    }
 
     unsigned int match, variable_arguments;
     int32_t refusal = PROTOCOL_NOT_FOUND, untyped = 0;
@@ -189,7 +368,7 @@ void protocol_parse(msg_t *msg)
         // checks received protocol; the first word is the verb, so a command of another verb is not read further
         for (j = 0; j < proto.list_count && j < g_commands[i].count && (j == 0 || match > 0); j++)
         {
-            if (strcmp(g_commands[i].list[j], proto.list[j]) == 0)
+            if (strcmp(g_commands[i].list[j], proto.list[j]) == 0 && strcmp(g_commands[i].list[j], "...") != 0)
             {
                 match++;
             }
@@ -256,12 +435,9 @@ void protocol_parse(msg_t *msg)
             g_commands[index].callback(&proto);
             if (proto.response)
             {
-#ifndef SKIP_READLINE
-                if (msg->sender_id == STDOUT_FILENO)
-                    write(msg->sender_id, proto.response, proto.response_size+1);
-                else
-#endif
-                    socket_send(msg->sender_id, proto.response, proto.response_size+1);
+                if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))
+                    error_word(&proto);
+                answer(msg, tag, tag_size, proto.response, proto.response_size+1);
                 if (g_verbose) printf("PROTOCOL: response '%s'\n", proto.response);
 
                 FREE(proto.response);
@@ -272,12 +448,7 @@ void protocol_parse(msg_t *msg)
     else
     {
         const char *error = protocol_error_message(index);
-#ifndef SKIP_READLINE
-        if (msg->sender_id == STDOUT_FILENO)
-            write(msg->sender_id, error, strlen(error)+1);
-        else
-#endif
-            socket_send(msg->sender_id, error, strlen(error)+1);
+        answer(msg, tag, tag_size, error, strlen(error)+1);
         if (g_verbose) printf("PROTOCOL: error '%s'\n", error);
     }
 
@@ -321,9 +492,19 @@ void protocol_response_int(int resp, proto_t *proto)
 }
 
 
+int protocol_add_hello(void)
+{
+    socket_session_start = session_start;
+    socket_feedback_prefix = feedback_prefix;
+    return protocol_add_command(OMX_VERB_HELLO_FMT, hello_cb);
+}
+
+
 void protocol_remove_commands(void)
 {
     unsigned int i;
+
+    session_start();
 
     for (i = 0; i < g_command_count; i++)
     {

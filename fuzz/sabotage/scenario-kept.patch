@@ -1,0 +1,16 @@
+Breaks check_kept of fuzz/fuzz_scenario.c:71 (a load keeps every line that is neither blank nor a comment).
+Caught by the seed input "guarded" of fuzz_scenario.
+
+diff --git a/src/host-scenario.c b/src/host-scenario.c
+index 9bd252f..ec196a8 100644
+--- a/src/host-scenario.c
++++ b/src/host-scenario.c
+@@ -204,7 +204,7 @@ int host_scenario_load(const char *path, const host_scenario_var_t *vars, int va
+         char *arrow, *guard = NULL;
+         host_scenario_t *sc;
+ 
+-        if (*text == '\0' || *text == '#')
++        if (*text == '\0' || *text == '#' || *text == '@')
+             continue;
+         arrow = strstr(text, "=>");
+         if (!arrow)

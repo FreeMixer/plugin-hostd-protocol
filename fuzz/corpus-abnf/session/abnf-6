@@ -1,0 +1,13 @@
+hello 1 errors seq tags
+@_.1 plan -8 -08 !͙!
+quit
+param_get 25 "\""
+state_load ć5
+chain_get -013
+midi_map 13 "Ġ" 7 6 7.30E696 inf
+preset_save -8 "" "!" ĭ
+@_i plan 96 -64 " " "\""
+hmi_map -8 f!ê -85 -5 -30 -294 1 "\"" infinity inf -30
+@.._ param_monitor -2 "!U" ">\"" -84
+@. param_get_many -32 "\""
+@z.A state_save ""

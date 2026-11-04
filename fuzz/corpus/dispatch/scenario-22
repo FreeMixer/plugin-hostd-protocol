@@ -1,1 +1,1 @@
-remove 3
+param_set_many 3 gain 0.5

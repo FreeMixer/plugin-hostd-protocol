@@ -3,7 +3,8 @@
 # accepted are separated by "|". The runner substitutes $URI (a plugin the host loads),
 # $BAD_URI (one it cannot), $PARAM (a control of $URI that takes 0.25), $DIR (a writable
 # directory), $PORT_A and $PORT_B (two ports the host can link). A verb that answers
-# "resp -902" is not served by the host; a line starting with "@verb" is skipped after that.
+# "resp -902", or "not found" when it is not required of the host, is not served by the host; a
+# line starting with "@verb" is skipped after that. A required verb answered "not found" fails.
 # $REMOVE_TWICE is what a second remove of the same instance answers: "resp -3" for a host that
 # refuses it, "resp 0" for mod-host, whose remove is idempotent.
 
@@ -26,6 +27,17 @@ param_get 3 :bypass => resp 0 1.0000
 bypass 3 0 => resp 0
 param_get 3 :bypass => resp 0 0.0000
 bypass 9 1 => resp -3
+
+# param_get_many (doc/protocol.md, Bulk verbs): a verb mod-host does not know
+param_get_many 3 $PARAM :bypass => resp 0 0.2500 0.0000 | not found
+@param_get_many param_get_many 3 $PARAM no_such_symbol => resp -103
+@param_get_many param_get_many 9 $PARAM => resp -3
+# param_set_many, all or nothing: a refused middle pair leaves every value as it was
+param_set_many 3 $PARAM 0.5 no_such_symbol 0.75 $PARAM 0.6 => resp -103 2 | not found
+@param_set_many param_get 3 $PARAM => resp 0 0.2500
+@param_set_many param_set_many 3 $PARAM 0.5 => resp 0
+@param_set_many param_get_many 3 $PARAM => resp 0 0.5000
+@param_set_many param_set 3 $PARAM 0.25 => resp 0
 
 # presets: a preset the host cannot load is refused as a bad URI or as unloadable state
 preset_load 3 urn:no:such:preset => resp -104 | resp -105 | resp -902
@@ -57,3 +69,26 @@ param_info 3 :bypass => resp -103 | resp -902
 # remove
 remove 3 => resp 0
 remove 3 => $REMOVE_TWICE
+
+# hello, request tags, error words and event sequence numbers (doc/protocol.md, Sessions): mod-host does not know hello,
+# and plugin-hostd refuses it, and the lines after it are skipped there. An extension the host
+# does not know is not granted, and no error.
+hello 1 tags no_such_extension => resp 0 1 tags | resp -902 | not found
+@hello @t1 param_get 9 $PARAM => @t1 resp -3
+@hello @t.2 param_set 9 $PARAM 0.5 => @t.2 resp -3
+@hello @t-3 bypass 9 1 => @t-3 resp -3
+@hello param_get 9 $PARAM => resp -3
+@hello @ param_get 9 $PARAM => not found
+@hello @t1 hello 1 => @t1 resp 0 1
+@hello @t1 param_get 9 $PARAM => not found
+@hello hello 1 errors => resp 0 1 errors
+@hello param_get 9 $PARAM => resp -3 reply.host.instance-non-exists
+@hello hello 1 errors tags => resp 0 1 tags errors
+@hello @e1 bypass 9 1 => @e1 resp -3 reply.host.instance-non-exists
+@hello @e2 param_set 9 $PARAM 0.5 => @e2 resp -3 reply.host.instance-non-exists
+@hello hello 1 => resp 0 1
+@hello param_get 9 $PARAM => resp -3
+@hello hello 1 seq tags => resp 0 1 tags seq
+@hello @s1 param_get 9 $PARAM => @s1 resp -3
+@hello hello 1 => resp 0 1
+hello 0 tags => resp -902 | not found

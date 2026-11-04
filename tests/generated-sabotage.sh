@@ -18,6 +18,7 @@ fresh() {
     rm -rf "$work/tree"
     mkdir -p "$work/tree"
     cp -r Makefile VERSION include src data protocol grammar doc tools tests packaging "$work/tree/"
+    mkdir -p "$work/tree/fuzz" && cp -r fuzz/corpus-abnf "$work/tree/fuzz/"
 }
 
 checks() {
@@ -74,6 +75,9 @@ arm "the grammar's core not generated" grammar/core.abnf 'int              = \["
 arm "the overview region by hand" doc/overview.md '| `bypass` | mod-ui | required' '| `bypass` | mod-ui | optional'
 arm "protocol.md by hand" doc/protocol.md 'is a superset of' 'extends'
 arm "the evidence not generated" doc/mod-ui-verbs.tsv 'connect' 'konnect'
+arm "the grammar's seeds not written again" fuzz/corpus-abnf/GRAMMAR.sha256 '^[0-9a-f]' 'g'
+arm "the error words by hand" src/reply-words.h '"reply.host.instance-non-exists"' '"reply.host.no-instance"'
+arm "a reply code not generated" data/verbs.json '"reply.plugin-hostd.no-such-worker"' '"reply.plugin-hostd.no-worker"'
 arm "mod-host's page not generated" doc/mod-host-commands.md 'toggle effect processing' 'toggle processing'
 
 table_arm "a word of ours that changes mod-host's" data/verbs.json \
@@ -82,5 +86,8 @@ table_arm "a word of ours that changes mod-host's" data/verbs.json \
 table_arm "a second form a mod-host line is a line of" data/verbs.json \
     'v = d["PLUGIN_HOSTD_VERBS"]["verbs"]["presetShow"]; v["format"] = "preset_show %i"' \
     "changes mod-host's preset_show"
+table_arm "one refusal number, two codes" data/verbs.json \
+    'd["PLUGIN_HOSTD_REPLY_CODES"]["codes"]["noSuchWorker"]["resp"] = -3' \
+    "is declared as more than one code"
 
 [ "$failed" = 0 ] && echo "generated sabotage ok" || { echo "generated sabotage FAILED"; exit 1; }

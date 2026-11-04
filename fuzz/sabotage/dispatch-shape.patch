@@ -1,0 +1,16 @@
+Breaks check_shape of fuzz/fuzz_dispatch.c:220 (the reply is "resp" and an integer, or a protocol error message).
+Caught by the seed input "extra-4" of fuzz_dispatch.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..423c4ea 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -315,7 +315,7 @@ void protocol_response(const char *response, proto_t *proto)
+ void protocol_response_int(int resp, proto_t *proto)
+ {
+     char buffer[32];
+-    snprintf(buffer, 32, "resp %i", resp);
++    snprintf(buffer, 32, "rsp %i", resp);
+     buffer[31] = '\0';
+     protocol_response(buffer, proto);
+ }

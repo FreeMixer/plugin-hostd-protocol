@@ -11,7 +11,20 @@
 ; words; the types below are what a sender writes, and what the tests hold every line of the scenario corpus and every
 ; line the library answers to.
 
-message          = command / reply / feedback
+message          = request / answer / event
+
+; a request is a command, and an answer a reply, each after a tag in a session that hello granted the extension tags:
+; the answer to a tagged request starts with the request's tag. Without that grant a line that starts with "@" is a
+; command whose verb no host has, answered "not found" as mod-host answers it. Feedback lines never carry a tag.
+request          = [tag SP] command
+answer           = [tag SP] reply
+tag              = "@" 1*tag-char
+tag-char         = ALPHA / DIGIT / "-" / "_" / "."
+
+; a feedback line, after its number in a session that hello granted the extension seq: 1 for the first line after that
+; hello, one more for each line after it, so a number that is not one more than the last is a line the client missed
+event            = [seq SP] feedback
+seq              = "#" %x31-39 *DIGIT
 
 ; a reply: resp, the status, and the words the verb's reply grammar gives; or a parse refusal (generated, as
 ; protocol-error), which mod-host writes as the bare message
@@ -127,6 +140,9 @@ command          = cmd-add
                  / cmd-supervisor-reset
                  / cmd-worker-env
                  / cmd-worker-list
+                 / cmd-hello
+                 / cmd-param-get-many
+                 / cmd-param-set-many
 
 ; mod-host: include/mod-host.h EFFECT_ADD; extended by plugin-hostd
 cmd-add                  = %s"add" SP word SP int tail
@@ -301,6 +317,12 @@ cmd-supervisor-reset     = %s"supervisor_reset" tail
 cmd-worker-env           = %s"worker_env" SP word SP word SP word
 ; plugin-hostd: data/verbs.json PLUGIN_HOSTD_VERBS.workerList
 cmd-worker-list          = %s"worker_list"
+; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.hello
+cmd-hello                = %s"hello" SP int tail
+; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.paramGetMany
+cmd-param-get-many       = %s"param_get_many" SP int SP word tail
+; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.paramSetMany
+cmd-param-set-many       = %s"param_set_many" SP int SP word SP float tail
 
 ; words a client of mod-ui may send that no host answers; each is refused and has no rule: set_midi_program_change_pedalboard_bank_channel, set_midi_program_change_pedalboard_snapshot_channel
 
@@ -368,6 +390,56 @@ fb-worker-died             = %s"worker_died" tail
 fb-worker-respawned        = %s"worker_respawned" tail
 ; plugin-hostd: <count>
 fb-xruns                   = %s"xruns" tail
+
+; the extensions hello grants, and hello's reply: the daemon's version, then each extension it grants, once and in
+; this order
+extension        = ext-tags / ext-errors / ext-seq
+ext-tags         = %s"tags"
+ext-errors       = %s"errors"
+ext-seq          = %s"seq"
+hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags] [SP ext-errors] [SP ext-seq]
+
+; a refusal in a session granted errors: its number, then the code the table declares for that number
+error-reply      = %s"resp -1 reply.host.instance-invalid"
+                 / %s"resp -3 reply.host.instance-non-exists"
+                 / %s"resp -103 reply.host.param-symbol-invalid"
+                 / %s"resp -501 reply.plugin-hostd.placement-invalid"
+                 / %s"resp -502 reply.plugin-hostd.no-backend"
+                 / %s"resp -503 reply.plugin-hostd.worker-spawn"
+                 / %s"resp -504 reply.plugin-hostd.replay"
+                 / %s"resp -505 reply.plugin-hostd.gave-up"
+                 / %s"resp -506 reply.plugin-hostd.no-such-worker"
+                 / %s"resp -507 reply.plugin-hostd.verb-dropped"
+                 / %s"resp -508 reply.host.pin-absent"
+                 / %s"resp -509 reply.plugin-hostd.pin-binary-mismatch"
+                 / %s"resp -510 reply.host.pin-layout-mismatch"
+                 / %s"resp -511 reply.host.no-param-contract"
+                 / %s"resp -512 reply.plugin-hostd.lv2-adapter-refused"
+                 / %s"resp -513 reply.host.no-note-input"
+                 / %s"resp -514 reply.host.notes-by-jack"
+                 / %s"resp -515 reply.plugin-hostd.no-preset-list"
+                 / %s"resp -516 reply.plugin-hostd.pin-refused"
+                 / %s"resp -517 reply.host.note-queue-full"
+                 / %s"resp -518 reply.plugin-hostd.chain-unknown-instance"
+                 / %s"resp -519 reply.plugin-hostd.chain-duplicate"
+                 / %s"resp -520 reply.plugin-hostd.chain-instance-busy"
+                 / %s"resp -521 reply.plugin-hostd.chain-mixed-format"
+                 / %s"resp -522 reply.plugin-hostd.no-such-chain"
+                 / %s"resp -523 reply.plugin-hostd.preset-not-offered"
+                 / %s"resp -524 reply.plugin-hostd.preset-invalid"
+                 / %s"resp -525 reply.plugin-hostd.preset-needs-state"
+                 / %s"resp -526 reply.plugin-hostd.preset-plugin-changed"
+                 / %s"resp -527 reply.plugin-hostd.load-refused"
+                 / %s"resp -528 reply.plugin-hostd.dir-not-writable"
+                 / %s"resp -529 reply.plugin-hostd.descriptor-absent"
+                 / %s"resp -530 reply.plugin-hostd.descriptor-pending"
+                 / %s"resp -531 reply.plugin-hostd.descriptor-scan-failed"
+                 / %s"resp -532 reply.plugin-hostd.no-such-plan"
+                 / %s"resp -533 reply.plugin-hostd.no-record"
+                 / %s"resp -534 reply.plugin-hostd.no-cell"
+                 / %s"resp -535 reply.plugin-hostd.unknown-plugin"
+                 / %s"resp -901 reply.host.memory-allocation"
+                 / %s"resp -902 reply.host.invalid-operation"
 
 ; mod-host's parse refusals, written as their message
 protocol-error   = %s"not found" / %s"many arguments" / %s"few arguments" / %s"invalid argument"

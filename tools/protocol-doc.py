@@ -381,6 +381,165 @@ def constant(name):
     fail(f"protocol/plugin-hostd.json: no constant {name}")
 
 
+HELLO = next((c for c in TABLE["commands"] if c["verb"] == "hello"), None)
+
+
+def grammar_rules(names):
+    """the rules of the grammar named, each with its comment lines and continuation lines, as the grammar writes them"""
+    lines = read(GRAMMAR).split("\n")
+    out = []
+    for name in names:
+        at = next((i for i, l in enumerate(lines) if re.match(rf"{re.escape(name)}\s+=", l)), None)
+        if at is None:
+            fail(f"{GRAMMAR}: no rule {name}")
+        end = at + 1
+        while end < len(lines) and lines[end].startswith(" "):
+            end += 1
+        out += lines[at:end]
+    return out
+
+
+def sessions(w):
+    """hello and request tags: the wire syntax from the grammar, the extensions from the table"""
+    if not HELLO:
+        return
+    version = PHD["version"]
+    exts = TABLE["extensions"]
+    tags = next((e for e in exts if e["word"] == "tags"), None)
+    w("Sessions: hello and request tags")
+    w("--------------------------------")
+    w("")
+    w("A client that never sends `hello` is answered exactly as mod-host answers it: that is mod-host mode, and it is "
+      "how mod-ui and Zynthian's engine talk to a host. `hello` opens a session that may use what mod-host's protocol "
+      "lacks, each part named as an extension. The lines, from the grammar:")
+    w("")
+    w("```abnf")
+    for line in grammar_rules(["cmd-hello", "hello-reply", "extension"] + [f"ext-{e['word']}" for e in exts]
+                              + ["request", "answer", "tag", "tag-char", "event", "seq"]):
+        w(line)
+    if any(e["word"] == "errors" for e in exts):
+        w("error-reply      = " + " / ".join(grammar_rules(["error-reply"])[0].split("= ", 1)[1:]) + " / ...")
+    w("```")
+    w("")
+    w(f"- The client names the protocol version it speaks and the extensions it asks for: `hello {version} "
+      + " ".join(e["word"] for e in exts) + "`. The daemon answers with its own protocol version and, of the extensions "
+      f"asked for, the ones it grants, each once and in the order of the table below: `resp 0 {version} "
+      + " ".join(e["word"] for e in exts) + "`. An extension the daemon does not know is not granted, and is no error.")
+    w("- The version is the one the protocol JSON carries. It changes only when a word, a code or the shape of a verb "
+      "changes incompatibly; what is added comes as a new extension. A client checks the version and uses only the "
+      "extensions granted.")
+    w("- A version that is not a whole number of 1 or more is refused with -902, and nothing changes.")
+    w(f"- Each `hello` replaces what the one before it granted, so `hello {version}` alone goes back to mod-host mode. A "
+      "new connection starts with nothing granted.")
+    w("- A host that does not know `hello` answers `not found`, as mod-host does, and one that grants nothing may refuse "
+      "it with -902; on any answer but `resp 0` the client stays in mod-host mode. A host built on this library "
+      "answers it once it calls `protocol_add_hello()`.")
+    w("")
+    w("\n".join(table(["extension", "what it grants"], [[code(e["word"]), cell(e["doc"])] for e in exts])))
+    w("")
+    if tags:
+        w("### Request tags")
+        w("")
+        w("In a session granted `tags`, a request may start with a tag: `@` and one or more letters, digits, `-`, `_` or "
+          "`.`, then one space, then the command. Its answer, a reply or a parse refusal, starts with the same tag and "
+          "one space:")
+        w("")
+        w("```")
+        w("> @a7 param_get 3 gain")
+        w("< @a7 resp 0 0.2500")
+        w("> @a8 remove")
+        w("< @a8 few arguments")
+        w("```")
+        w("")
+        w("- A line without a tag is answered without one. Answers still come in the order of the requests; the tag lets "
+          "a client match them without counting.")
+        w("- A tag with nothing after it is answered `<tag> not found`.")
+        w("- A first word that starts with `@` but is not a tag (`@` alone, or with any other character) is read as a "
+          "verb, and answered `not found`. So is every line that starts with `@` in a session not granted `tags`, as "
+          "mod-host answers it.")
+        w("- The answer to a tagged `hello` carries its tag, also when that `hello` drops `tags`.")
+        w("- Events and feedback lines go out on the feedback port and never carry a tag, also when a tagged request "
+          "caused them.")
+        w("")
+    if any(e["word"] == "errors" for e in exts):
+        codes = TABLE["reply_codes"]
+        w("### Error words")
+        w("")
+        w("In a session granted `errors`, a refusal `resp <n>` is followed by one more word, the code the protocol "
+          "declares for that number: a stable word that is never reworded, which a client can match and translate "
+          "without a table of numbers. The number stays first, so a client that reads only the number reads it as before:")
+        w("")
+        w("```")
+        w("> param_get 9 gain")
+        ex = next(c for c in codes if c["resp"] == -3)
+        w(f"< resp -3 {ex['code']}")
+        w("```")
+        w("")
+        w(f"- The words are those of the [reply codes](#reply-codes), {len(codes)} numbers in all; a number the protocol "
+          "declares no code for goes out bare.")
+        w("- Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse "
+          "refusal (`not found`, `few arguments`, which are words already) go out as they are.")
+        w("- With `tags` as well, the tag comes first: `@a9 resp -3 " + ex["code"] + "`.")
+        w("")
+    if any(e["word"] == "seq" for e in exts):
+        w("### Event sequence numbers")
+        w("")
+        w("In a session granted `seq`, every line on the feedback port starts with its number, `#` and a whole number, "
+          "then one space: 1 for the first line after the `hello` that granted `seq`, one more for each line after it. "
+          "A number that is not one more than the last one read is a line the client missed:")
+        w("")
+        w("```")
+        w("< #1 output_set 3 level 0.25")
+        w("< #2 output_set 3 level 0.5")
+        w("< #4 output_set 3 level 0.75     (line 3 was missed)")
+        w("```")
+        w("")
+        w("- A `hello` that grants `seq` again starts the numbers again at 1; one that drops it drops the numbers.")
+        w("- A line the host could not send keeps its number, so the client sees the gap.")
+        w("- Requests and answers on the command port carry no number; an event a tagged request causes carries its "
+          "number and no tag.")
+        w("")
+
+
+def bulk(w):
+    """the protocol's own verbs other than hello, from the table and their declaration"""
+    own = VERBS["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"]
+    rows = [c for c in TABLE["commands"] if c["origin"] == "plugin-hostd-protocol" and c["verb"] != "hello"]
+    if not rows:
+        return
+    docs = {v["verb"]: v["doc"] for v in own.values()}
+    w("Bulk verbs")
+    w("----------")
+    w("")
+    w("A bulk verb does in one line what a client would send once an instance or a parameter. It is a verb like any "
+      "other and needs no `hello`: it changes no line a client already sends, and a host that does not serve it answers "
+      "`not found`, as mod-host does, or -902. A host built on this library answers them over its backend once it "
+      "calls `host_dispatch_register()`. `param_set_many` is all or nothing: every pair is checked before any value "
+      "is set, and a line refused answers `resp <code> <position>`, the first refused pair's code and its position from "
+      "1.")
+    w("")
+    w("\n".join(table(["verb", "form", "reply", "codes", "meaning"],
+                      [[code(c["verb"]), code(" ".join([c["verb"]] + c["forms"][0]["args"] + (["..."] if c["forms"][0]["tail"] else []))),
+                        code(c["reply"]), cell(codes_cell(c["codes"])), cell(docs.get(c["verb"], "-"))] for c in rows])))
+    w("")
+    examples = {
+        "param_get_many": [("3 gain cutoff :bypass", "resp 0 0.2500 440.0000 0.0000"), ("3 gain nope", "resp -103")],
+        "param_set_many": [("3 gain 0.5 cutoff 880", "resp 0"),
+                           ("3 gain 0.75 nope 1 cutoff 440", "resp -103 2     (nothing is set: gain stays 0.5)")],
+    }
+    for c in rows:
+        if c["verb"] not in examples:
+            fail(f"{c['verb']}: a bulk verb with no example on the page; give it one")
+        w(f"`{c['verb']}`:")
+        w("")
+        w("```")
+        for args, reply in examples[c["verb"]]:
+            w(f"> {c['verb']} {args}")
+            w(f"< {reply}")
+        w("```")
+        w("")
+
+
 def page():
     o = []
     w = o.append
@@ -430,8 +589,9 @@ def page():
                       [[code(k), code(v)] for k, v in sorted(names.items())])))
     w("")
     w(f"`pkg-config --variable=protocoldir {NAME}` names that directory, and `--variable=table`, `grammar` and "
-      "`protocoljson` name the files. The `protocol` and `version` keys of the protocol JSON identify it; " + ("no verb below answers a version." if not any(
-          "version" == v for v in list(DAEMON_VERBS) + list(MOD_COMMANDS)) else "the version verb answers it."))
+      "`protocoljson` name the files. The `protocol` and `version` keys of the protocol JSON identify it; "
+      + ("`hello` answers the version on the socket ([Sessions](#sessions-hello-and-request-tags))."
+         if HELLO else "no verb below answers a version."))
     w("")
 
     # the one table and the grammar
@@ -444,7 +604,7 @@ def page():
     w(f"`protocol/{TABLE['protocol']}.json` is the one table of the protocol: every command, each once, with its origin, "
       "its argument types, its reply and its refusals, and every feedback line. It is merged from "
       + ", ".join(f"`{s}`" for s in TABLE["sources"]) + " by `tools/protocol-table.py`; "
-      + ", ".join(f"{n} commands of origin {o}" for o, n in sorted(origins.items(), key=lambda x: -x[1]))
+      + ", ".join(f"{n} command{'s' if n != 1 else ''} of origin {o}" for o, n in sorted(origins.items(), key=lambda x: -x[1]))
       + f", {len(TABLE['feedback'])} feedback lines.")
     w("")
     w(f"`{GRAMMAR}` is the grammar of a line, in ABNF (RFC 5234, with RFC 7405's case-sensitive strings): the lexical "
@@ -468,6 +628,9 @@ def page():
     else:
         w("none.")
     w("")
+
+    sessions(w)
+    bulk(w)
 
     # 2. mod-host's verbs
     w("2. mod-host's verbs on plugin-hostd")

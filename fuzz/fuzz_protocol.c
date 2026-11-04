@@ -23,29 +23,38 @@ static const struct { const char *pattern, *verb; uint32_t min, max; } g_table[]
     { "state_save ...",         "state_save", 1, UINT32_MAX },
 };
 
-/* one callback per row, so each checks the count its own pattern allows */
-static void check(proto_t *proto, unsigned row)
+/* The parser hands a callback only a command with the argument count its pattern allows: fewer is "few arguments", more
+   is "many arguments", and neither reaches the callback. g_table counts the words before a "...", so a variable pattern
+   is called with that many at least. */
+__attribute__((noinline)) static void check_arity(const proto_t *proto, unsigned row)
 {
-    g_called++;
-    /* g_table counts the words before a "...", so a variable pattern is called with that many at least */
-    uint32_t min = g_table[row].min;
-    /* The parser hands a callback only a command with the argument count its pattern allows: fewer is "few
-       arguments", more is "many arguments", and neither reaches the callback.
-       mutant: src/protocol.c:184 `proto.list_count < (g_commands[i].count - variable_arguments)` -> `0`
+    /* mutant: src/protocol.c:399 `proto.list_count < (g_commands[i].count - variable_arguments)` -> `0`
        input: extra-14 */
-    if (proto->list_count < min || proto->list_count > g_table[row].max)
+    if (proto->list_count < g_table[row].min || proto->list_count > g_table[row].max)
         abort();
-    /* The callback that runs is the one of the command the input names: its first word is the pattern's.
-       mutant: src/protocol.c:216 `g_commands[index].callback(&proto);` -> `g_commands[0].callback(&proto);`
+}
+
+/* The callback that runs is the one of the command the input names: its first word is the pattern's. */
+__attribute__((noinline)) static void check_callback(const proto_t *proto, unsigned row)
+{
+    /* mutant: src/protocol.c:435 `g_commands[index].callback(&proto);` -> `g_commands[0].callback(&proto);`
        input: extra-9
-       mutant: src/protocol.c:155 ` && (j == 0 || match > 0)` -> ``
+       mutant: src/protocol.c:369 ` && (j == 0 || match > 0)` -> ``
        input: extra-23 */
     if (proto->list_count == 0 || strcmp(proto->list[0], g_table[row].verb) != 0)
         abort();
+}
+
+/* one callback per row, so each checks the count its own pattern allows */
+static void on_command(proto_t *proto, unsigned row)
+{
+    g_called++;
+    check_callback(proto, row);
+    check_arity(proto, row);
     protocol_response_int((int)proto->list_count, proto);
 }
 
-#define CB(n) static void cb##n(proto_t *proto) { check(proto, n); }
+#define CB(n) static void cb##n(proto_t *proto) { on_command(proto, n); }
 CB(0) CB(1) CB(2) CB(3) CB(4) CB(5) CB(6) CB(7) CB(8) CB(9)
 static void (*const g_cbs[])(proto_t *) = { cb0, cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9 };
 
@@ -57,26 +66,44 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
-/* The words of a message the way the parser counts them when it has no quotes to read: trailing blanks go, a run of
-   spaces is one separator, and a message that starts with a space starts with an empty word. Answers the count and
-   the length of the first word. */
-static unsigned message_words(const char *m, size_t *first)
+/* A command that names a verb of the table with a word count in its row's range runs its callback once, and any other
+   command runs none. */
+__attribute__((noinline)) static void check_called(int exact, int expect_called)
 {
-    size_t len = strlen(m);
-    unsigned words = 1;
-    while (len > 0 && (m[len - 1] == ' ' || m[len - 1] == '\t' || m[len - 1] == '\r' || m[len - 1] == '\n'))
-        len--;
-    for (size_t i = 0; i < len; i++)
-        if (m[i] == ' ')
-        {
-            words++;
-            while (i + 1 < len && m[i + 1] == ' ')
-                i++;
-        }
-    *first = 0;
-    while (*first < len && m[*first] != ' ')
-        (*first)++;
-    return words;
+    /* mutant: src/protocol.c:405 `match == proto.list_count || variable_arguments` -> `0`
+       input: extra-1
+       mutant: src/utils.c:203 `quote = 0;` -> ``
+       input: quoted-words */
+    if (exact && g_called != expect_called)
+        abort();
+}
+
+/* The parser answers once, with its NUL: the callback's "resp <words>", "few arguments" below the row's minimum, "many
+   arguments" above its maximum, or "not found" for a verb outside the table. */
+__attribute__((noinline)) static void check_reply(int exact, const char *expect_reply)
+{
+    /* mutant: src/protocol.c:400 `result = PROTOCOL_FEW_ARGUMENTS;` -> `result = PROTOCOL_MANY_ARGUMENTS;`
+       input: extra-14
+       mutant: src/protocol.c:403 `result = PROTOCOL_MANY_ARGUMENTS;` -> `result = PROTOCOL_FEW_ARGUMENTS;`
+       input: extra-16 */
+    if (exact && (fuzz_reply_len != strlen(expect_reply) + 1 || strcmp(fuzz_reply, expect_reply) != 0))
+        abort();
+}
+
+/* Each of the parser's four error codes has its message, with the text the protocol documents. */
+__attribute__((noinline)) static void check_messages(void)
+{
+    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
+    for (int code = -1; code >= -4; code--)
+    {
+        const char *message = protocol_error_message(code);
+        /* mutant: src/protocol.c:523 `g_error_messages[-code-1]` -> `g_error_messages[0]`
+           input: extra-1
+           mutant: src/protocol.c:520 `code >= 0` -> `code >= -1`
+           input: extra-1 */
+        if (message == NULL || strcmp(message, texts[-code - 1]) != 0)
+            abort();
+    }
 }
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
@@ -92,16 +119,22 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     msg.data_size = strlen(msg.data);
     msg.sender_id = FUZZ_SENDER;
 
-    /* what the input must get, from its words and the table. Left to the callbacks' own checks: a message with a
-       quote, a backslash, a "%" or a "..." in it. Quotes join and cut words, and the parser takes a word that is a
-       pattern's own wildcard or "..." for a match. */
-    size_t first;
-    unsigned words = message_words(msg.data, &first);
+    /* what the input must get, from its words by the quoting rule (fuzz_words) and the table. Left to the callbacks' own
+       checks: a message with a word that holds a "%" or a "...", which the parser may take for a pattern's wildcard. */
+    char *buf = malloc(msg.data_size + 1);
+    char **word = malloc((msg.data_size + 2) * sizeof(*word));
+    /* not a property: the harness's own allocation failed */
+    if (!buf || !word)
+        abort();
+    unsigned words = fuzz_words(msg.data, buf, word, (unsigned)msg.data_size + 2);
+    int exact = 1;
+    for (unsigned i = 0; i < words; i++)
+        exact = exact && !fuzz_wildcard(word[i]);
     int expect_called = 0;
     char expect_reply[32] = "not found";
     for (unsigned row = 0; row < sizeof(g_table) / sizeof(g_table[0]); row++)
     {
-        if (strlen(g_table[row].verb) != first || strncmp(msg.data, g_table[row].verb, first) != 0)
+        if (strcmp(word[0], g_table[row].verb) != 0)
             continue;
         if (words < g_table[row].min)
             strcpy(expect_reply, "few arguments");
@@ -114,37 +147,14 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         }
     }
 
-    int exact = strpbrk(msg.data, "%\"\\") == NULL && strstr(msg.data, "...") == NULL;
+    free(buf);
+    free(word);
 
     protocol_parse(&msg);
     free(msg.data);
 
-    /* A command that names a verb of the table with a word count in its row's range runs its callback once, and any
-       other command runs none.
-       mutant: src/protocol.c:196 `match == proto.list_count || variable_arguments` -> `0`
-       input: extra-1 */
-    if (exact && g_called != expect_called)
-        abort();
-    /* The parser answers once, with its NUL: the callback's "resp <words>", "few arguments" below the row's minimum,
-       "many arguments" above its maximum, or "not found" for a verb outside the table.
-       mutant: src/protocol.c:186 `index = PROTOCOL_FEW_ARGUMENTS;` -> `index = PROTOCOL_MANY_ARGUMENTS;`
-       input: extra-14
-       mutant: src/protocol.c:192 `index = PROTOCOL_MANY_ARGUMENTS;` -> `index = PROTOCOL_FEW_ARGUMENTS;`
-       input: extra-16 */
-    if (exact && (fuzz_reply_len != strlen(expect_reply) + 1 || strcmp(fuzz_reply, expect_reply) != 0))
-        abort();
-
-    static const char *const texts[] = { "not found", "many arguments", "few arguments", "invalid argument" };
-    for (int code = -1; code >= -4; code--)
-    {
-        const char *message = protocol_error_message(code);
-        /* Each of the parser's four error codes has its message, with the text the protocol documents.
-           mutant: src/protocol.c:302 `g_error_messages[-code-1]` -> `g_error_messages[0]`
-           input: extra-1
-           mutant: src/protocol.c:299 `code >= 0` -> `code >= -1`
-           input: extra-1 */
-        if (message == NULL || strcmp(message, texts[-code - 1]) != 0)
-            abort();
-    }
+    check_messages();
+    check_called(exact, expect_called);
+    check_reply(exact, expect_reply);
     return 0;
 }

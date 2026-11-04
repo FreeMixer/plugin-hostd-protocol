@@ -19,7 +19,11 @@
  *
  *   plugin-hostd#371  param_info of a port whose range or default is not finite: format_number() wrote past digits[20]
  *   plugin-hostd#372  a command whose first word names no verb ran the callback of the first command its later words
- *                     matched (add, for "zzz %s 5") */
+ *                     matched (add, for "zzz %s 5")
+ *   #12               a word "..." at the "..." of a pattern was read as a fixed word, so the words after it were
+ *                     refused (many arguments, for "add urn:x 5 ... c")
+ *   #11               a track_info name of a C1 control character (U+0080..U+009F, C2 80..C2 9F) was taken: "no control
+ *                     character" is Unicode's class Cc, U+0000..U+001F, U+007F and U+0080..U+009F */
 
 #include <math.h>
 #include <stdio.h>
@@ -58,6 +62,12 @@ static int b_disconnect(const char *a, const char *b)
     record("disconnect");
     return SUCCESS;
 }
+static int b_track_info(int instance, const char *name, const char *color, const char *kind)
+{
+    (void)instance; (void)name; (void)color; (void)kind;
+    record("track_info");
+    return SUCCESS;
+}
 /* a port's range or default need not be finite: a range times the sample rate can overflow a float */
 static int b_param_info(int instance, const char *symbol, host_param_info_t *info)
 {
@@ -80,7 +90,7 @@ static int b_param_info(int instance, const char *symbol, host_param_info_t *inf
 }
 
 static const host_backend_t g_backend = { .add = b_add, .connect = b_connect, .disconnect = b_disconnect };
-static const host_plugin_info_t g_info = { .param_info = b_param_info };
+static const host_plugin_info_t g_info = { .track_info = b_track_info, .param_info = b_param_info };
 
 static void expect(host_scenario_direct_t *direct, const char *issue, const char *command, const char *reply,
                    const char *calls)
@@ -127,6 +137,17 @@ int main(void)
     expect(&direct, "#372", "connect %s %i", "resp 0", "connect");
     expect(&direct, "#372", "disconnect %s %s", "resp 0", "disconnect");
     expect(&direct, "#372", "add urn:x 5", "resp 5", "add");
+
+    /* #12: a word "..." at the "..." of a pattern leaves the words after it to the pattern */
+    expect(&direct, "#12", "add urn:x 5 ... c", "resp 5", "add");
+
+    /* #11: a name refuses the C1 control characters as it refuses C0 and DEL; U+00A0, the first code point after them,
+       and a name of no control character are taken */
+    expect(&direct, "#11", "track_info 0 \302\200 -", "resp -902", "");
+    expect(&direct, "#11", "track_info 0 a\302\237b -", "resp -902", "");
+    expect(&direct, "#11", "track_info 0 a\177b -", "resp -902", "");
+    expect(&direct, "#11", "track_info 0 \302\240 -", "resp 0", "track_info");
+    expect(&direct, "#11", "track_info 0 Kick -", "resp 0", "track_info");
 
     host_scenario_direct_close(&direct);
     printf("%s\n", g_failures == 0 ? "fixes ok" : "fixes FAILED");

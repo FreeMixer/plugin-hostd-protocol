@@ -753,5 +753,100 @@
         "doc": "What a chain of these plugins would cost at a rate and a quantum, read from the qualification records with no plugin loaded: <rate> <quantum> <uri> [<uri> ...], the uris as add takes them, in signal order. The reply is the latency in frames (each member's measured latency, else its declared one, added up), the CPU as percent of one core's cycle (each member's median nanoseconds per sample times the rate, added up), the RAM in bytes (the Pss each member's worker had running alone on this host class, added up; - unless every member has one), the workers plan would place the members in, and how many members have no figure at that rate and quantum; then each of those as its position in the line, from 0, and its code (noRecord, noCell or unknownPlugin), joined by commas, - for none. The latency and the CPU add up only the members that have a figure. Then the memory: what the workers hold now in bytes (- when one cannot be read), what the members would add in bytes from the qualification records, what instances of one plugin share counted once in a segment (- when no member has a figure), the host's ram_budget_mb in bytes (- when none is set), and how many members have no such figure."
       }
     }
+  },
+  "PLUGIN_HOSTD_PROTOCOL_VERBS": {
+    "kind": "verbs",
+    "since": "0.3.0",
+    "doc": "The verbs of the protocol itself, which the library answers for any host that registers them: hello (protocol_add_hello) and the bulk verbs, which host_dispatch_register() answers over the host's backend. A client that never sends one is answered exactly as mod-host answers it.",
+    "verbs": {
+      "hello": {
+        "verb": "hello",
+        "format": "hello %i ...",
+        "reply": "resp 0 <version> <extension> ...",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.3.0",
+        "doc": "Open a session: <version> [<extension> ...], the protocol version the client speaks and the extensions it asks for. The reply is the daemon's protocol version and, of the extensions asked for, the ones it grants, in the order of PLUGIN_HOSTD_PROTOCOL_EXTENSIONS; an extension the daemon does not know is not granted and is no error. Each hello replaces what the one before it granted, and a new connection starts with none. -902 for a version that is not a whole number of 1 or more, and nothing changes."
+      },
+      "paramGetMany": {
+        "verb": "param_get_many",
+        "format": "param_get_many %i %s ...",
+        "reply": "resp 0 <value> ...",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.instanceNonExists"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.paramSymbolInvalid"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.memoryAllocation"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.3.0",
+        "doc": "The values of several parameters of one instance in one line: <instance> <symbol> [<symbol> ...], each value as param_get writes it, in the order asked. A symbol the instance does not have refuses the whole line with param_get's code (-103), an instance that does not exist with -3, and no value is answered then."
+      },
+      "paramSetMany": {
+        "verb": "param_set_many",
+        "format": "param_set_many %i %s %f ...",
+        "reply": "resp 0",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.instanceNonExists"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.paramSymbolInvalid"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.memoryAllocation"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.3.0",
+        "doc": "Several parameters of one instance in one line, all or nothing: <instance> <symbol> <value> [<symbol> <value> ...]. Every pair is checked before any is set: a symbol the instance does not have (-103), an instance that does not exist (-3), a value that is not a number or a pair with no value (-902). The first pair refused refuses the line, answered resp <code> <position> with the pair's position from 1, and no value is set. Should the host refuse a value as it sets it, the values set before it are set back, and the line is refused the same way."
+      }
+    }
+  },
+  "PLUGIN_HOSTD_PROTOCOL_EXTENSIONS": {
+    "kind": "words",
+    "since": "0.3.0",
+    "doc": "The extensions hello can grant, each a word a client names after its version. A session that was granted none is answered as mod-host answers it.",
+    "words": {
+      "tags": {
+        "word": "tags",
+        "doc": "request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>"
+      },
+      "errors": {
+        "word": "errors",
+        "doc": "error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one"
+      },
+      "seq": {
+        "word": "seq",
+        "doc": "event sequence numbers: every feedback line starts with #<n>, 1 for the first after this hello and one more for each, so a gap is a missed line"
+      }
+    }
   }
 }

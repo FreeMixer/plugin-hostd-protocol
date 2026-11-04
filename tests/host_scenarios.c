@@ -23,7 +23,7 @@
 */
 
 /* Runs tests/host-scenarios.txt against a host on a socket:
- *   host_scenarios <port> <scenario file> NAME=value ... */
+ *   host_scenarios <port> <scenario file> [HOST=<host>] NAME=value ... */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,6 +53,12 @@ int main(int argc, char **argv)
             return 2;
         }
         *eq = '\0';
+        /* HOST=<host> names the host under test, whose levels decide a verb it answers "not found" */
+        if (strcmp(argv[i], "HOST") == 0)
+        {
+            host_scenario_set_host(eq + 1);
+            continue;
+        }
         vars[var_count].name = argv[i];
         vars[var_count].value = eq + 1;
         var_count++;

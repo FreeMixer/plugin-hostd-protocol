@@ -4,9 +4,10 @@
 #
 # The grammar against the lines it describes, read by an ABNF parser that is not ours (python `abnf`, RFC 5234 and
 # RFC 7405):
-#   - every command of the scenario corpus (tests/host-scenarios.txt) is a `command`, and every reply it accepts a
-#     `reply`;
-#   - every line the library answered in the golden transcript (tests/golden/plugin-hostd-protocol.txt) is a `reply`;
+#   - every command of the scenario corpus (tests/host-scenarios.txt) is a `request` (a command, tagged or not), and
+#     every reply it accepts an `answer`;
+#   - every line the library answered in the golden transcript (tests/golden/plugin-hostd-protocol.txt) is an `answer`;
+#   - hello and its reply, tags and tagged lines take the shapes the grammar gives them, and no other;
 #   - every verb of the table, written with a value of each of its types, is its own rule and a `command`; with one
 #     word short it is not;
 #   - lines that are wrong in a way the grammar names are refused: no verb, a word that is not a verb, a word that is
@@ -65,12 +66,12 @@ def parses(rule, line):
 
 def must(rule, line, where):
     if not parses(rule, line):
-        fail(f"{where}: {line!r} is not a {rule}")
+        fail(f"{where}: {line!r} is not {'an' if rule[0] in 'aeiou' else 'a'} {rule}")
 
 
 def must_not(rule, line, where):
     if parses(rule, line):
-        fail(f"{where}: {line!r} is a {rule}, and must not be")
+        fail(f"{where}: {line!r} is {'an' if rule[0] in 'aeiou' else 'a'} {rule}, and must not be")
 
 
 # ---- the scenario corpus ----
@@ -84,13 +85,23 @@ with open(os.path.join(ROOT, "tests", "host-scenarios.txt"), encoding="utf-8") a
         command = re.sub(r"^@\w+ ", "", command)
         for k in sorted(SCENARIO_VALUES, key=len, reverse=True):
             command = command.replace(k, SCENARIO_VALUES[k])
-        must("command", command, f"host-scenarios.txt:{n}")
+        # a line of a session may carry a tag; one whose first word starts with "@" but is no tag is not a request
+        if re.match(r"@[^ ]* ", command) and not parses("tag", command.split(" ", 1)[0]):
+            must_not("request", command, f"host-scenarios.txt:{n}")
+        else:
+            must("request", command, f"host-scenarios.txt:{n}")
         for r in replies.split(" | "):
             if not r.startswith("$"):
-                must("reply", r.strip(), f"host-scenarios.txt:{n}")
+                must("answer", r.strip(), f"host-scenarios.txt:{n}")
         scenarios += 1
 
 # ---- what the library answered ----
+def table_version():
+    with open(TABLE, encoding="utf-8") as f:
+        return json.load(f)["version"]
+
+
+hello_answers = error_answers = 0
 answers = set()
 with open(os.path.join(ROOT, "tests", "golden", "plugin-hostd-protocol.txt"), encoding="utf-8") as f:
     for line in f:
@@ -100,7 +111,10 @@ with open(os.path.join(ROOT, "tests", "golden", "plugin-hostd-protocol.txt"), en
             raw = re.sub(r"\\x([0-9a-f]{2})", lambda m: chr(int(m.group(1), 16)), raw).replace("\\\\", "\\")
             answers.add(raw)
 for a in sorted(answers):
-    must("reply", a, "golden transcript")
+    must("answer", a, "golden transcript")
+    if a.startswith("resp 0 ") and a.split()[2:3] == [str(table_version())] and all(
+            w in [e["word"] for e in json.load(open(TABLE, encoding="utf-8"))["extensions"]] for w in a.split()[3:]):
+        hello_answers += 1
 
 # ---- every verb of the table ----
 with open(TABLE, encoding="utf-8") as f:
@@ -139,6 +153,50 @@ for f_ in table["feedback"]:
 for word in table["refused"]:
     must_not("command", word, f"the refused {word}")
 
+# ---- hello and request tags ----
+version = table["version"]
+words = [e["word"] for e in table["extensions"]]
+must("cmd-hello", f"hello {version}", "hello with no extension")
+must("cmd-hello", f"hello {version} " + " ".join(words) + " no_such_extension", "hello with an unknown extension")
+must_not("cmd-hello", "hello", "hello with no version")
+must_not("cmd-hello", "hello x", "hello with a word for the version")
+must("hello-reply", f"resp 0 {version}", "hello's reply granting nothing")
+must("hello-reply", f"resp 0 {version} " + " ".join(words), "hello's reply granting every extension")
+must("reply", f"resp 0 {version} " + " ".join(words), "hello's reply is a reply")
+must_not("hello-reply", f"resp 0 {version} no_such_extension", "hello's reply granting what no table has")
+must_not("hello-reply", f"resp 0 {version} " + " ".join(words + words), "hello's reply granting one twice")
+for line in ("@a7 param_get 3 gain", "@t.2-x_Y param_get 3 gain", "param_get 3 gain"):
+    must("request", line, "a request")
+for line in ("@ param_get 3 gain", "@a@b param_get 3 gain", "@a7  param_get 3 gain", "@a7"):
+    must_not("request", line, "not a request")
+for line in ("@a7 resp 0 0.2500", "@a8 few arguments", "resp -3"):
+    must("answer", line, "an answer")
+for line in ("@ resp 0", "@a7resp 0"):
+    must_not("answer", line, "not an answer")
+fb0 = " ".join([table["feedback"][0]["line"]] + [SAMPLE[a] for a in (table["feedback"][0]["args"] or [])])
+must_not("feedback", "@a7 " + fb0, "a tagged feedback line")
+must_not("event", "@a7 " + fb0, "a tagged event")
+for n in ("1", "17", "4294967296"):
+    must("event", f"#{n} " + fb0, "a numbered feedback line")
+must("event", fb0, "a feedback line without a number")
+for n in ("#0", "#", "#x", "#-1", "#01"):
+    must_not("event", f"{n} " + fb0, "not a numbered feedback line")
+must_not("request", "#1 " + fb0.split(" ")[0], "a numbered request")
+
+codes = table["reply_codes"]
+for c in codes:
+    must("error-reply", f"resp {c['resp']} {c['code']}", "a refusal with its error word")
+    must("reply", f"resp {c['resp']} {c['code']}", "a refusal with its error word is a reply")
+must_not("error-reply", f"resp {codes[0]['resp']} {codes[1]['code']}", "a refusal with another number's word")
+must_not("error-reply", f"resp {codes[0]['resp']}", "a refusal without its word")
+for a in answers:
+    words_ = a.split(" ")
+    if len(words_) == 3 and words_[0] == "resp" and words_[2].startswith("reply."):
+        must("error-reply", a, "golden transcript, a refusal with its error word")
+        error_answers += 1
+if error_answers == 0:
+    fail("the golden transcript holds no refusal with its error word")
+
 # ---- refusals the grammar names ----
 for line in ("", "zzz 3", "add", "remove x", "set_bpm loud", "param_set 3 gain", "bypass 3", "Add urn:golden:amp 3",
              "remove  3", "remove 3 "):
@@ -154,6 +212,9 @@ for v in ("", "-", "1e", "e3", "Infinityx"):
 
 if failed:
     sys.exit(1)
-print(f"ok   grammar: {scenarios} scenario lines, {len(answers)} distinct answers of the library, "
+if hello_answers == 0:
+    fail("the golden transcript holds no answer to hello")
+print(f"ok   grammar: {scenarios} scenario lines, {len(answers)} distinct answers of the library ({hello_answers} to hello, "
+      f"{error_answers} with an error word), "
       f"{len(table['commands'])} commands ({forms} forms) and {len(table['feedback'])} feedback lines of the table, "
       f"{checked} parses in all")

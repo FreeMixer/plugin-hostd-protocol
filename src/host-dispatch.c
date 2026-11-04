@@ -38,6 +38,8 @@
 #include "host-errors.h"
 #include "mod-host.h"
 #include "socket.h"
+// the bulk verbs, declared with the protocol's own (data/verbs.json)
+#include "plugin-hostd/plugin_hostd_protocol_host_verbs.h"
 
 
 /*
@@ -148,6 +150,118 @@ static void param_get_cb(proto_t *proto)
     protocol_response(buffer, proto);
 }
 
+/* param_get_many <instance> <symbol> ...: every value as param_get writes it, in the order asked; the first refusal
+   refuses the whole line, with no value */
+static void param_get_many_cb(proto_t *proto)
+{
+    char *buffer;
+    size_t size, pos;
+    uint32_t j;
+    float value;
+    int resp, instance = atoi(proto->list[1]);
+
+    if (!g_backend->param_get)
+    {
+        protocol_response_int(ERR_INVALID_OPERATION, proto);
+        return;
+    }
+    /* "resp 0", then at most 1 + 48 bytes a value: a float written %.04f is shorter than that */
+    size = 8 + (size_t)(proto->list_count - 2) * 49;
+    buffer = malloc(size);
+    if (!buffer)
+    {
+        protocol_response_int(ERR_MEMORY_ALLOCATION, proto);
+        return;
+    }
+    pos = (size_t)snprintf(buffer, size, "resp 0");
+    for (j = 2; j < proto->list_count; j++)
+    {
+        resp = g_backend->param_get(instance, proto->list[j], &value);
+        if (resp < SUCCESS)
+        {
+            free(buffer);
+            protocol_response_int(resp, proto);
+            return;
+        }
+        pos += (size_t)snprintf(buffer + pos, size - pos, " %.04f", value);
+    }
+    protocol_response(buffer, proto);
+    free(buffer);
+}
+
+/* resp <code> <position>: the pair of param_set_many that refused the line, from 1 */
+static void refuse_pair(proto_t *proto, int code, uint32_t position)
+{
+    char buffer[48];
+
+    snprintf(buffer, sizeof(buffer), "resp %d %u", code, position);
+    protocol_response(buffer, proto);
+}
+
+/* param_set_many <instance> <symbol> <value> ...: all or nothing. Every pair is checked before any value is set, its
+   symbol by the backend's param_get, which reads the value it holds, and its value a number; the first pair that fails
+   refuses the line with its code and position, and nothing is set. Then each value is set in order; a value the backend
+   refuses as it sets it sets the ones before it back to what they held, and refuses the line the same way */
+static void param_set_many_cb(proto_t *proto)
+{
+    uint32_t pairs = (proto->list_count - 2) / 2, k, j;
+    int instance = atoi(proto->list[1]), checked, set;
+    float *held;
+    char *end;
+
+    if (!g_backend->param_set || !g_backend->param_get)
+    {
+        protocol_response_int(ERR_INVALID_OPERATION, proto);
+        return;
+    }
+    held = malloc((pairs + 1) * sizeof(*held));
+    if (!held)
+    {
+        protocol_response_int(ERR_MEMORY_ALLOCATION, proto);
+        return;
+    }
+    for (k = 0; k < pairs; k++)
+    {
+        const char *value = proto->list[3 + 2 * k];
+
+        checked = g_backend->param_get(instance, proto->list[2 + 2 * k], &held[k]);
+        if (checked < SUCCESS)
+        {
+            free(held);
+            refuse_pair(proto, checked, k + 1);
+            return;
+        }
+        (void)strtod(value, &end);
+        if (*value == '\0' || *end != '\0')
+        {
+            free(held);
+            refuse_pair(proto, ERR_INVALID_OPERATION, k + 1);
+            return;
+        }
+    }
+    /* a symbol with no value after it */
+    if ((proto->list_count - 2) % 2)
+    {
+        free(held);
+        refuse_pair(proto, ERR_INVALID_OPERATION, pairs + 1);
+        return;
+    }
+    for (k = 0; k < pairs; k++)
+    {
+        set = g_backend->param_set(instance, proto->list[2 + 2 * k], (float)atof(proto->list[3 + 2 * k]));
+        if (set < SUCCESS)
+        {
+            for (j = k; j-- > 0;)
+                g_backend->param_set(instance, proto->list[2 + 2 * j], held[j]);
+            free(held);
+            refuse_pair(proto, set, k + 1);
+            return;
+        }
+    }
+    free(held);
+    protocol_response_int(SUCCESS, proto);
+}
+
 static void state_load_cb(proto_t *proto)
 {
     int resp;
@@ -179,7 +293,8 @@ static void monitor_output_cb(proto_t *proto)
     protocol_response_int(resp, proto);
 }
 
-/* a name: valid UTF-8, at most 255 bytes, no control character */
+/* a name: valid UTF-8 (RFC 3629), at most 255 bytes, no control character of Unicode's class Cc (U+0000..U+001F, U+007F,
+   U+0080..U+009F) */
 static int valid_name(const char *s)
 {
     const unsigned char *p = (const unsigned char *)s;
@@ -201,6 +316,12 @@ static int valid_name(const char *s)
         else if ((*p & 0xf8) == 0xf0 && *p <= 0xf4)
             extra = 3;
         else
+            return 0;
+        /* RFC 3629: the shortest form, no surrogate and nothing past U+10FFFF narrow the second byte after E0, ED, F0, F4 */
+        if ((*p == 0xe0 && p[1] < 0xa0) || (*p == 0xed && p[1] > 0x9f) || (*p == 0xf0 && p[1] < 0x90) || (*p == 0xf4 && p[1] > 0x8f))
+            return 0;
+        /* the C1 control characters U+0080..U+009F */
+        if (*p == 0xc2 && p[1] < 0xa0)
             return 0;
         for (p++; extra > 0; extra--, p++)
             if ((*p & 0xc0) != 0x80)
@@ -408,6 +529,8 @@ void host_dispatch_register(const host_backend_t *backend)
     protocol_add_command(EFFECT_BYPASS, bypass_cb);
     protocol_add_command(EFFECT_PARAM_SET, param_set_cb);
     protocol_add_command(EFFECT_PARAM_GET, param_get_cb);
+    protocol_add_command(OMX_VERB_PARAM_GET_MANY_FMT, param_get_many_cb);
+    protocol_add_command(OMX_VERB_PARAM_SET_MANY_FMT, param_set_many_cb);
     protocol_add_command(STATE_LOAD, state_load_cb);
     protocol_add_command(STATE_SAVE, state_save_cb);
 }

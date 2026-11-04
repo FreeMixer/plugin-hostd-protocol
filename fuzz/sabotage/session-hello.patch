@@ -1,0 +1,15 @@
+Breaks check_hello of fuzz/fuzz_session.c:226 (hello grants the extensions asked for that the library knows).
+Caught by the seed input "mixed" of fuzz_session.
+
+diff --git a/src/protocol.c b/src/protocol.c
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -191,7 +191,7 @@
+     size = 32;
+     for (i = 0; i < EXTENSION_COUNT; i++)
+     {
+-        want[i] = 0;
++        want[i] = 1;
+         for (j = 2; j < proto->list_count; j++)
+             if (strcmp(proto->list[j], g_extensions[i]) == 0)
+                 want[i] = 1;

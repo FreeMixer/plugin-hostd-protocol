@@ -30,5 +30,10 @@ arm "a verb one word short" '%s"param_get" SP int SP word' '%s"param_get" SP int
 arm "a reply is not resp" 'resp-line        = %s"resp"' 'resp-line        = %s"rsp"'
 arm "a quoted word holds no space" 'quoted-char      = %x20-21' 'quoted-char      = %x21'
 arm "no parse refusal" '%s"few arguments" / ' ''
+arm "no tagged request" 'request          = \[tag SP\] command' 'request          = command'
+arm "a tag takes an @" 'tag-char         = ALPHA' 'tag-char         = "@" / ALPHA'
+arm "hello grants one twice" 'hello-reply      = %s"resp" SP %s"0" SP int' 'hello-reply      = %s"resp" SP %s"0" SP int *(SP extension)'
+arm "an error word of another number" 'error-reply      = %s"resp -1 ' 'error-reply      = %s"resp -3 '
+arm "a feedback line numbered 0" '%x31-39 \*DIGIT' '%x30-39 *DIGIT'
 
 [ "$failed" = 0 ] && echo "grammar sabotage ok" || { echo "grammar sabotage FAILED"; exit 1; }

@@ -1,0 +1,7 @@
+hello 1 tags
+@a param_get 3 gain
+@a.b-c_d frobnicate 1
+@ remove 3
+@x
+hello 1
+@a param_get 3 gain

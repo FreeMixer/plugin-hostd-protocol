@@ -1,0 +1,15 @@
+Breaks check_set_many of fuzz/fuzz_session.c:142 (param_set_many sets nothing when a pair is refused as it is checked).
+Caught by the seed input "setmany" of fuzz_session.
+
+diff --git a/src/host-dispatch.c b/src/host-dispatch.c
+--- a/src/host-dispatch.c
++++ b/src/host-dispatch.c
+@@ -225,7 +225,7 @@
+         const char *value = proto->list[3 + 2 * k];
+ 
+         checked = g_backend->param_get(instance, proto->list[2 + 2 * k], &held[k]);
+-        if (checked < SUCCESS)
++        if (0)
+         {
+             free(held);
+             refuse_pair(proto, checked, k + 1);
