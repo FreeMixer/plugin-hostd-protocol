@@ -26,6 +26,8 @@ jobs:
             apt-get update && apt-get -y install --no-install-recommends gcc libc6-dev make git pkg-config ca-certificates binutils gawk python3 diffutils
           fi
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       # omx-contract's C headers, which the declared protocol's generator is built against, are the OpenMixer channel's
       - name: Add the OpenMixer channel
         uses: FreeMixer/.github/.github/actions/add-openmixer@v1
@@ -33,8 +35,6 @@ jobs:
         run: |
           if command -v dnf >/dev/null; then dnf -y install 'omx-contract-devel >= 3.4.0'; else apt-get -y install --no-install-recommends libomx-contract-dev; fi
           pkg-config --exists omx-contract
-        with:
-          fetch-depth: 0
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Build
