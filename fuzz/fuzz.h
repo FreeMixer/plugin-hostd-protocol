@@ -10,7 +10,7 @@
 #include "../include/utils.h"
 #include "../include/protocol.h"
 
-#define FUZZ_MAX_INPUT 4096
+#define FUZZ_MAX_INPUT 8192
 
 /* Where protocol_parse() answers: fuzz/socket_fuzz.c replaces src/socket.c in every harness, and its socket_send()
    appends each reply, with its NUL, to fuzz_reply. A harness empties it before an input and reads it after. */

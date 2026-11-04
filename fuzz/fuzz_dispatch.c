@@ -263,15 +263,15 @@ __attribute__((noinline)) static void check_value(int modeled, const char *expec
 {
     /* mutant: src/host-dispatch.c:146 `resp, value);` -> `resp, 0.0);`
        input: param-get
-       mutant: src/host-dispatch.c:430 `info.max` -> `info.min`
+       mutant: src/host-dispatch.c:503 `info.max` -> `info.min`
        input: extra-8
-       mutant: src/host-dispatch.c:361 `"Infinity"` -> `"inf"`
+       mutant: src/host-dispatch.c:434 `"Infinity"` -> `"inf"`
        input: param-info-inf
        mutant: src/utils.c:203 `quote = 0;` -> ``
        input: track-info-quoted
-       mutant: src/host-dispatch.c:239 ` && *p >= 0xc2` -> ``
+       mutant: src/host-dispatch.c:312 ` && *p >= 0xc2` -> ``
        input: track-info-overlong
-       mutant: src/host-dispatch.c:251 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
+       mutant: src/host-dispatch.c:324 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
        input: track-info-c1 */
     if (modeled && strcmp(fuzz_reply, expect) != 0)
         abort();
