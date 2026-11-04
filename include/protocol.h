@@ -62,6 +62,11 @@
 #define PROTOCOL_FEW_ARGUMENTS      (-3)
 #define PROTOCOL_INVALID_ARGUMENT   (-4)
 
+// this library answers hello, request tags and error words (doc/protocol.md, Sessions) once a host calls
+// protocol_add_hello(); a
+// consumer that also builds against mod-host's library tests this before it calls it
+#define PROTOCOL_HELLO              1
+
 
 /*
 ************************************************************************************************************************
@@ -105,6 +110,13 @@ int protocol_add_command(const char *command, void (*callback)(proto_t *proto));
 void protocol_response(const char *response, proto_t *proto);
 void protocol_response_int(int resp, proto_t *proto);
 void protocol_remove_commands(void);
+/* Registers hello, which the library answers itself: the client names its protocol version and the extensions it asks
+ * for, and the reply names the protocol version and the extensions granted, from the declared table
+ * (doc/protocol.md, Sessions). A session granted tags may tag a line, and its answer carries the tag; one granted
+ * errors reads the declared error word after a refusal's number. What hello
+ * grants lasts until the next hello or the next connection; a client that never sends hello is answered as before.
+ * 0, or -1 as protocol_add_command */
+int protocol_add_hello(void);
 void protocol_verbose(int verbose);
 const char *protocol_error_message(int code);
 

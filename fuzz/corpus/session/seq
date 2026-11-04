@@ -1,0 +1,11 @@
+emit 1
+hello 1 seq
+emit 2
+emit 3
+hello 1 seq tags
+emit 4
+@a emit 5
+hello 1 seq
+emit 6
+hello 1
+emit 7

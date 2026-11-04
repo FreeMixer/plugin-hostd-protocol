@@ -28,7 +28,7 @@ static const struct { const char *pattern, *verb; uint32_t min, max; } g_table[]
    is called with that many at least. */
 __attribute__((noinline)) static void check_arity(const proto_t *proto, unsigned row)
 {
-    /* mutant: src/protocol.c:220 `proto.list_count < (g_commands[i].count - variable_arguments)` -> `0`
+    /* mutant: src/protocol.c:399 `proto.list_count < (g_commands[i].count - variable_arguments)` -> `0`
        input: extra-14 */
     if (proto->list_count < g_table[row].min || proto->list_count > g_table[row].max)
         abort();
@@ -37,9 +37,9 @@ __attribute__((noinline)) static void check_arity(const proto_t *proto, unsigned
 /* The callback that runs is the one of the command the input names: its first word is the pattern's. */
 __attribute__((noinline)) static void check_callback(const proto_t *proto, unsigned row)
 {
-    /* mutant: src/protocol.c:256 `g_commands[index].callback(&proto);` -> `g_commands[0].callback(&proto);`
+    /* mutant: src/protocol.c:435 `g_commands[index].callback(&proto);` -> `g_commands[0].callback(&proto);`
        input: extra-9
-       mutant: src/protocol.c:190 ` && (j == 0 || match > 0)` -> ``
+       mutant: src/protocol.c:369 ` && (j == 0 || match > 0)` -> ``
        input: extra-23 */
     if (proto->list_count == 0 || strcmp(proto->list[0], g_table[row].verb) != 0)
         abort();
@@ -70,7 +70,7 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
    command runs none. */
 __attribute__((noinline)) static void check_called(int exact, int expect_called)
 {
-    /* mutant: src/protocol.c:226 `match == proto.list_count || variable_arguments` -> `0`
+    /* mutant: src/protocol.c:405 `match == proto.list_count || variable_arguments` -> `0`
        input: extra-1
        mutant: src/utils.c:203 `quote = 0;` -> ``
        input: quoted-words */
@@ -82,9 +82,9 @@ __attribute__((noinline)) static void check_called(int exact, int expect_called)
    arguments" above its maximum, or "not found" for a verb outside the table. */
 __attribute__((noinline)) static void check_reply(int exact, const char *expect_reply)
 {
-    /* mutant: src/protocol.c:221 `result = PROTOCOL_FEW_ARGUMENTS;` -> `result = PROTOCOL_MANY_ARGUMENTS;`
+    /* mutant: src/protocol.c:400 `result = PROTOCOL_FEW_ARGUMENTS;` -> `result = PROTOCOL_MANY_ARGUMENTS;`
        input: extra-14
-       mutant: src/protocol.c:224 `result = PROTOCOL_MANY_ARGUMENTS;` -> `result = PROTOCOL_FEW_ARGUMENTS;`
+       mutant: src/protocol.c:403 `result = PROTOCOL_MANY_ARGUMENTS;` -> `result = PROTOCOL_FEW_ARGUMENTS;`
        input: extra-16 */
     if (exact && (fuzz_reply_len != strlen(expect_reply) + 1 || strcmp(fuzz_reply, expect_reply) != 0))
         abort();
@@ -97,9 +97,9 @@ __attribute__((noinline)) static void check_messages(void)
     for (int code = -1; code >= -4; code--)
     {
         const char *message = protocol_error_message(code);
-        /* mutant: src/protocol.c:342 `g_error_messages[-code-1]` -> `g_error_messages[0]`
+        /* mutant: src/protocol.c:523 `g_error_messages[-code-1]` -> `g_error_messages[0]`
            input: extra-1
-           mutant: src/protocol.c:339 `code >= 0` -> `code >= -1`
+           mutant: src/protocol.c:520 `code >= 0` -> `code >= -1`
            input: extra-1 */
         if (message == NULL || strcmp(message, texts[-code - 1]) != 0)
             abort();

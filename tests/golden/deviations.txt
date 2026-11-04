@@ -2,3 +2,58 @@
 # "%i %s %f" names no verb; mod-host ran add with the URI "%s" and the instance 0, ours answers "not found"
 fuzz/corpus/protocol/extra-20 plugin-hostd#372
 dispatch:fuzz/corpus/dispatch/extra-20 plugin-hostd#372
+# "zzz %s 5" names no verb either; mod-host ran it as add (written again over the whole seed corpus)
+fuzz/corpus/protocol/extra-23 plugin-hostd#372
+dispatch:fuzz/corpus/dispatch/extra-23 plugin-hostd#372
+# a param_info value that is not finite: mod-host wrote a word no float takes (n.an), ours NaN, Infinity or -Infinity
+dispatch:fuzz/corpus/dispatch/param-info-inf plugin-hostd#371
+dispatch:fuzz/corpus/dispatch/param-info-nan plugin-hostd#371
+dispatch:fuzz/corpus/dispatch/param-info-neg-inf plugin-hostd#371
+# a track_info name that is not RFC 3629 UTF-8 (a code point past U+10FFFF, a surrogate, an overlong form): mod-host
+# took it, ours refuses it
+dispatch:fuzz/corpus/dispatch/track-info-beyond plugin-hostd-protocol#8
+dispatch:fuzz/corpus/dispatch/track-info-surrogate plugin-hostd-protocol#8
+dispatch:fuzz/corpus/dispatch/track-info-overlong3 plugin-hostd-protocol#8
+# a track_info name with a C1 control character: mod-host took it, ours refuses it
+dispatch:fuzz/corpus/dispatch/track-info-c1 plugin-hostd-protocol#11
+dispatch:fuzz/corpus/dispatch/track-info-c1-inside plugin-hostd-protocol#11
+# a word "..." where add's pattern has its "...": mod-host read it as a fixed word, ours as the tail
+fuzz/corpus/protocol/extra-24 plugin-hostd-protocol#12
+dispatch:fuzz/corpus/dispatch/extra-24 plugin-hostd-protocol#12
+# the bulk verbs, which mod-host does not know: ours answers them over the backend
+dispatch:fuzz/corpus/dispatch/scenario-12 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-13 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-14 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-15 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-22 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-23 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-12 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-13 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-14 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-15 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-22 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-23 plugin-hostd-protocol#9
+# the scenario lines of the bulk verbs and of the hello session: mod-host knows neither bulk verbs nor hello; an untagged
+# line, a word "@" alone, a tagged line after the tags are dropped and a refusal after the error words are dropped
+# answer as mod-host does
+scenario-15 plugin-hostd-protocol#9
+scenario-16 plugin-hostd-protocol#9
+scenario-17 plugin-hostd-protocol#9
+scenario-18 plugin-hostd-protocol#9
+scenario-20 plugin-hostd-protocol#9
+scenario-21 plugin-hostd-protocol#9
+scenario-40 plugin-hostd-protocol#9
+scenario-41 plugin-hostd-protocol#9
+scenario-42 plugin-hostd-protocol#9
+scenario-43 plugin-hostd-protocol#9
+scenario-46 plugin-hostd-protocol#9
+scenario-48 plugin-hostd-protocol#9
+scenario-49 plugin-hostd-protocol#9
+scenario-50 plugin-hostd-protocol#9
+scenario-51 plugin-hostd-protocol#9
+scenario-52 plugin-hostd-protocol#9
+scenario-53 plugin-hostd-protocol#9
+scenario-55 plugin-hostd-protocol#9
+scenario-56 plugin-hostd-protocol#9
+scenario-57 plugin-hostd-protocol#9
+scenario-58 plugin-hostd-protocol#9

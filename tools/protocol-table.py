@@ -8,7 +8,8 @@
 #
 #   protocol/mod-host.json        mod-host's commands and feedback, written from include/mod-host.h (check-generated)
 #   protocol/plugin-hostd.json    what include/plugin-hostd/protocol.h declares (check-generated)
-#   data/verbs.json               the verbs plugin-hostd adds, as omx-contract declares them (check-rendered)
+#   data/verbs.json               the verbs plugin-hostd adds, the protocol's own (hello) and the extensions hello
+#                                 grants, as omx-contract declares them (check-rendered)
 #   include/plugin-hostd/omx_clap_core_host_verbs.h   omx-clap-core's verbs, as omx-contract renders them
 #
 # A word of ours never shadows or changes a mod-host word. A verb of another origin that has a mod-host word either
@@ -114,12 +115,20 @@ def table():
     shared = shared_verbs()
 
     vocab = read("include/plugin-hostd/omx_clap_core_vocabulary.h")
-    host_codes = {}
-    for m in re.finditer(r'#define OMX_REPLY_HOST_([A-Z0-9_]+) "[^"]+"(?: ///< .*)?\n#define OMX_REPLY_HOST_\1_RESP \((-?\d+)\)',
+    host_codes, words = {}, {}
+    for m in re.finditer(r'#define OMX_REPLY_HOST_([A-Z0-9_]+) "([^"]+)"(?: ///< .*)?\n#define OMX_REPLY_HOST_\1_RESP \((-?\d+)\)',
                          vocab):
         parts = m.group(1).lower().split("_")
-        host_codes[parts[0] + "".join(x.capitalize() for x in parts[1:])] = int(m.group(2))
+        host_codes[parts[0] + "".join(x.capitalize() for x in parts[1:])] = int(m.group(3))
+        words.setdefault(int(m.group(3)), set()).add(m.group(2))
     phd_codes = {k: v["resp"] for k, v in verbs["PLUGIN_HOSTD_REPLY_CODES"]["codes"].items()}
+    for v in verbs["PLUGIN_HOSTD_REPLY_CODES"]["codes"].values():
+        words.setdefault(v["resp"], set()).add(v["code"])
+    # the word an error word answer carries after a refusal's number: one word a number, or the table is not written
+    for resp, w in words.items():
+        if len(w) > 1:
+            fail(f"resp {resp} is declared as more than one code: {', '.join(sorted(w))}")
+    reply_codes = [{"resp": r, "code": next(iter(w))} for r, w in sorted(words.items(), reverse=True)]
 
     def resolve(ref):
         group, name = ref.split(".", 1)
@@ -155,6 +164,12 @@ def table():
     for word, (key, v) in declared.items():
         entries.append(ours(word, "plugin-hostd", f"data/verbs.json PLUGIN_HOSTD_VERBS.{key}", v["format"], v["reply"],
                             [resolve(c["ref"]) for c in v.get("codes", [])], v.get("doc", "")))
+    # the verbs of the protocol itself (hello), which the library answers for the host that registers them
+    for key, v in verbs["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"].items():
+        if v["verb"] in declared:
+            fail(f"{v['verb']}: declared by both PLUGIN_HOSTD_VERBS and PLUGIN_HOSTD_PROTOCOL_VERBS")
+        entries.append(ours(v["verb"], "plugin-hostd-protocol", f"data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.{key}",
+                            v["format"], v["reply"], [resolve(c["ref"]) for c in v.get("codes", [])], v.get("doc", "")))
     for word, v in shared.items():
         entries.append(ours(word, "omx-clap-core", f"omx-clap-core data/verbs.json {v['item']}", v["format"],
                             v["reply"], v["codes"], v["doc"]))
@@ -220,6 +235,11 @@ def table():
         "refused": mod_ui,
         "feedback": sorted(feedback.values(), key=lambda e: (e["origin"] != "mod-host", e["line"])),
         "protocol_errors": mod["protocol_errors"],
+        # every refusal number the protocol declares a code for, and that code: the error word of the extension errors
+        "reply_codes": reply_codes,
+        # what hello can grant, in the order its reply names them
+        "extensions": [{"word": w["word"], "doc": w.get("doc", "")}
+                       for w in verbs["PLUGIN_HOSTD_PROTOCOL_EXTENSIONS"]["words"].values()],
     }
 
 

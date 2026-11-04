@@ -2,10 +2,9 @@ Breaks check_callback of fuzz/fuzz_protocol.c:38 (the callback that runs is the 
 Caught by the seed input "extra-9" of fuzz_protocol.
 
 diff --git a/src/protocol.c b/src/protocol.c
-index 4a19214..849bf84 100644
 --- a/src/protocol.c
 +++ b/src/protocol.c
-@@ -253,7 +253,7 @@ void protocol_parse(msg_t *msg)
+@@ -432,7 +432,7 @@
      {
          if (g_commands[index].callback)
          {
@@ -13,4 +12,4 @@ index 4a19214..849bf84 100644
 +            g_commands[0].callback(&proto);
              if (proto.response)
              {
- #ifndef SKIP_READLINE
+                 if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))

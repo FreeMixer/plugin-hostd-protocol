@@ -2,15 +2,14 @@ Breaks check_one_answer of fuzz/fuzz_dispatch.c:196 (one answer per command, end
 Caught by the seed input "scenario-1" of fuzz_dispatch.
 
 diff --git a/src/protocol.c b/src/protocol.c
-index 4a19214..690af33 100644
 --- a/src/protocol.c
 +++ b/src/protocol.c
-@@ -261,7 +261,7 @@ void protocol_parse(msg_t *msg)
-                     write(msg->sender_id, proto.response, proto.response_size+1);
-                 else
- #endif
--                    socket_send(msg->sender_id, proto.response, proto.response_size+1);
-+                    socket_send(msg->sender_id, proto.response, proto.response_size);
+@@ -437,7 +437,7 @@
+             {
+                 if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))
+                     error_word(&proto);
+-                answer(msg, tag, tag_size, proto.response, proto.response_size+1);
++                answer(msg, tag, tag_size, proto.response, proto.response_size);
                  if (g_verbose) printf("PROTOCOL: response '%s'\n", proto.response);
  
                  FREE(proto.response);

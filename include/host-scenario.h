@@ -61,7 +61,8 @@ typedef struct HOST_SCENARIO_VAR_T {
 } host_scenario_var_t;
 
 /* One line of the file after substitution: the command, the '|'-separated replies accepted, and the
-   verb whose absence (an earlier "resp -902") skips the line, or NULL. */
+   verb whose absence (an earlier "resp -902", or "not found" for a verb not required of the host) skips the
+   line, or NULL. */
 typedef struct HOST_SCENARIO_T {
     char *command;
     char *reply;
@@ -97,6 +98,11 @@ void host_scenario_free(host_scenario_list_t *list);
    leaves NULL, is a failure too. */
 int host_scenario_run(const host_scenario_list_t *list, host_scenario_exchange_t exchange, void *ctx,
                       const host_backend_t *table);
+
+/* The host under test, a word of the declared hosts ("plugin-hostd", "omx-clap-host", "mod-host"): a declared verb it
+   answers "not found" is a verb it does not serve when it is not required of that host, and a failure when it is.
+   NULL, the default, holds every verb required of any host. */
+void host_scenario_set_host(const char *host);
 
 int host_scenario_socket_open(const char *host, int port);
 int host_scenario_socket_exchange(void *ctx, const char *command, char *reply, size_t size);

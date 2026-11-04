@@ -41,7 +41,7 @@ HEADERS = include/host-backend.h include/host-dispatch.h include/host-errors.h i
 # the declared protocol (doc/protocol.md): plugin-hostd's protocol.h and the headers it includes, rendered by
 # omx-contract from data/verbs.json and from omx-clap-core's package of the contract directory; installed under
 # <includedir>/plugin-hostd-protocol/plugin-hostd/, so a consumer includes <plugin-hostd/protocol.h> with this package's
-# Cflags. No source of the library includes them.
+# Cflags. src/protocol.c reads the protocol version, hello's line and the extensions hello grants from them.
 RENDERED = include/plugin-hostd/plugin_hostd_protocol_host_verbs.h include/plugin-hostd/plugin_hostd_protocol_vocabulary.h \
            include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h
 PROTOCOL_HEADERS = include/plugin-hostd/protocol.h include/plugin-hostd/search_paths.h $(RENDERED)
@@ -52,7 +52,7 @@ PC_DATADIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(DATADIR))
 
 all: $(LIB_SO)
 
-$(OBJ): $(HEADERS)
+$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h src/reply-words.h
 
 src/%.o: src/%.c
 	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
@@ -93,10 +93,11 @@ TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
 # write() calls, which mod-host leaves unchecked too
 SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test tests/forms_test \
+             tests/hello_test tests/runner_test \
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi version-check \
+      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
@@ -179,6 +180,26 @@ tests/forms_test: tests/forms_test.c $(SRC) $(HEADERS)
 test-forms-sabotage:
 	sh tests/forms-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
 
+# hello and request tags (tests/hello_test.c), over the library's own server and its feedback port, with
+# AddressSanitizer and UndefinedBehaviorSanitizer: a client that never sends hello is answered as before
+HELLO_PORT ?= 15590
+test-hello: tests/hello_test
+	HELLO_PORT=$(HELLO_PORT) ./tests/hello_test
+
+# the scenario runner reads "not found" by the host's levels (tests/runner_test.c): a verb not required of the host is
+# one it does not serve, a required one fails; test-hello-sabotage breaks this too
+test-runner: tests/runner_test
+	./tests/runner_test
+
+tests/runner_test: tests/runner_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
+
+test-hello-sabotage:
+	HELLO_PORT=$(HELLO_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
+
+tests/hello_test: tests/hello_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
+
 # each fix taken out again in a scratch copy of the sources: fixes_test must fail on each
 test-fixes-sabotage:
 	sh tests/fixes-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
@@ -220,6 +241,9 @@ abi-check: abi-stage
 #   protocol/plugin-hostd-protocol.json   tools/protocol-table.py, the one table merged from the three above and
 #                                         data/verbs.json; it refuses a word of ours that changes a mod-host word
 #   grammar/plugin-hostd-protocol.abnf    tools/abnf-gen.py, grammar/core.abnf and a rule per word of the table
+#   fuzz/corpus-abnf/                     tools/abnf-corpus.py, seeds from the grammar (check-generated reads the
+#                                         SHA-256 of the grammar they were written from)
+#   src/reply-words.h                     tools/reply-words.py, the error word of each refusal number of the table
 #   README.md                             the region host-verbs, tools/protocol-gen splice
 #   doc/protocol.md                       tools/protocol-doc.py, from all of the above
 #
@@ -240,6 +264,7 @@ gen: $(GEN)
 	    mv protocol/plugin-hostd-protocol.json.new protocol/plugin-hostd-protocol.json
 	python3 tools/abnf-gen.py > grammar/plugin-hostd-protocol.abnf.new && \
 	    mv grammar/plugin-hostd-protocol.abnf.new grammar/plugin-hostd-protocol.abnf
+	python3 tools/reply-words.py > src/reply-words.h.new && mv src/reply-words.h.new src/reply-words.h
 	$(GEN) splice README.md > README.md.new && mv README.md.new README.md
 	$(MAKE) --no-print-directory protocol-doc
 
@@ -249,7 +274,9 @@ check-generated: $(GEN)
 	python3 tools/mod-host-json.py include > $$tmp/mod-host.json; cmp $$tmp/mod-host.json protocol/mod-host.json; \
 	python3 tools/protocol-table.py --check; \
 	python3 tools/abnf-gen.py --check; \
+	python3 tools/reply-words.py --check; \
 	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
+	sha256sum -c --quiet $(ABNF_CORPUS)/GRAMMAR.sha256 || { echo "$(ABNF_CORPUS) is not written from this grammar: run make fuzz-abnf-corpus"; exit 1; }; \
 	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
 	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
 	echo "generated files are current"
@@ -287,7 +314,7 @@ CONTRACT_SCHEMA_MAJOR = 3
 CONTRACTDIR = $(or $(shell $(PKG_CONFIG) --variable=contractdir omx-contract 2>/dev/null),$(DATADIR)/omx-contract/contract.d)
 INSTALL_CONTRACT_DIR = $(firstword $(wildcard $(shell $(PKG_CONFIG) --variable=datadir omx-contract 2>/dev/null)/install-contract-dir.sh) $(wildcard $(OMX_CONTRACT_DIR)/tools/install-contract-dir.sh))
 
-check-protocol-tools: check-rendered test-rendered-sabotage check-schema test-grammar check-contract-dir
+check-protocol-tools: check-rendered test-rendered-sabotage check-schema test-grammar check-contract-dir test-abnf-corpus
 
 # data/verbs.json as the package plugin-hostd-protocol of omx-contract's contract directory,
 # <contractdir>/<schema major>/plugin-hostd-protocol/, with the MANIFEST.json omx-contract's script writes
@@ -343,7 +370,7 @@ version-check:
 FUZZ_CC        ?= clang
 FUZZ_BUILD     ?= build/fuzz
 FUZZ_TIME      ?= 60
-FUZZ_HARNESSES := protocol dispatch scenario
+FUZZ_HARNESSES := protocol dispatch scenario session
 FUZZ_BINS      := $(FUZZ_HARNESSES:%=$(FUZZ_BUILD)/fuzz_%)
 FUZZ_CFLAGS    := -O1 -g -std=gnu99 -D_GNU_SOURCE -fno-omit-frame-pointer -fsanitize=fuzzer,address,undefined \
                   -fno-sanitize-recover=undefined
@@ -360,6 +387,16 @@ fuzz-run: fuzz
 
 fuzz-corpus:
 	sh fuzz/gen-corpus.sh fuzz/corpus
+
+# the seeds generated from the grammar (tools/abnf-corpus.py, python's abnf module): fuzz-run adds them to each
+# harness's corpus. check-generated fails when the grammar changed since they were written; test-abnf-corpus (in
+# check-protocol-tools) writes them again and compares
+ABNF_CORPUS = fuzz/corpus-abnf
+fuzz-abnf-corpus:
+	$(PYTHON) tools/abnf-corpus.py $(ABNF_CORPUS)
+
+test-abnf-corpus:
+	$(PYTHON) tools/abnf-corpus.py --check $(ABNF_CORPUS)
 
 # each fuzz/sabotage/ patch is a one-line bug the check_<property> it names must catch, and only that one
 fuzz-sabotage:
@@ -398,5 +435,5 @@ clean:
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
-        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi \
-        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus fuzz-sabotage fuzz-records fuzz-coverage clean
+        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi \
+        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus fuzz-abnf-corpus test-abnf-corpus fuzz-sabotage fuzz-records fuzz-coverage clean

@@ -1,0 +1,15 @@
+Breaks check_many of fuzz/fuzz_session.c:132 (param_get_many answers each value, or the first refusal alone).
+Caught by the seed input "many" of fuzz_session.
+
+diff --git a/src/host-dispatch.c b/src/host-dispatch.c
+--- a/src/host-dispatch.c
++++ b/src/host-dispatch.c
+@@ -177,7 +177,7 @@
+     for (j = 2; j < proto->list_count; j++)
+     {
+         resp = g_backend->param_get(instance, proto->list[j], &value);
+-        if (resp < SUCCESS)
++        if (resp < -100)
+         {
+             free(buffer);
+             protocol_response_int(resp, proto);

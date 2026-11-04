@@ -1,0 +1,7 @@
+param_get_many 3 gain cutoff
+param_get_many 3 gain xbad gain
+param_get_many 9 gain
+hello 1 errors
+param_get_many 9 gain
+param_get_many 3 a "b c" ddd
+param_get_many 3

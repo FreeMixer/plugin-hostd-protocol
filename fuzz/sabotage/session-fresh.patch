@@ -1,0 +1,15 @@
+Breaks check_fresh of fuzz/fuzz_session.c:235 (a new connection starts with nothing granted).
+Caught by the seed input "tags" of fuzz_session.
+
+diff --git a/src/protocol.c b/src/protocol.c
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -156,7 +156,7 @@
+ /* a new session: nothing granted, every line answered as mod-host answers it */
+ static void session_start(void)
+ {
+-    memset(g_granted, 0, sizeof(g_granted));
++    (void)g_granted;
+     __atomic_store_n(&g_seq, 0, __ATOMIC_SEQ_CST);
+ }
+ 

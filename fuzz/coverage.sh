@@ -30,13 +30,15 @@ dead=
 # the functions each harness covers; static functions are matched by their bare name
 funcs() {
     case $1 in
-    protocol) echo src/protocol.c :: is_wildcard typed protocol_parse protocol_add_command protocol_response \
+    protocol) echo src/protocol.c :: is_wildcard typed protocol_parse answer protocol_add_command protocol_response \
         protocol_response_int protocol_error_message ;;
     dispatch) echo src/host-dispatch.c src/protocol.c :: add_cb remove_cb preset_load_cb connect_cb disconnect_cb \
         bypass_cb param_set_cb param_get_cb state_load_cb state_save_cb monitor_output_cb valid_name valid_color \
         track_info_cb remote_pages_cb append_quoted remote_page_get_cb format_number param_info_cb \
-        host_dispatch_unsupported_cb protocol_parse ;;
+        host_dispatch_unsupported_cb protocol_parse answer ;;
     scenario) echo src/host-scenario.c :: trim substitute host_scenario_load host_scenario_free ;;
+    session) echo src/protocol.c src/host-dispatch.c :: session_start granted hello_cb tag_char answer feedback_prefix \
+        error_word protocol_parse protocol_add_hello param_get_many_cb param_set_many_cb refuse_pair ;;
     *) echo "coverage.sh: no function list for harness '$1'" >&2; exit 2 ;;
     esac
 }

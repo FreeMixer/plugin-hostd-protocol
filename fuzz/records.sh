@@ -22,17 +22,18 @@ mkdir -p "$B"
 # every mutant aborts: no core file for any of them
 ulimit -c 0
 
-# the harness each file's checks belong to; fuzz/fuzz.h serves all three and holds no property
+# the harness each file's checks belong to; fuzz/fuzz.h serves all four and holds no property
 harness_of() {
     case $1 in
     fuzz/fuzz_protocol.c) echo protocol ;;
     fuzz/fuzz_dispatch.c) echo dispatch ;;
     fuzz/fuzz_scenario.c) echo scenario ;;
+    fuzz/fuzz_session.c) echo session ;;
     *) echo "" ;;
     esac
 }
-HARNESSES="protocol dispatch scenario"
-CHECKED="fuzz/fuzz_protocol.c fuzz/fuzz_dispatch.c fuzz/fuzz_scenario.c fuzz/fuzz.h"
+HARNESSES="protocol dispatch scenario session"
+CHECKED="fuzz/fuzz_protocol.c fuzz/fuzz_dispatch.c fuzz/fuzz_scenario.c fuzz/fuzz_session.c fuzz/fuzz.h"
 
 cat >"$B/abort-at.h" <<'EOF'
 /* make fuzz-records: abort() names where it was called, then aborts */

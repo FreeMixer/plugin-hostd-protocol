@@ -10,13 +10,15 @@
 #include "../include/utils.h"
 #include "../include/protocol.h"
 
-#define FUZZ_MAX_INPUT 4096
+#define FUZZ_MAX_INPUT 8192
 
 /* Where protocol_parse() answers: fuzz/socket_fuzz.c replaces src/socket.c in every harness, and its socket_send()
    appends each reply, with its NUL, to fuzz_reply. A harness empties it before an input and reads it after. */
 #define FUZZ_REPLY_MAX 65536
 extern char fuzz_reply[FUZZ_REPLY_MAX];
 extern size_t fuzz_reply_len;
+/* the last feedback line a harness sent, with the number a session granted seq puts before it */
+extern char fuzz_feedback[FUZZ_REPLY_MAX];
 
 /* the sender id to put in msg_t: any value but STDOUT_FILENO, which the parser writes to directly */
 #define FUZZ_SENDER 7

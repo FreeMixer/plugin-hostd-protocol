@@ -242,7 +242,7 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
 /* Each command gets a reply: the callback's, or a protocol error message. */
 __attribute__((noinline)) static void check_answered(void)
 {
-    /* mutant: src/host-dispatch.c:70 `protocol_response_int(resp, proto);` -> `(void)resp;`
+    /* mutant: src/host-dispatch.c:72 `protocol_response_int(resp, proto);` -> `(void)resp;`
        input: scenario-1 */
     if (fuzz_reply_len == 0)
         abort();
@@ -251,7 +251,7 @@ __attribute__((noinline)) static void check_answered(void)
 /* One answer per command, sent with its NUL: the NUL is the last byte and the only one. */
 __attribute__((noinline)) static void check_one_answer(void)
 {
-    /* mutant: src/protocol.c:264 `proto.response_size+1` -> `proto.response_size`
+    /* mutant: src/protocol.c:440 `proto.response_size+1` -> `proto.response_size`
        input: scenario-1 */
     if (memchr(fuzz_reply, '\0', fuzz_reply_len) != fuzz_reply + fuzz_reply_len - 1)
         abort();
@@ -261,17 +261,17 @@ __attribute__((noinline)) static void check_one_answer(void)
    included. */
 __attribute__((noinline)) static void check_value(int modeled, const char *expect)
 {
-    /* mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
+    /* mutant: src/host-dispatch.c:146 `resp, value);` -> `resp, 0.0);`
        input: param-get
-       mutant: src/host-dispatch.c:389 `info.max` -> `info.min`
+       mutant: src/host-dispatch.c:503 `info.max` -> `info.min`
        input: extra-8
-       mutant: src/host-dispatch.c:320 `"Infinity"` -> `"inf"`
+       mutant: src/host-dispatch.c:434 `"Infinity"` -> `"inf"`
        input: param-info-inf
        mutant: src/utils.c:203 `quote = 0;` -> ``
        input: track-info-quoted
-       mutant: src/host-dispatch.c:198 ` && *p >= 0xc2` -> ``
+       mutant: src/host-dispatch.c:312 ` && *p >= 0xc2` -> ``
        input: track-info-overlong
-       mutant: src/host-dispatch.c:210 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
+       mutant: src/host-dispatch.c:324 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
        input: track-info-c1 */
     if (modeled && strcmp(fuzz_reply, expect) != 0)
         abort();
@@ -285,9 +285,9 @@ __attribute__((noinline)) static void check_shape(void)
     int known = 0;
     for (int i = 0; i < 4 && !known; i++)
         known = strcmp(fuzz_reply, texts[i]) == 0;
-    /* mutant: src/protocol.c:342 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
+    /* mutant: src/protocol.c:523 `g_error_messages[-code-1]` -> `g_error_messages[-code-1] + 1`
        input: extra-17
-       mutant: src/protocol.c:318 `"resp %i"` -> `"rsp %i"`
+       mutant: src/protocol.c:489 `"resp %i"` -> `"rsp %i"`
        input: extra-4 */
     if (!known && !is_resp_line(fuzz_reply))
         abort();

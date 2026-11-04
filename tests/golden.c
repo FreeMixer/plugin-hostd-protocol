@@ -330,6 +330,10 @@ int main(int argc, char **argv)
     host_dispatch_register_monitor_output(b_monitor_output);
     host_dispatch_register_plugin_info(&g_info);
     host_dispatch_register_unsupported();
+#ifdef PROTOCOL_HELLO
+    /* this library's hello: a line that does not follow a hello is answered as before (deviations.txt) */
+    protocol_add_hello();
+#endif
 
     pthread_create(&thread, NULL, client_thread, NULL);
     socket_run(0);
