@@ -38,6 +38,8 @@
 #include "host-errors.h"
 #include "mod-host.h"
 #include "socket.h"
+// the bulk verbs, declared with the protocol's own (data/verbs.json)
+#include "plugin-hostd/plugin_hostd_protocol_host_verbs.h"
 
 
 /*
@@ -146,6 +148,45 @@ static void param_get_cb(proto_t *proto)
         sprintf(buffer, "resp %i", resp);
 
     protocol_response(buffer, proto);
+}
+
+/* param_get_many <instance> <symbol> ...: every value as param_get writes it, in the order asked; the first refusal
+   refuses the whole line, with no value */
+static void param_get_many_cb(proto_t *proto)
+{
+    char *buffer;
+    size_t size, pos;
+    uint32_t j;
+    float value;
+    int resp, instance = atoi(proto->list[1]);
+
+    if (!g_backend->param_get)
+    {
+        protocol_response_int(ERR_INVALID_OPERATION, proto);
+        return;
+    }
+    /* "resp 0", then at most 1 + 48 bytes a value: a float written %.04f is shorter than that */
+    size = 8 + (size_t)(proto->list_count - 2) * 49;
+    buffer = malloc(size);
+    if (!buffer)
+    {
+        protocol_response_int(ERR_MEMORY_ALLOCATION, proto);
+        return;
+    }
+    pos = (size_t)snprintf(buffer, size, "resp 0");
+    for (j = 2; j < proto->list_count; j++)
+    {
+        resp = g_backend->param_get(instance, proto->list[j], &value);
+        if (resp < SUCCESS)
+        {
+            free(buffer);
+            protocol_response_int(resp, proto);
+            return;
+        }
+        pos += (size_t)snprintf(buffer + pos, size - pos, " %.04f", value);
+    }
+    protocol_response(buffer, proto);
+    free(buffer);
 }
 
 static void state_load_cb(proto_t *proto)
@@ -408,6 +449,7 @@ void host_dispatch_register(const host_backend_t *backend)
     protocol_add_command(EFFECT_BYPASS, bypass_cb);
     protocol_add_command(EFFECT_PARAM_SET, param_set_cb);
     protocol_add_command(EFFECT_PARAM_GET, param_get_cb);
+    protocol_add_command(OMX_VERB_PARAM_GET_MANY_FMT, param_get_many_cb);
     protocol_add_command(STATE_LOAD, state_load_cb);
     protocol_add_command(STATE_SAVE, state_save_cb);
 }

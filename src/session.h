@@ -8,6 +8,12 @@
 #ifndef SESSION_H
 #define SESSION_H
 
+#include <stddef.h>
+
 extern void (*socket_session_start)(void) __attribute__((visibility("hidden")));
+
+/* socket_send_feedback() asks it for the words a feedback line starts with: "#<n> " in a session granted seq, the line's
+ * number, or nothing. It writes them, NUL-terminated, in buf and answers their length. protocol_add_hello() sets it. */
+extern size_t (*socket_feedback_prefix)(char *buf, size_t size) __attribute__((visibility("hidden")));
 
 #endif

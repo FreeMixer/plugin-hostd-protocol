@@ -1,0 +1,13 @@
+hello 1 errors seq tags
+@. note_on 80 -56 03 -71
+chain_expect -48 746
+@- set_bpb .14
+@A. param_get_many 22 "\"" "" ͩ
+@E_. cc_value_set -98 "\"" infinity
+cv_map -7 M3 "" inf .682E304 "ʔ\""
+bundle_remove « ǂ$0
+state_load ć5
+chain_get -013
+midi_map 13 "Ġ" 7 6 7.30E696 inf
+preset_save -8 "" "!" ĭ
+@_i plan 96 -64 " " "\""

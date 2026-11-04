@@ -88,8 +88,9 @@ static void (*g_receive_cb)(msg_t *msg);
 static void (*g_idle_cb)(void);
 static int g_idle_interval_ms;
 
-// called as each controller connects (session.h)
+// called as each controller connects, and asked for what a feedback line starts with (session.h)
 void (*socket_session_start)(void);
+size_t (*socket_feedback_prefix)(char *buf, size_t size);
 
 /*
 ************************************************************************************************************************
@@ -315,9 +316,26 @@ int socket_send(int destination, const char *buffer, int size)
 
 int socket_send_feedback(const char *buffer)
 {
+    char prefix[32], small[1024], *line;
+    size_t n, size;
+    int ret;
+
     if (g_fbclientfd == INVALID_SOCKET) return -1;
 
-    return socket_send(g_fbclientfd, buffer, strlen(buffer)+1);
+    /* in a session granted seq the line goes out after its number, in one send */
+    n = socket_feedback_prefix ? socket_feedback_prefix(prefix, sizeof(prefix)) : 0;
+    if (n == 0)
+        return socket_send(g_fbclientfd, buffer, strlen(buffer)+1);
+
+    size = n + strlen(buffer) + 1;
+    line = size <= sizeof(small) ? small : malloc(size);
+    /* with no memory for the line it is not sent: its number is missing, which is what a client is told */
+    if (line == NULL) return -1;
+    memcpy(line, prefix, n);
+    memcpy(line + n, buffer, size - n);
+    ret = socket_send(g_fbclientfd, line, size);
+    if (line != small) free(line);
+    return ret;
 }
 
 

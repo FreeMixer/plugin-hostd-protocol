@@ -1,10 +1,10 @@
-Breaks check_untagged of fuzz/fuzz_session.c:99 (a line no tag is read for is answered "not found").
+Breaks check_untagged of fuzz/fuzz_session.c:164 (a line no tag is read for is answered "not found").
 Caught by the seed input "mixed" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c
 --- a/src/protocol.c
 +++ b/src/protocol.c
-@@ -291,7 +291,7 @@
+@@ -308,7 +308,7 @@
      size_t tag_size = 0;
  
      // a session granted tags: a first word "@<tag>" is the request's tag, and the command follows it after one space

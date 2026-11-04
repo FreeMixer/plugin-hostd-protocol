@@ -90,7 +90,8 @@
     {"verb": "supervisor_reset", "origin": "plugin-hostd", "declared": "data/verbs.json PLUGIN_HOSTD_VERBS.supervisorReset", "forms": [{"args": [], "tail": true, "origin": "plugin-hostd"}], "reply": "resp 0", "codes": [-506, -901, -902], "sent_by": "controller", "extended_by": [], "levels": {"lv2-worker": "required", "clap-worker": "required", "console": "required", "zynthian": "required"}},
     {"verb": "worker_env", "origin": "plugin-hostd", "declared": "data/verbs.json PLUGIN_HOSTD_VERBS.workerEnv", "forms": [{"args": ["word", "word", "word"], "tail": false, "origin": "plugin-hostd"}], "reply": "resp 0", "codes": [-901, -902], "sent_by": "controller", "extended_by": [], "levels": {"lv2-worker": "required", "clap-worker": "required", "console": "required", "zynthian": "required"}},
     {"verb": "worker_list", "origin": "plugin-hostd", "declared": "data/verbs.json PLUGIN_HOSTD_VERBS.workerList", "forms": [{"args": [], "tail": false, "origin": "plugin-hostd"}], "reply": "resp <n> <worker>:<pid>:<format>:<state>:<core>:<pool>:<place>:<i>,<i>,...", "codes": [-901, -902], "sent_by": "controller", "extended_by": [], "levels": {"lv2-worker": "required", "clap-worker": "required", "console": "required", "zynthian": "required"}},
-    {"verb": "hello", "origin": "plugin-hostd-protocol", "declared": "data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.hello", "forms": [{"args": ["int"], "tail": true, "origin": "plugin-hostd-protocol"}], "reply": "resp 0 <version> <extension> ...", "codes": [-902], "sent_by": "controller", "extended_by": [], "levels": null}
+    {"verb": "hello", "origin": "plugin-hostd-protocol", "declared": "data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.hello", "forms": [{"args": ["int"], "tail": true, "origin": "plugin-hostd-protocol"}], "reply": "resp 0 <version> <extension> ...", "codes": [-902], "sent_by": "controller", "extended_by": [], "levels": null},
+    {"verb": "param_get_many", "origin": "plugin-hostd-protocol", "declared": "data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.paramGetMany", "forms": [{"args": ["int", "word"], "tail": true, "origin": "plugin-hostd-protocol"}], "reply": "resp 0 <value> ...", "codes": [-3, -103, -901, -902], "sent_by": "controller", "extended_by": [], "levels": null}
   ],
   "refused": ["set_midi_program_change_pedalboard_bank_channel", "set_midi_program_change_pedalboard_snapshot_channel"],
   "feedback": [
@@ -166,6 +167,7 @@
   ],
   "extensions": [
     {"word": "tags", "doc": "request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>"},
-    {"word": "errors", "doc": "error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one"}
+    {"word": "errors", "doc": "error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one"},
+    {"word": "seq", "doc": "event sequence numbers: every feedback line starts with #<n>, 1 for the first after this hello and one more for each, so a gap is a missed line"}
   ]
 }

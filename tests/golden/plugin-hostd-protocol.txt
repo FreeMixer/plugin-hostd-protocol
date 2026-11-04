@@ -55,134 +55,158 @@
 < resp 0
 = bypass(9,1)
 # scenario-15 answer 0
+> param_get_many 3 gain :bypass
+< resp -3
+= param_get(3,gain)
+# scenario-16 answer 0
+> param_get_many 3 gain no_such_symbol
+< resp -3
+= param_get(3,gain)
+# scenario-17 answer 0
+> param_get_many 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# scenario-18 answer 0
 > preset_load 3 urn:no:such:preset
 < resp -3
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 0
+# scenario-19 answer 0
 > state_save /tmp/golden
 < resp -2
 = state_save(/tmp/golden)
-# scenario-17 answer 0
+# scenario-20 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-18 answer 0
+# scenario-21 answer 0
 > add urn:golden:amp 3
 < resp -3
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 0
+# scenario-22 answer 0
 > state_load /tmp/golden
 < resp -2
 = state_load(/tmp/golden)
-# scenario-20 answer 0
+# scenario-23 answer 0
 > connect a:out b:in
 < resp 0
 = connect(a:out,b:in)
-# scenario-21 answer 0
+# scenario-24 answer 0
 > disconnect a:out b:in
 < resp 0
 = disconnect(a:out,b:in)
-# scenario-22 answer 0
+# scenario-25 answer 0
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 0
+# scenario-26 answer 0
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 0
+# scenario-27 answer 0
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 0
+# scenario-28 answer 0
 > remote_pages 9
 < resp 1
 = remote_pages(9)
-# scenario-26 answer 0
+# scenario-29 answer 0
 > remote_page_get 9 0
 < resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
 = remote_page_get(9,0)
-# scenario-27 answer 0
+# scenario-30 answer 0
 > param_info 9 gain
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(9,gain)
-# scenario-28 answer 0
+# scenario-31 answer 0
 > param_info 3 no_such_symbol
 < resp -3
 = param_info(3,no_such_symbol)
-# scenario-29 answer 0
+# scenario-32 answer 0
 > param_info 3 :bypass
 < resp -3
 = param_info(3,:bypass)
-# scenario-30 answer 0
+# scenario-33 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-31 answer 0
+# scenario-34 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-32 answer 0
+# scenario-35 answer 0
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 0
+# scenario-36 answer 0
 > @t1 param_get 9 gain
 < @t1 resp 0 2.2500
 = param_get(9,gain)
-# scenario-34 answer 0
+# scenario-37 answer 0
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp 0
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 0
+# scenario-38 answer 0
 > @t-3 bypass 9 1
 < @t-3 resp 0
 = bypass(9,1)
-# scenario-36 answer 0
+# scenario-39 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-37 answer 0
+# scenario-40 answer 0
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 0
+# scenario-41 answer 0
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 0
+# scenario-42 answer 0
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 0
+# scenario-43 answer 0
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 0
+# scenario-44 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-42 answer 0
+# scenario-45 answer 0
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 0
+# scenario-46 answer 0
 > @e1 bypass 9 1
 < @e1 resp 0
 = bypass(9,1)
-# scenario-44 answer 0
+# scenario-47 answer 0
 > @e2 param_set 9 gain 0.5
 < @e2 resp 0
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 0
+# scenario-48 answer 0
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 0
+# scenario-49 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-47 answer 0
+# scenario-50 answer 0
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 0
+> @s1 param_get 9 gain
+< @s1 resp 0 2.2500
+= param_get(9,gain)
+# scenario-52 answer 0
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 0
 > hello 0 tags
 < resp -902
 = 
@@ -291,66 +315,78 @@
 < resp 0 2.2500
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 0
+> param_get_many 3 gain :bypass
+< resp -3
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 0
+> param_get_many 3 gain no_such_symbol
+< resp -3
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 0
+> param_get_many 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 0
 > param_info 3 :bypass
 < resp -3
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 0
+# fuzz/corpus/protocol/scenario-16 answer 0
 > param_info 3 no_such_symbol
 < resp -3
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 0
+# fuzz/corpus/protocol/scenario-17 answer 0
 > param_info 9 gain
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 0
+# fuzz/corpus/protocol/scenario-18 answer 0
 > param_set 3 gain 0.25
 < resp -3
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 0
+# fuzz/corpus/protocol/scenario-19 answer 0
 > param_set 3 no_such_symbol 0.5
 < resp -3
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 0
-> param_set 9 gain 0.5
-< resp 0
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 0
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 0
-> preset_load 3 urn:no:such:preset
-< resp -3
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 0
 > add urn:no:such:plugin 4
 < resp -4
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 0
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 0
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 0
 > remote_page_get 9 0
 < resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 0
+# fuzz/corpus/protocol/scenario-24 answer 0
 > remote_pages 9
 < resp 1
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 0
+# fuzz/corpus/protocol/scenario-25 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 0
+# fuzz/corpus/protocol/scenario-26 answer 0
 > state_load /tmp/state
 < resp -1
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 0
+# fuzz/corpus/protocol/scenario-27 answer 0
 > state_save /tmp/state
 < resp -1
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 0
+# fuzz/corpus/protocol/scenario-28 answer 0
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 0
+# fuzz/corpus/protocol/scenario-29 answer 0
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -503,66 +539,78 @@
 < resp 0 2.2500
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 0
+> param_get_many 3 gain :bypass
+< resp -3
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 0
+> param_get_many 3 gain no_such_symbol
+< resp -3
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 0
+> param_get_many 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 0
 > param_info 3 :bypass
 < resp -3
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 0
 > param_info 3 no_such_symbol
 < resp -3
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 0
 > param_info 9 gain
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 0
 > param_set 3 gain 0.25
 < resp -3
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 0
 > param_set 3 no_such_symbol 0.5
 < resp -3
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 0
-> param_set 9 gain 0.5
-< resp 0
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 0
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 0
-> preset_load 3 urn:no:such:preset
-< resp -3
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 0
 > add urn:no:such:plugin 4
 < resp -4
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 0
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 0
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 0
 > remote_page_get 9 0
 < resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 0
 > remote_pages 9
 < resp 1
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 0
 > state_load /tmp/state
 < resp -1
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 0
 > state_save /tmp/state
 < resp -1
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 0
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 0
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 0
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -651,134 +699,158 @@
 < resp -1
 = bypass(9,1)
 # scenario-15 answer 1
+> param_get_many 3 gain :bypass
+< resp -4
+= param_get(3,gain)
+# scenario-16 answer 1
+> param_get_many 3 gain no_such_symbol
+< resp -4
+= param_get(3,gain)
+# scenario-17 answer 1
+> param_get_many 9 gain
+< resp -1
+= param_get(9,gain)
+# scenario-18 answer 1
 > preset_load 3 urn:no:such:preset
 < resp -4
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 1
+# scenario-19 answer 1
 > state_save /tmp/golden
 < resp -3
 = state_save(/tmp/golden)
-# scenario-17 answer 1
+# scenario-20 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-18 answer 1
+# scenario-21 answer 1
 > add urn:golden:amp 3
 < resp -4
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 1
+# scenario-22 answer 1
 > state_load /tmp/golden
 < resp -3
 = state_load(/tmp/golden)
-# scenario-20 answer 1
+# scenario-23 answer 1
 > connect a:out b:in
 < resp -1
 = connect(a:out,b:in)
-# scenario-21 answer 1
+# scenario-24 answer 1
 > disconnect a:out b:in
 < resp -1
 = disconnect(a:out,b:in)
-# scenario-22 answer 1
+# scenario-25 answer 1
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 1
+# scenario-26 answer 1
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 1
+# scenario-27 answer 1
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 1
+# scenario-28 answer 1
 > remote_pages 9
 < resp -1
 = remote_pages(9)
-# scenario-26 answer 1
+# scenario-29 answer 1
 > remote_page_get 9 0
 < resp -1
 = remote_page_get(9,0)
-# scenario-27 answer 1
+# scenario-30 answer 1
 > param_info 9 gain
 < resp -1
 = param_info(9,gain)
-# scenario-28 answer 1
+# scenario-31 answer 1
 > param_info 3 no_such_symbol
 < resp -4
 = param_info(3,no_such_symbol)
-# scenario-29 answer 1
+# scenario-32 answer 1
 > param_info 3 :bypass
 < resp -4
 = param_info(3,:bypass)
-# scenario-30 answer 1
+# scenario-33 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-31 answer 1
+# scenario-34 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-32 answer 1
+# scenario-35 answer 1
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 1
+# scenario-36 answer 1
 > @t1 param_get 9 gain
 < @t1 resp -1
 = param_get(9,gain)
-# scenario-34 answer 1
+# scenario-37 answer 1
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -1
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 1
+# scenario-38 answer 1
 > @t-3 bypass 9 1
 < @t-3 resp -1
 = bypass(9,1)
-# scenario-36 answer 1
+# scenario-39 answer 1
 > param_get 9 gain
 < resp -1
 = param_get(9,gain)
-# scenario-37 answer 1
+# scenario-40 answer 1
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 1
+# scenario-41 answer 1
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 1
+# scenario-42 answer 1
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 1
+# scenario-43 answer 1
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 1
+# scenario-44 answer 1
 > param_get 9 gain
 < resp -1 reply.host.instance-invalid
 = param_get(9,gain)
-# scenario-42 answer 1
+# scenario-45 answer 1
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 1
+# scenario-46 answer 1
 > @e1 bypass 9 1
 < @e1 resp -1 reply.host.instance-invalid
 = bypass(9,1)
-# scenario-44 answer 1
+# scenario-47 answer 1
 > @e2 param_set 9 gain 0.5
 < @e2 resp -1 reply.host.instance-invalid
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 1
+# scenario-48 answer 1
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 1
+# scenario-49 answer 1
 > param_get 9 gain
 < resp -1
 = param_get(9,gain)
-# scenario-47 answer 1
+# scenario-50 answer 1
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 1
+> @s1 param_get 9 gain
+< @s1 resp -1
+= param_get(9,gain)
+# scenario-52 answer 1
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 1
 > hello 0 tags
 < resp -902
 = 
@@ -887,66 +959,78 @@
 < resp -1
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 1
+> param_get_many 3 gain :bypass
+< resp -4
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 1
+> param_get_many 3 gain no_such_symbol
+< resp -4
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 1
+> param_get_many 9 gain
+< resp -1
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 1
 > param_info 3 :bypass
 < resp -4
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 1
+# fuzz/corpus/protocol/scenario-16 answer 1
 > param_info 3 no_such_symbol
 < resp -4
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 1
+# fuzz/corpus/protocol/scenario-17 answer 1
 > param_info 9 gain
 < resp -1
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 1
+# fuzz/corpus/protocol/scenario-18 answer 1
 > param_set 3 gain 0.25
 < resp -4
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 1
+# fuzz/corpus/protocol/scenario-19 answer 1
 > param_set 3 no_such_symbol 0.5
 < resp -4
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 1
-> param_set 9 gain 0.5
-< resp -1
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 1
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 1
-> preset_load 3 urn:no:such:preset
-< resp -4
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 1
 > add urn:no:such:plugin 4
 < resp -101
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 1
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 1
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 1
 > remote_page_get 9 0
 < resp -1
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 1
+# fuzz/corpus/protocol/scenario-24 answer 1
 > remote_pages 9
 < resp -1
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 1
+# fuzz/corpus/protocol/scenario-25 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 1
+# fuzz/corpus/protocol/scenario-26 answer 1
 > state_load /tmp/state
 < resp -2
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 1
+# fuzz/corpus/protocol/scenario-27 answer 1
 > state_save /tmp/state
 < resp -2
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 1
+# fuzz/corpus/protocol/scenario-28 answer 1
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 1
+# fuzz/corpus/protocol/scenario-29 answer 1
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -1099,66 +1183,78 @@
 < resp -1
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 1
+> param_get_many 3 gain :bypass
+< resp -4
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 1
+> param_get_many 3 gain no_such_symbol
+< resp -4
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 1
+> param_get_many 9 gain
+< resp -1
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 1
 > param_info 3 :bypass
 < resp -4
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 1
 > param_info 3 no_such_symbol
 < resp -4
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 1
 > param_info 9 gain
 < resp -1
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 1
 > param_set 3 gain 0.25
 < resp -4
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 1
 > param_set 3 no_such_symbol 0.5
 < resp -4
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 1
-> param_set 9 gain 0.5
-< resp -1
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 1
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 1
-> preset_load 3 urn:no:such:preset
-< resp -4
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 1
 > add urn:no:such:plugin 4
 < resp -101
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 1
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 1
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 1
 > remote_page_get 9 0
 < resp -1
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 1
 > remote_pages 9
 < resp -1
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 1
 > state_load /tmp/state
 < resp -2
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 1
 > state_save /tmp/state
 < resp -2
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 1
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 1
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 1
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -1247,134 +1343,158 @@
 < resp -2
 = bypass(9,1)
 # scenario-15 answer 2
+> param_get_many 3 gain :bypass
+< resp -101
+= param_get(3,gain)
+# scenario-16 answer 2
+> param_get_many 3 gain no_such_symbol
+< resp -101
+= param_get(3,gain)
+# scenario-17 answer 2
+> param_get_many 9 gain
+< resp -2
+= param_get(9,gain)
+# scenario-18 answer 2
 > preset_load 3 urn:no:such:preset
 < resp -101
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 2
+# scenario-19 answer 2
 > state_save /tmp/golden
 < resp -4
 = state_save(/tmp/golden)
-# scenario-17 answer 2
+# scenario-20 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-18 answer 2
+# scenario-21 answer 2
 > add urn:golden:amp 3
 < resp -101
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 2
+# scenario-22 answer 2
 > state_load /tmp/golden
 < resp -4
 = state_load(/tmp/golden)
-# scenario-20 answer 2
+# scenario-23 answer 2
 > connect a:out b:in
 < resp -2
 = connect(a:out,b:in)
-# scenario-21 answer 2
+# scenario-24 answer 2
 > disconnect a:out b:in
 < resp -2
 = disconnect(a:out,b:in)
-# scenario-22 answer 2
+# scenario-25 answer 2
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 2
+# scenario-26 answer 2
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 2
+# scenario-27 answer 2
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 2
+# scenario-28 answer 2
 > remote_pages 9
 < resp -2
 = remote_pages(9)
-# scenario-26 answer 2
+# scenario-29 answer 2
 > remote_page_get 9 0
 < resp -2
 = remote_page_get(9,0)
-# scenario-27 answer 2
+# scenario-30 answer 2
 > param_info 9 gain
 < resp -2
 = param_info(9,gain)
-# scenario-28 answer 2
+# scenario-31 answer 2
 > param_info 3 no_such_symbol
 < resp -101
 = param_info(3,no_such_symbol)
-# scenario-29 answer 2
+# scenario-32 answer 2
 > param_info 3 :bypass
 < resp -101
 = param_info(3,:bypass)
-# scenario-30 answer 2
+# scenario-33 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-31 answer 2
+# scenario-34 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-32 answer 2
+# scenario-35 answer 2
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 2
+# scenario-36 answer 2
 > @t1 param_get 9 gain
 < @t1 resp -2
 = param_get(9,gain)
-# scenario-34 answer 2
+# scenario-37 answer 2
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -2
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 2
+# scenario-38 answer 2
 > @t-3 bypass 9 1
 < @t-3 resp -2
 = bypass(9,1)
-# scenario-36 answer 2
+# scenario-39 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-37 answer 2
+# scenario-40 answer 2
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 2
+# scenario-41 answer 2
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 2
+# scenario-42 answer 2
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 2
+# scenario-43 answer 2
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 2
+# scenario-44 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-42 answer 2
+# scenario-45 answer 2
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 2
+# scenario-46 answer 2
 > @e1 bypass 9 1
 < @e1 resp -2
 = bypass(9,1)
-# scenario-44 answer 2
+# scenario-47 answer 2
 > @e2 param_set 9 gain 0.5
 < @e2 resp -2
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 2
+# scenario-48 answer 2
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 2
+# scenario-49 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-47 answer 2
+# scenario-50 answer 2
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 2
+> @s1 param_get 9 gain
+< @s1 resp -2
+= param_get(9,gain)
+# scenario-52 answer 2
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 2
 > hello 0 tags
 < resp -902
 = 
@@ -1483,66 +1603,78 @@
 < resp -2
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 2
+> param_get_many 3 gain :bypass
+< resp -101
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 2
+> param_get_many 3 gain no_such_symbol
+< resp -101
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 2
+> param_get_many 9 gain
+< resp -2
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 2
 > param_info 3 :bypass
 < resp -101
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 2
+# fuzz/corpus/protocol/scenario-16 answer 2
 > param_info 3 no_such_symbol
 < resp -101
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 2
+# fuzz/corpus/protocol/scenario-17 answer 2
 > param_info 9 gain
 < resp -2
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 2
+# fuzz/corpus/protocol/scenario-18 answer 2
 > param_set 3 gain 0.25
 < resp -101
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 2
+# fuzz/corpus/protocol/scenario-19 answer 2
 > param_set 3 no_such_symbol 0.5
 < resp -101
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 2
-> param_set 9 gain 0.5
-< resp -2
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 2
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 2
-> preset_load 3 urn:no:such:preset
-< resp -101
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 2
 > add urn:no:such:plugin 4
 < resp -902
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 2
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 2
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 2
 > remote_page_get 9 0
 < resp -2
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 2
+# fuzz/corpus/protocol/scenario-24 answer 2
 > remote_pages 9
 < resp -2
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 2
+# fuzz/corpus/protocol/scenario-25 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 2
+# fuzz/corpus/protocol/scenario-26 answer 2
 > state_load /tmp/state
 < resp -3
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 2
+# fuzz/corpus/protocol/scenario-27 answer 2
 > state_save /tmp/state
 < resp -3
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 2
+# fuzz/corpus/protocol/scenario-28 answer 2
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 2
+# fuzz/corpus/protocol/scenario-29 answer 2
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -1695,66 +1827,78 @@
 < resp -2
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 2
+> param_get_many 3 gain :bypass
+< resp -101
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 2
+> param_get_many 3 gain no_such_symbol
+< resp -101
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 2
+> param_get_many 9 gain
+< resp -2
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 2
 > param_info 3 :bypass
 < resp -101
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 2
 > param_info 3 no_such_symbol
 < resp -101
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 2
 > param_info 9 gain
 < resp -2
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 2
 > param_set 3 gain 0.25
 < resp -101
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 2
 > param_set 3 no_such_symbol 0.5
 < resp -101
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 2
-> param_set 9 gain 0.5
-< resp -2
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 2
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 2
-> preset_load 3 urn:no:such:preset
-< resp -101
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 2
 > add urn:no:such:plugin 4
 < resp -902
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 2
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 2
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 2
 > remote_page_get 9 0
 < resp -2
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 2
 > remote_pages 9
 < resp -2
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 2
 > state_load /tmp/state
 < resp -3
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 2
 > state_save /tmp/state
 < resp -3
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 2
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 2
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 2
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -1843,134 +1987,158 @@
 < resp -3
 = bypass(9,1)
 # scenario-15 answer 3
+> param_get_many 3 gain :bypass
+< resp -902
+= param_get(3,gain)
+# scenario-16 answer 3
+> param_get_many 3 gain no_such_symbol
+< resp -902
+= param_get(3,gain)
+# scenario-17 answer 3
+> param_get_many 9 gain
+< resp -3
+= param_get(9,gain)
+# scenario-18 answer 3
 > preset_load 3 urn:no:such:preset
 < resp -902
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 3
+# scenario-19 answer 3
 > state_save /tmp/golden
 < resp -101
 = state_save(/tmp/golden)
-# scenario-17 answer 3
+# scenario-20 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-18 answer 3
+# scenario-21 answer 3
 > add urn:golden:amp 3
 < resp -902
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 3
+# scenario-22 answer 3
 > state_load /tmp/golden
 < resp -101
 = state_load(/tmp/golden)
-# scenario-20 answer 3
+# scenario-23 answer 3
 > connect a:out b:in
 < resp -3
 = connect(a:out,b:in)
-# scenario-21 answer 3
+# scenario-24 answer 3
 > disconnect a:out b:in
 < resp -3
 = disconnect(a:out,b:in)
-# scenario-22 answer 3
+# scenario-25 answer 3
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 3
+# scenario-26 answer 3
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 3
+# scenario-27 answer 3
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 3
+# scenario-28 answer 3
 > remote_pages 9
 < resp -3
 = remote_pages(9)
-# scenario-26 answer 3
+# scenario-29 answer 3
 > remote_page_get 9 0
 < resp -3
 = remote_page_get(9,0)
-# scenario-27 answer 3
+# scenario-30 answer 3
 > param_info 9 gain
 < resp -3
 = param_info(9,gain)
-# scenario-28 answer 3
+# scenario-31 answer 3
 > param_info 3 no_such_symbol
 < resp -902
 = param_info(3,no_such_symbol)
-# scenario-29 answer 3
+# scenario-32 answer 3
 > param_info 3 :bypass
 < resp -902
 = param_info(3,:bypass)
-# scenario-30 answer 3
+# scenario-33 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-31 answer 3
+# scenario-34 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-32 answer 3
+# scenario-35 answer 3
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 3
+# scenario-36 answer 3
 > @t1 param_get 9 gain
 < @t1 resp -3
 = param_get(9,gain)
-# scenario-34 answer 3
+# scenario-37 answer 3
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -3
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 3
+# scenario-38 answer 3
 > @t-3 bypass 9 1
 < @t-3 resp -3
 = bypass(9,1)
-# scenario-36 answer 3
+# scenario-39 answer 3
 > param_get 9 gain
 < resp -3
 = param_get(9,gain)
-# scenario-37 answer 3
+# scenario-40 answer 3
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 3
+# scenario-41 answer 3
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 3
+# scenario-42 answer 3
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 3
+# scenario-43 answer 3
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 3
+# scenario-44 answer 3
 > param_get 9 gain
 < resp -3 reply.host.instance-non-exists
 = param_get(9,gain)
-# scenario-42 answer 3
+# scenario-45 answer 3
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 3
+# scenario-46 answer 3
 > @e1 bypass 9 1
 < @e1 resp -3 reply.host.instance-non-exists
 = bypass(9,1)
-# scenario-44 answer 3
+# scenario-47 answer 3
 > @e2 param_set 9 gain 0.5
 < @e2 resp -3 reply.host.instance-non-exists
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 3
+# scenario-48 answer 3
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 3
+# scenario-49 answer 3
 > param_get 9 gain
 < resp -3
 = param_get(9,gain)
-# scenario-47 answer 3
+# scenario-50 answer 3
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 3
+> @s1 param_get 9 gain
+< @s1 resp -3
+= param_get(9,gain)
+# scenario-52 answer 3
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 3
 > hello 0 tags
 < resp -902
 = 
@@ -2079,66 +2247,78 @@
 < resp -3
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 3
+> param_get_many 3 gain :bypass
+< resp -902
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 3
+> param_get_many 3 gain no_such_symbol
+< resp -902
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 3
+> param_get_many 9 gain
+< resp -3
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 3
 > param_info 3 :bypass
 < resp -902
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 3
+# fuzz/corpus/protocol/scenario-16 answer 3
 > param_info 3 no_such_symbol
 < resp -902
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 3
+# fuzz/corpus/protocol/scenario-17 answer 3
 > param_info 9 gain
 < resp -3
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 3
+# fuzz/corpus/protocol/scenario-18 answer 3
 > param_set 3 gain 0.25
 < resp -902
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 3
+# fuzz/corpus/protocol/scenario-19 answer 3
 > param_set 3 no_such_symbol 0.5
 < resp -902
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 3
-> param_set 9 gain 0.5
-< resp -3
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 3
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 3
-> preset_load 3 urn:no:such:preset
-< resp -902
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 3
 > add urn:no:such:plugin 4
 < resp -205
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 3
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 3
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 3
 > remote_page_get 9 0
 < resp -3
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 3
+# fuzz/corpus/protocol/scenario-24 answer 3
 > remote_pages 9
 < resp -3
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 3
+# fuzz/corpus/protocol/scenario-25 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 3
+# fuzz/corpus/protocol/scenario-26 answer 3
 > state_load /tmp/state
 < resp -4
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 3
+# fuzz/corpus/protocol/scenario-27 answer 3
 > state_save /tmp/state
 < resp -4
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 3
+# fuzz/corpus/protocol/scenario-28 answer 3
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 3
+# fuzz/corpus/protocol/scenario-29 answer 3
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -2291,66 +2471,78 @@
 < resp -3
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 3
+> param_get_many 3 gain :bypass
+< resp -902
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 3
+> param_get_many 3 gain no_such_symbol
+< resp -902
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 3
+> param_get_many 9 gain
+< resp -3
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 3
 > param_info 3 :bypass
 < resp -902
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 3
 > param_info 3 no_such_symbol
 < resp -902
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 3
 > param_info 9 gain
 < resp -3
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 3
 > param_set 3 gain 0.25
 < resp -902
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 3
 > param_set 3 no_such_symbol 0.5
 < resp -902
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 3
-> param_set 9 gain 0.5
-< resp -3
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 3
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 3
-> preset_load 3 urn:no:such:preset
-< resp -902
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 3
 > add urn:no:such:plugin 4
 < resp -205
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 3
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 3
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 3
 > remote_page_get 9 0
 < resp -3
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 3
 > remote_pages 9
 < resp -3
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 3
 > state_load /tmp/state
 < resp -4
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 3
 > state_save /tmp/state
 < resp -4
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 3
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 3
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 3
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -2439,134 +2631,158 @@
 < resp -4
 = bypass(9,1)
 # scenario-15 answer 4
+> param_get_many 3 gain :bypass
+< resp -205
+= param_get(3,gain)
+# scenario-16 answer 4
+> param_get_many 3 gain no_such_symbol
+< resp -205
+= param_get(3,gain)
+# scenario-17 answer 4
+> param_get_many 9 gain
+< resp -4
+= param_get(9,gain)
+# scenario-18 answer 4
 > preset_load 3 urn:no:such:preset
 < resp -205
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 4
+# scenario-19 answer 4
 > state_save /tmp/golden
 < resp -902
 = state_save(/tmp/golden)
-# scenario-17 answer 4
+# scenario-20 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-18 answer 4
+# scenario-21 answer 4
 > add urn:golden:amp 3
 < resp -205
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 4
+# scenario-22 answer 4
 > state_load /tmp/golden
 < resp -902
 = state_load(/tmp/golden)
-# scenario-20 answer 4
+# scenario-23 answer 4
 > connect a:out b:in
 < resp -4
 = connect(a:out,b:in)
-# scenario-21 answer 4
+# scenario-24 answer 4
 > disconnect a:out b:in
 < resp -4
 = disconnect(a:out,b:in)
-# scenario-22 answer 4
+# scenario-25 answer 4
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 4
+# scenario-26 answer 4
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 4
+# scenario-27 answer 4
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 4
+# scenario-28 answer 4
 > remote_pages 9
 < resp -4
 = remote_pages(9)
-# scenario-26 answer 4
+# scenario-29 answer 4
 > remote_page_get 9 0
 < resp -4
 = remote_page_get(9,0)
-# scenario-27 answer 4
+# scenario-30 answer 4
 > param_info 9 gain
 < resp -4
 = param_info(9,gain)
-# scenario-28 answer 4
+# scenario-31 answer 4
 > param_info 3 no_such_symbol
 < resp -205
 = param_info(3,no_such_symbol)
-# scenario-29 answer 4
+# scenario-32 answer 4
 > param_info 3 :bypass
 < resp -205
 = param_info(3,:bypass)
-# scenario-30 answer 4
+# scenario-33 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-31 answer 4
+# scenario-34 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-32 answer 4
+# scenario-35 answer 4
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 4
+# scenario-36 answer 4
 > @t1 param_get 9 gain
 < @t1 resp -4
 = param_get(9,gain)
-# scenario-34 answer 4
+# scenario-37 answer 4
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -4
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 4
+# scenario-38 answer 4
 > @t-3 bypass 9 1
 < @t-3 resp -4
 = bypass(9,1)
-# scenario-36 answer 4
+# scenario-39 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-37 answer 4
+# scenario-40 answer 4
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 4
+# scenario-41 answer 4
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 4
+# scenario-42 answer 4
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 4
+# scenario-43 answer 4
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 4
+# scenario-44 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-42 answer 4
+# scenario-45 answer 4
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 4
+# scenario-46 answer 4
 > @e1 bypass 9 1
 < @e1 resp -4
 = bypass(9,1)
-# scenario-44 answer 4
+# scenario-47 answer 4
 > @e2 param_set 9 gain 0.5
 < @e2 resp -4
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 4
+# scenario-48 answer 4
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 4
+# scenario-49 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-47 answer 4
+# scenario-50 answer 4
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 4
+> @s1 param_get 9 gain
+< @s1 resp -4
+= param_get(9,gain)
+# scenario-52 answer 4
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 4
 > hello 0 tags
 < resp -902
 = 
@@ -2675,66 +2891,78 @@
 < resp -4
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 4
+> param_get_many 3 gain :bypass
+< resp -205
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 4
+> param_get_many 3 gain no_such_symbol
+< resp -205
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 4
+> param_get_many 9 gain
+< resp -4
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 4
 > param_info 3 :bypass
 < resp -205
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 4
+# fuzz/corpus/protocol/scenario-16 answer 4
 > param_info 3 no_such_symbol
 < resp -205
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 4
+# fuzz/corpus/protocol/scenario-17 answer 4
 > param_info 9 gain
 < resp -4
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 4
+# fuzz/corpus/protocol/scenario-18 answer 4
 > param_set 3 gain 0.25
 < resp -205
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 4
+# fuzz/corpus/protocol/scenario-19 answer 4
 > param_set 3 no_such_symbol 0.5
 < resp -205
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 4
-> param_set 9 gain 0.5
-< resp -4
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 4
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 4
-> preset_load 3 urn:no:such:preset
-< resp -205
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 4
 > add urn:no:such:plugin 4
 < resp -105
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 4
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 4
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 4
 > remote_page_get 9 0
 < resp -4
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 4
+# fuzz/corpus/protocol/scenario-24 answer 4
 > remote_pages 9
 < resp -4
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 4
+# fuzz/corpus/protocol/scenario-25 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 4
+# fuzz/corpus/protocol/scenario-26 answer 4
 > state_load /tmp/state
 < resp -101
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 4
+# fuzz/corpus/protocol/scenario-27 answer 4
 > state_save /tmp/state
 < resp -101
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 4
+# fuzz/corpus/protocol/scenario-28 answer 4
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 4
+# fuzz/corpus/protocol/scenario-29 answer 4
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -2887,66 +3115,78 @@
 < resp -4
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 4
+> param_get_many 3 gain :bypass
+< resp -205
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 4
+> param_get_many 3 gain no_such_symbol
+< resp -205
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 4
+> param_get_many 9 gain
+< resp -4
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 4
 > param_info 3 :bypass
 < resp -205
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 4
 > param_info 3 no_such_symbol
 < resp -205
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 4
 > param_info 9 gain
 < resp -4
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 4
 > param_set 3 gain 0.25
 < resp -205
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 4
 > param_set 3 no_such_symbol 0.5
 < resp -205
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 4
-> param_set 9 gain 0.5
-< resp -4
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 4
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 4
-> preset_load 3 urn:no:such:preset
-< resp -205
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 4
 > add urn:no:such:plugin 4
 < resp -105
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 4
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 4
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 4
 > remote_page_get 9 0
 < resp -4
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 4
 > remote_pages 9
 < resp -4
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 4
 > state_load /tmp/state
 < resp -101
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 4
 > state_save /tmp/state
 < resp -101
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 4
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 4
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 4
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -3035,134 +3275,158 @@
 < resp -101
 = bypass(9,1)
 # scenario-15 answer 5
+> param_get_many 3 gain :bypass
+< resp -105
+= param_get(3,gain)
+# scenario-16 answer 5
+> param_get_many 3 gain no_such_symbol
+< resp -105
+= param_get(3,gain)
+# scenario-17 answer 5
+> param_get_many 9 gain
+< resp -101
+= param_get(9,gain)
+# scenario-18 answer 5
 > preset_load 3 urn:no:such:preset
 < resp -105
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 5
+# scenario-19 answer 5
 > state_save /tmp/golden
 < resp -205
 = state_save(/tmp/golden)
-# scenario-17 answer 5
+# scenario-20 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-18 answer 5
+# scenario-21 answer 5
 > add urn:golden:amp 3
 < resp -105
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 5
+# scenario-22 answer 5
 > state_load /tmp/golden
 < resp -205
 = state_load(/tmp/golden)
-# scenario-20 answer 5
+# scenario-23 answer 5
 > connect a:out b:in
 < resp -101
 = connect(a:out,b:in)
-# scenario-21 answer 5
+# scenario-24 answer 5
 > disconnect a:out b:in
 < resp -101
 = disconnect(a:out,b:in)
-# scenario-22 answer 5
+# scenario-25 answer 5
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 5
+# scenario-26 answer 5
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 5
+# scenario-27 answer 5
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 5
+# scenario-28 answer 5
 > remote_pages 9
 < resp -101
 = remote_pages(9)
-# scenario-26 answer 5
+# scenario-29 answer 5
 > remote_page_get 9 0
 < resp -101
 = remote_page_get(9,0)
-# scenario-27 answer 5
+# scenario-30 answer 5
 > param_info 9 gain
 < resp -101
 = param_info(9,gain)
-# scenario-28 answer 5
+# scenario-31 answer 5
 > param_info 3 no_such_symbol
 < resp -105
 = param_info(3,no_such_symbol)
-# scenario-29 answer 5
+# scenario-32 answer 5
 > param_info 3 :bypass
 < resp -105
 = param_info(3,:bypass)
-# scenario-30 answer 5
+# scenario-33 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-31 answer 5
+# scenario-34 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-32 answer 5
+# scenario-35 answer 5
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 5
+# scenario-36 answer 5
 > @t1 param_get 9 gain
 < @t1 resp -101
 = param_get(9,gain)
-# scenario-34 answer 5
+# scenario-37 answer 5
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -101
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 5
+# scenario-38 answer 5
 > @t-3 bypass 9 1
 < @t-3 resp -101
 = bypass(9,1)
-# scenario-36 answer 5
+# scenario-39 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-37 answer 5
+# scenario-40 answer 5
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 5
+# scenario-41 answer 5
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 5
+# scenario-42 answer 5
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 5
+# scenario-43 answer 5
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 5
+# scenario-44 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-42 answer 5
+# scenario-45 answer 5
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 5
+# scenario-46 answer 5
 > @e1 bypass 9 1
 < @e1 resp -101
 = bypass(9,1)
-# scenario-44 answer 5
+# scenario-47 answer 5
 > @e2 param_set 9 gain 0.5
 < @e2 resp -101
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 5
+# scenario-48 answer 5
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 5
+# scenario-49 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-47 answer 5
+# scenario-50 answer 5
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 5
+> @s1 param_get 9 gain
+< @s1 resp -101
+= param_get(9,gain)
+# scenario-52 answer 5
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 5
 > hello 0 tags
 < resp -902
 = 
@@ -3271,66 +3535,78 @@
 < resp -101
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 5
+> param_get_many 3 gain :bypass
+< resp -105
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 5
+> param_get_many 3 gain no_such_symbol
+< resp -105
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 5
+> param_get_many 9 gain
+< resp -101
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 5
 > param_info 3 :bypass
 < resp -105
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 5
+# fuzz/corpus/protocol/scenario-16 answer 5
 > param_info 3 no_such_symbol
 < resp -105
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 5
+# fuzz/corpus/protocol/scenario-17 answer 5
 > param_info 9 gain
 < resp -101
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 5
+# fuzz/corpus/protocol/scenario-18 answer 5
 > param_set 3 gain 0.25
 < resp -105
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 5
+# fuzz/corpus/protocol/scenario-19 answer 5
 > param_set 3 no_such_symbol 0.5
 < resp -105
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 5
-> param_set 9 gain 0.5
-< resp -101
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 5
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 5
-> preset_load 3 urn:no:such:preset
-< resp -105
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 5
 > add urn:no:such:plugin 4
 < resp 4
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 5
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 5
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 5
 > remote_page_get 9 0
 < resp -101
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 5
+# fuzz/corpus/protocol/scenario-24 answer 5
 > remote_pages 9
 < resp -101
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 5
+# fuzz/corpus/protocol/scenario-25 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 5
+# fuzz/corpus/protocol/scenario-26 answer 5
 > state_load /tmp/state
 < resp -902
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 5
+# fuzz/corpus/protocol/scenario-27 answer 5
 > state_save /tmp/state
 < resp -902
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 5
+# fuzz/corpus/protocol/scenario-28 answer 5
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 5
+# fuzz/corpus/protocol/scenario-29 answer 5
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -3483,66 +3759,78 @@
 < resp -101
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 5
+> param_get_many 3 gain :bypass
+< resp -105
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 5
+> param_get_many 3 gain no_such_symbol
+< resp -105
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 5
+> param_get_many 9 gain
+< resp -101
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 5
 > param_info 3 :bypass
 < resp -105
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 5
 > param_info 3 no_such_symbol
 < resp -105
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 5
 > param_info 9 gain
 < resp -101
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 5
 > param_set 3 gain 0.25
 < resp -105
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 5
 > param_set 3 no_such_symbol 0.5
 < resp -105
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 5
-> param_set 9 gain 0.5
-< resp -101
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 5
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 5
-> preset_load 3 urn:no:such:preset
-< resp -105
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 5
 > add urn:no:such:plugin 4
 < resp 4
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 5
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 5
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 5
 > remote_page_get 9 0
 < resp -101
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 5
 > remote_pages 9
 < resp -101
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 5
 > state_load /tmp/state
 < resp -902
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 5
 > state_save /tmp/state
 < resp -902
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 5
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 5
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 5
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -3631,134 +3919,158 @@
 < resp -902
 = bypass(9,1)
 # scenario-15 answer 6
+> param_get_many 3 gain :bypass
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,:bypass)
+# scenario-16 answer 6
+> param_get_many 3 gain no_such_symbol
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,no_such_symbol)
+# scenario-17 answer 6
+> param_get_many 9 gain
+< resp -902
+= param_get(9,gain)
+# scenario-18 answer 6
 > preset_load 3 urn:no:such:preset
 < resp 0
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 6
+# scenario-19 answer 6
 > state_save /tmp/golden
 < resp -105
 = state_save(/tmp/golden)
-# scenario-17 answer 6
+# scenario-20 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-18 answer 6
+# scenario-21 answer 6
 > add urn:golden:amp 3
 < resp 3
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 6
+# scenario-22 answer 6
 > state_load /tmp/golden
 < resp -105
 = state_load(/tmp/golden)
-# scenario-20 answer 6
+# scenario-23 answer 6
 > connect a:out b:in
 < resp -902
 = connect(a:out,b:in)
-# scenario-21 answer 6
+# scenario-24 answer 6
 > disconnect a:out b:in
 < resp -902
 = disconnect(a:out,b:in)
-# scenario-22 answer 6
+# scenario-25 answer 6
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 6
+# scenario-26 answer 6
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 6
+# scenario-27 answer 6
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 6
+# scenario-28 answer 6
 > remote_pages 9
 < resp -902
 = remote_pages(9)
-# scenario-26 answer 6
+# scenario-29 answer 6
 > remote_page_get 9 0
 < resp -902
 = remote_page_get(9,0)
-# scenario-27 answer 6
+# scenario-30 answer 6
 > param_info 9 gain
 < resp -902
 = param_info(9,gain)
-# scenario-28 answer 6
+# scenario-31 answer 6
 > param_info 3 no_such_symbol
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,no_such_symbol)
-# scenario-29 answer 6
+# scenario-32 answer 6
 > param_info 3 :bypass
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,:bypass)
-# scenario-30 answer 6
+# scenario-33 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-31 answer 6
+# scenario-34 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-32 answer 6
+# scenario-35 answer 6
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 6
+# scenario-36 answer 6
 > @t1 param_get 9 gain
 < @t1 resp -902
 = param_get(9,gain)
-# scenario-34 answer 6
+# scenario-37 answer 6
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -902
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 6
+# scenario-38 answer 6
 > @t-3 bypass 9 1
 < @t-3 resp -902
 = bypass(9,1)
-# scenario-36 answer 6
+# scenario-39 answer 6
 > param_get 9 gain
 < resp -902
 = param_get(9,gain)
-# scenario-37 answer 6
+# scenario-40 answer 6
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 6
+# scenario-41 answer 6
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 6
+# scenario-42 answer 6
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 6
+# scenario-43 answer 6
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 6
+# scenario-44 answer 6
 > param_get 9 gain
 < resp -902 reply.host.invalid-operation
 = param_get(9,gain)
-# scenario-42 answer 6
+# scenario-45 answer 6
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 6
+# scenario-46 answer 6
 > @e1 bypass 9 1
 < @e1 resp -902 reply.host.invalid-operation
 = bypass(9,1)
-# scenario-44 answer 6
+# scenario-47 answer 6
 > @e2 param_set 9 gain 0.5
 < @e2 resp -902 reply.host.invalid-operation
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 6
+# scenario-48 answer 6
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 6
+# scenario-49 answer 6
 > param_get 9 gain
 < resp -902
 = param_get(9,gain)
-# scenario-47 answer 6
+# scenario-50 answer 6
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 6
+> @s1 param_get 9 gain
+< @s1 resp -902
+= param_get(9,gain)
+# scenario-52 answer 6
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 6
 > hello 0 tags
 < resp -902
 = 
@@ -3867,66 +4179,78 @@
 < resp -902
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 6
+> param_get_many 3 gain :bypass
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,:bypass)
+# fuzz/corpus/protocol/scenario-13 answer 6
+> param_get_many 3 gain no_such_symbol
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-14 answer 6
+> param_get_many 9 gain
+< resp -902
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 6
 > param_info 3 :bypass
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 6
+# fuzz/corpus/protocol/scenario-16 answer 6
 > param_info 3 no_such_symbol
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 6
+# fuzz/corpus/protocol/scenario-17 answer 6
 > param_info 9 gain
 < resp -902
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 6
+# fuzz/corpus/protocol/scenario-18 answer 6
 > param_set 3 gain 0.25
 < resp 0
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 6
+# fuzz/corpus/protocol/scenario-19 answer 6
 > param_set 3 no_such_symbol 0.5
 < resp 0
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 6
-> param_set 9 gain 0.5
-< resp -902
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 6
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 6
-> preset_load 3 urn:no:such:preset
-< resp 0
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 6
 > add urn:no:such:plugin 4
 < resp -1
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 6
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 6
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 6
 > remote_page_get 9 0
 < resp -902
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 6
+# fuzz/corpus/protocol/scenario-24 answer 6
 > remote_pages 9
 < resp -902
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 6
+# fuzz/corpus/protocol/scenario-25 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 6
+# fuzz/corpus/protocol/scenario-26 answer 6
 > state_load /tmp/state
 < resp -205
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 6
+# fuzz/corpus/protocol/scenario-27 answer 6
 > state_save /tmp/state
 < resp -205
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 6
+# fuzz/corpus/protocol/scenario-28 answer 6
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 6
+# fuzz/corpus/protocol/scenario-29 answer 6
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -4079,66 +4403,78 @@
 < resp -902
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 6
+> param_get_many 3 gain :bypass
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 6
+> param_get_many 3 gain no_such_symbol
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 6
+> param_get_many 9 gain
+< resp -902
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 6
 > param_info 3 :bypass
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 6
 > param_info 3 no_such_symbol
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 6
 > param_info 9 gain
 < resp -902
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 6
 > param_set 3 gain 0.25
 < resp 0
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 6
 > param_set 3 no_such_symbol 0.5
 < resp 0
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 6
-> param_set 9 gain 0.5
-< resp -902
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 6
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 6
-> preset_load 3 urn:no:such:preset
-< resp 0
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 6
 > add urn:no:such:plugin 4
 < resp -1
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 6
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 6
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 6
 > remote_page_get 9 0
 < resp -902
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 6
 > remote_pages 9
 < resp -902
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 6
 > state_load /tmp/state
 < resp -205
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 6
 > state_save /tmp/state
 < resp -205
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 6
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 6
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 6
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -4227,134 +4563,158 @@
 < resp -205
 = bypass(9,1)
 # scenario-15 answer 7
+> param_get_many 3 gain :bypass
+< resp -1
+= param_get(3,gain)
+# scenario-16 answer 7
+> param_get_many 3 gain no_such_symbol
+< resp -1
+= param_get(3,gain)
+# scenario-17 answer 7
+> param_get_many 9 gain
+< resp -205
+= param_get(9,gain)
+# scenario-18 answer 7
 > preset_load 3 urn:no:such:preset
 < resp -1
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 7
+# scenario-19 answer 7
 > state_save /tmp/golden
 < resp 0
 = state_save(/tmp/golden)
-# scenario-17 answer 7
+# scenario-20 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-18 answer 7
+# scenario-21 answer 7
 > add urn:golden:amp 3
 < resp -1
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 7
+# scenario-22 answer 7
 > state_load /tmp/golden
 < resp 0
 = state_load(/tmp/golden)
-# scenario-20 answer 7
+# scenario-23 answer 7
 > connect a:out b:in
 < resp -205
 = connect(a:out,b:in)
-# scenario-21 answer 7
+# scenario-24 answer 7
 > disconnect a:out b:in
 < resp -205
 = disconnect(a:out,b:in)
-# scenario-22 answer 7
+# scenario-25 answer 7
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 7
+# scenario-26 answer 7
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 7
+# scenario-27 answer 7
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 7
+# scenario-28 answer 7
 > remote_pages 9
 < resp -205
 = remote_pages(9)
-# scenario-26 answer 7
+# scenario-29 answer 7
 > remote_page_get 9 0
 < resp -205
 = remote_page_get(9,0)
-# scenario-27 answer 7
+# scenario-30 answer 7
 > param_info 9 gain
 < resp -205
 = param_info(9,gain)
-# scenario-28 answer 7
+# scenario-31 answer 7
 > param_info 3 no_such_symbol
 < resp -1
 = param_info(3,no_such_symbol)
-# scenario-29 answer 7
+# scenario-32 answer 7
 > param_info 3 :bypass
 < resp -1
 = param_info(3,:bypass)
-# scenario-30 answer 7
+# scenario-33 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-31 answer 7
+# scenario-34 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-32 answer 7
+# scenario-35 answer 7
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 7
+# scenario-36 answer 7
 > @t1 param_get 9 gain
 < @t1 resp -205
 = param_get(9,gain)
-# scenario-34 answer 7
+# scenario-37 answer 7
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -205
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 7
+# scenario-38 answer 7
 > @t-3 bypass 9 1
 < @t-3 resp -205
 = bypass(9,1)
-# scenario-36 answer 7
+# scenario-39 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-37 answer 7
+# scenario-40 answer 7
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 7
+# scenario-41 answer 7
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 7
+# scenario-42 answer 7
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 7
+# scenario-43 answer 7
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 7
+# scenario-44 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-42 answer 7
+# scenario-45 answer 7
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 7
+# scenario-46 answer 7
 > @e1 bypass 9 1
 < @e1 resp -205
 = bypass(9,1)
-# scenario-44 answer 7
+# scenario-47 answer 7
 > @e2 param_set 9 gain 0.5
 < @e2 resp -205
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 7
+# scenario-48 answer 7
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 7
+# scenario-49 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-47 answer 7
+# scenario-50 answer 7
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 7
+> @s1 param_get 9 gain
+< @s1 resp -205
+= param_get(9,gain)
+# scenario-52 answer 7
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 7
 > hello 0 tags
 < resp -902
 = 
@@ -4463,66 +4823,78 @@
 < resp -205
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 7
+> param_get_many 3 gain :bypass
+< resp -1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 7
+> param_get_many 3 gain no_such_symbol
+< resp -1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 7
+> param_get_many 9 gain
+< resp -205
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 7
 > param_info 3 :bypass
 < resp -1
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 7
+# fuzz/corpus/protocol/scenario-16 answer 7
 > param_info 3 no_such_symbol
 < resp -1
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 7
+# fuzz/corpus/protocol/scenario-17 answer 7
 > param_info 9 gain
 < resp -205
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 7
+# fuzz/corpus/protocol/scenario-18 answer 7
 > param_set 3 gain 0.25
 < resp -1
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 7
+# fuzz/corpus/protocol/scenario-19 answer 7
 > param_set 3 no_such_symbol 0.5
 < resp -1
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 7
-> param_set 9 gain 0.5
-< resp -205
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 7
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 7
-> preset_load 3 urn:no:such:preset
-< resp -1
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 7
 > add urn:no:such:plugin 4
 < resp -2
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 7
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 7
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 7
 > remote_page_get 9 0
 < resp -205
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 7
+# fuzz/corpus/protocol/scenario-24 answer 7
 > remote_pages 9
 < resp -205
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 7
+# fuzz/corpus/protocol/scenario-25 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 7
+# fuzz/corpus/protocol/scenario-26 answer 7
 > state_load /tmp/state
 < resp -105
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 7
+# fuzz/corpus/protocol/scenario-27 answer 7
 > state_save /tmp/state
 < resp -105
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 7
+# fuzz/corpus/protocol/scenario-28 answer 7
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 7
+# fuzz/corpus/protocol/scenario-29 answer 7
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -4675,66 +5047,78 @@
 < resp -205
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 7
+> param_get_many 3 gain :bypass
+< resp -1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 7
+> param_get_many 3 gain no_such_symbol
+< resp -1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 7
+> param_get_many 9 gain
+< resp -205
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 7
 > param_info 3 :bypass
 < resp -1
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 7
 > param_info 3 no_such_symbol
 < resp -1
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 7
 > param_info 9 gain
 < resp -205
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 7
 > param_set 3 gain 0.25
 < resp -1
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 7
 > param_set 3 no_such_symbol 0.5
 < resp -1
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 7
-> param_set 9 gain 0.5
-< resp -205
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 7
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 7
-> preset_load 3 urn:no:such:preset
-< resp -1
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 7
 > add urn:no:such:plugin 4
 < resp -2
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 7
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 7
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 7
 > remote_page_get 9 0
 < resp -205
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 7
 > remote_pages 9
 < resp -205
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 7
 > state_load /tmp/state
 < resp -105
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 7
 > state_save /tmp/state
 < resp -105
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 7
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 7
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 7
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -4823,134 +5207,158 @@
 < resp -105
 = bypass(9,1)
 # scenario-15 answer 8
+> param_get_many 3 gain :bypass
+< resp -2
+= param_get(3,gain)
+# scenario-16 answer 8
+> param_get_many 3 gain no_such_symbol
+< resp -2
+= param_get(3,gain)
+# scenario-17 answer 8
+> param_get_many 9 gain
+< resp -105
+= param_get(9,gain)
+# scenario-18 answer 8
 > preset_load 3 urn:no:such:preset
 < resp -2
 = preset_load(3,urn:no:such:preset)
-# scenario-16 answer 8
+# scenario-19 answer 8
 > state_save /tmp/golden
 < resp -1
 = state_save(/tmp/golden)
-# scenario-17 answer 8
+# scenario-20 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-18 answer 8
+# scenario-21 answer 8
 > add urn:golden:amp 3
 < resp -2
 = add(urn:golden:amp,3,NULL)
-# scenario-19 answer 8
+# scenario-22 answer 8
 > state_load /tmp/golden
 < resp -1
 = state_load(/tmp/golden)
-# scenario-20 answer 8
+# scenario-23 answer 8
 > connect a:out b:in
 < resp -105
 = connect(a:out,b:in)
-# scenario-21 answer 8
+# scenario-24 answer 8
 > disconnect a:out b:in
 < resp -105
 = disconnect(a:out,b:in)
-# scenario-22 answer 8
+# scenario-25 answer 8
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-23 answer 8
+# scenario-26 answer 8
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-24 answer 8
+# scenario-27 answer 8
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-25 answer 8
+# scenario-28 answer 8
 > remote_pages 9
 < resp -105
 = remote_pages(9)
-# scenario-26 answer 8
+# scenario-29 answer 8
 > remote_page_get 9 0
 < resp -105
 = remote_page_get(9,0)
-# scenario-27 answer 8
+# scenario-30 answer 8
 > param_info 9 gain
 < resp -105
 = param_info(9,gain)
-# scenario-28 answer 8
+# scenario-31 answer 8
 > param_info 3 no_such_symbol
 < resp -2
 = param_info(3,no_such_symbol)
-# scenario-29 answer 8
+# scenario-32 answer 8
 > param_info 3 :bypass
 < resp -2
 = param_info(3,:bypass)
-# scenario-30 answer 8
+# scenario-33 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-31 answer 8
+# scenario-34 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-32 answer 8
+# scenario-35 answer 8
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-33 answer 8
+# scenario-36 answer 8
 > @t1 param_get 9 gain
 < @t1 resp -105
 = param_get(9,gain)
-# scenario-34 answer 8
+# scenario-37 answer 8
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -105
 = param_set(9,gain,0x1p-1)
-# scenario-35 answer 8
+# scenario-38 answer 8
 > @t-3 bypass 9 1
 < @t-3 resp -105
 = bypass(9,1)
-# scenario-36 answer 8
+# scenario-39 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-37 answer 8
+# scenario-40 answer 8
 > @ param_get 9 gain
 < not found
 = 
-# scenario-38 answer 8
+# scenario-41 answer 8
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-39 answer 8
+# scenario-42 answer 8
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-40 answer 8
+# scenario-43 answer 8
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-41 answer 8
+# scenario-44 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-42 answer 8
+# scenario-45 answer 8
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-43 answer 8
+# scenario-46 answer 8
 > @e1 bypass 9 1
 < @e1 resp -105
 = bypass(9,1)
-# scenario-44 answer 8
+# scenario-47 answer 8
 > @e2 param_set 9 gain 0.5
 < @e2 resp -105
 = param_set(9,gain,0x1p-1)
-# scenario-45 answer 8
+# scenario-48 answer 8
 > hello 1
 < resp 0 1
 = 
-# scenario-46 answer 8
+# scenario-49 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-47 answer 8
+# scenario-50 answer 8
+> hello 1 seq tags
+< resp 0 1 tags seq
+= 
+# scenario-51 answer 8
+> @s1 param_get 9 gain
+< @s1 resp -105
+= param_get(9,gain)
+# scenario-52 answer 8
+> hello 1
+< resp 0 1
+= 
+# scenario-53 answer 8
 > hello 0 tags
 < resp -902
 = 
@@ -5059,66 +5467,78 @@
 < resp -105
 = param_get(9,gain)
 # fuzz/corpus/protocol/scenario-12 answer 8
+> param_get_many 3 gain :bypass
+< resp -2
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-13 answer 8
+> param_get_many 3 gain no_such_symbol
+< resp -2
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-14 answer 8
+> param_get_many 9 gain
+< resp -105
+= param_get(9,gain)
+# fuzz/corpus/protocol/scenario-15 answer 8
 > param_info 3 :bypass
 < resp -2
 = param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-13 answer 8
+# fuzz/corpus/protocol/scenario-16 answer 8
 > param_info 3 no_such_symbol
 < resp -2
 = param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-14 answer 8
+# fuzz/corpus/protocol/scenario-17 answer 8
 > param_info 9 gain
 < resp -105
 = param_info(9,gain)
-# fuzz/corpus/protocol/scenario-15 answer 8
+# fuzz/corpus/protocol/scenario-18 answer 8
 > param_set 3 gain 0.25
 < resp -2
 = param_set(3,gain,0x1p-2)
-# fuzz/corpus/protocol/scenario-16 answer 8
+# fuzz/corpus/protocol/scenario-19 answer 8
 > param_set 3 no_such_symbol 0.5
 < resp -2
 = param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-17 answer 8
-> param_set 9 gain 0.5
-< resp -105
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-18 answer 8
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# fuzz/corpus/protocol/scenario-19 answer 8
-> preset_load 3 urn:no:such:preset
-< resp -2
-= preset_load(3,urn:no:such:preset)
 # fuzz/corpus/protocol/scenario-2 answer 8
 > add urn:no:such:plugin 4
 < resp -3
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 8
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-21 answer 8
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-22 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-23 answer 8
 > remote_page_get 9 0
 < resp -105
 = remote_page_get(9,0)
-# fuzz/corpus/protocol/scenario-21 answer 8
+# fuzz/corpus/protocol/scenario-24 answer 8
 > remote_pages 9
 < resp -105
 = remote_pages(9)
-# fuzz/corpus/protocol/scenario-22 answer 8
+# fuzz/corpus/protocol/scenario-25 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# fuzz/corpus/protocol/scenario-23 answer 8
+# fuzz/corpus/protocol/scenario-26 answer 8
 > state_load /tmp/state
 < resp 0
 = state_load(/tmp/state)
-# fuzz/corpus/protocol/scenario-24 answer 8
+# fuzz/corpus/protocol/scenario-27 answer 8
 > state_save /tmp/state
 < resp 0
 = state_save(/tmp/state)
-# fuzz/corpus/protocol/scenario-25 answer 8
+# fuzz/corpus/protocol/scenario-28 answer 8
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# fuzz/corpus/protocol/scenario-26 answer 8
+# fuzz/corpus/protocol/scenario-29 answer 8
 > track_info 3 Kick - aux
 < resp -902
 = 
@@ -5271,66 +5691,78 @@
 < resp -105
 = param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 8
+> param_get_many 3 gain :bypass
+< resp -2
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 8
+> param_get_many 3 gain no_such_symbol
+< resp -2
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 8
+> param_get_many 9 gain
+< resp -105
+= param_get(9,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 8
 > param_info 3 :bypass
 < resp -2
 = param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 8
 > param_info 3 no_such_symbol
 < resp -2
 = param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 8
 > param_info 9 gain
 < resp -105
 = param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 8
 > param_set 3 gain 0.25
 < resp -2
 = param_set(3,gain,0x1p-2)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 8
 > param_set 3 no_such_symbol 0.5
 < resp -2
 = param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 8
-> param_set 9 gain 0.5
-< resp -105
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 8
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 8
-> preset_load 3 urn:no:such:preset
-< resp -2
-= preset_load(3,urn:no:such:preset)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 8
 > add urn:no:such:plugin 4
 < resp -3
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 8
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 8
+> patch_set 3 urn:no:such:property 1
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-23 answer 8
 > remote_page_get 9 0
 < resp -105
 = remote_page_get(9,0)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-24 answer 8
 > remote_pages 9
 < resp -105
 = remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-25 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# dispatch:fuzz/corpus/dispatch/scenario-23 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-26 answer 8
 > state_load /tmp/state
 < resp 0
 = state_load(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-24 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-27 answer 8
 > state_save /tmp/state
 < resp 0
 = state_save(/tmp/state)
-# dispatch:fuzz/corpus/dispatch/scenario-25 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 8
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# dispatch:fuzz/corpus/dispatch/scenario-26 answer 8
+# dispatch:fuzz/corpus/dispatch/scenario-29 answer 8
 > track_info 3 Kick - aux
 < resp -902
 = 

@@ -71,6 +71,10 @@ printf 'param_get 3 gain\n@a param_get 3 gain\nhello 1 tags tags zzz\n@a@b remov
     > "$out/session/mixed"
 printf 'refuse -3\nhello 1 errors\nrefuse -3\nrefuse -2\nrefuse -3 x\nrefuse -902\nhello 1 tags errors\n@a refuse -103\nrefuse 0\nhello 0\n' \
     > "$out/session/errors"
+printf 'emit 1\nhello 1 seq\nemit 2\nemit 3\nhello 1 seq tags\nemit 4\n@a emit 5\nhello 1 seq\nemit 6\nhello 1\nemit 7\n' \
+    > "$out/session/seq"
+printf 'param_get_many 3 gain cutoff\nparam_get_many 3 gain xbad gain\nparam_get_many 9 gain\nhello 1 errors\nparam_get_many 9 gain\nparam_get_many 3 a "b c" ddd\nparam_get_many 3\n' \
+    > "$out/session/many"
 
 # the scenario file reader: the real file, and its edges
 cp "$scen" "$out/scenario/host-scenarios"

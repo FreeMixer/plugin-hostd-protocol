@@ -1,10 +1,10 @@
-Breaks check_tagged of fuzz/fuzz_session.c:109 (the answer to a tagged line carries its tag).
+Breaks check_tagged of fuzz/fuzz_session.c:174 (the answer to a tagged line carries its tag).
 Caught by the seed input "tags" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c
 --- a/src/protocol.c
 +++ b/src/protocol.c
-@@ -254,7 +254,7 @@
+@@ -271,7 +271,7 @@
  
      if (tag)
      {

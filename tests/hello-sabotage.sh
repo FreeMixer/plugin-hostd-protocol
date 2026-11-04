@@ -41,6 +41,10 @@ sabotage "a tag takes an @" src/protocol.c "c == '.';" "c == '.' || c == '@';"
 sabotage "an error word without the grant" src/protocol.c \
     'if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS))' 'if (granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS) || 1)'
 sabotage "an error word after a reply with values" src/protocol.c 'if (strcmp(bare, proto->response) != 0)' 'if (0)'
+sabotage "a feedback line numbered without the grant" src/protocol.c \
+    'if (!granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_SEQ))' 'if (0)'
+sabotage "a hello that grants seq does not start again at 1" src/protocol.c \
+    '(void)__atomic_exchange_n(\&g_seq, 0, __ATOMIC_SEQ_CST);' ''
 sabotage "a required verb not found is a verb not served" src/host-scenario.c 'if (level == VERB_REQUIRED)' 'if (0)' \
     runner_test
 sabotage "the host named is not read" src/host-scenario.c '(!g_host || strcmp(hosts\[h\], g_host) == 0)' '(!g_host || hosts[h] != NULL)' runner_test

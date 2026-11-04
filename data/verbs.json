@@ -757,7 +757,7 @@
   "PLUGIN_HOSTD_PROTOCOL_VERBS": {
     "kind": "verbs",
     "since": "0.3.0",
-    "doc": "The verbs of the protocol itself, which the library answers for any host that registers them (protocol_add_hello). A client that never sends one is answered exactly as mod-host answers it.",
+    "doc": "The verbs of the protocol itself, which the library answers for any host that registers them: hello (protocol_add_hello) and the bulk verbs, which host_dispatch_register() answers over the host's backend. A client that never sends one is answered exactly as mod-host answers it.",
     "verbs": {
       "hello": {
         "verb": "hello",
@@ -775,6 +775,32 @@
         },
         "since": "0.3.0",
         "doc": "Open a session: <version> [<extension> ...], the protocol version the client speaks and the extensions it asks for. The reply is the daemon's protocol version and, of the extensions asked for, the ones it grants, in the order of PLUGIN_HOSTD_PROTOCOL_EXTENSIONS; an extension the daemon does not know is not granted and is no error. Each hello replaces what the one before it granted, and a new connection starts with none. -902 for a version that is not a whole number of 1 or more, and nothing changes."
+      },
+      "paramGetMany": {
+        "verb": "param_get_many",
+        "format": "param_get_many %i %s ...",
+        "reply": "resp 0 <value> ...",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.instanceNonExists"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.paramSymbolInvalid"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.memoryAllocation"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.3.0",
+        "doc": "The values of several parameters of one instance in one line: <instance> <symbol> [<symbol> ...], each value as param_get writes it, in the order asked. A symbol the instance does not have refuses the whole line with param_get's code (-103), an instance that does not exist with -3, and no value is answered then."
       }
     }
   },
@@ -790,6 +816,10 @@
       "errors": {
         "word": "errors",
         "doc": "error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one"
+      },
+      "seq": {
+        "word": "seq",
+        "doc": "event sequence numbers: every feedback line starts with #<n>, 1 for the first after this hello and one more for each, so a gap is a missed line"
       }
     }
   }

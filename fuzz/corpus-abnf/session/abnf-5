@@ -1,0 +1,13 @@
+hello 1 errors seq tags
+@_. preset_get 860 -38
+param_monitor 8 "ȣ" "" infinity
+@- param_get_many -615 "\""
+output_data_ready
+hide_external_ui -11
+param_monitor -7 "\"!" ! +.87
+@- cc_map 494 "l\"" -76 09 "\"G" +inf +.43e+18 73.E-842 -6 -19 "" -58 !7ͅ A
+quit
+quit
+cv_unmap 382 σ
+@-.F note_input -178
+cc_value_set 45 "!\"" .087e43

@@ -30,3 +30,7 @@ backend answers), then the command.
 `mutant:`/`input:` record of the one-line change that breaks it and the seed that shows it. `fuzz/sabotage/` holds that
 change as a patch per property (`session-<property>.patch`), each caught by its own check and no other. An input is a
 session, one command a line: `fuzz/corpus/session/host-scenarios` is the session of the scenario file.
+
+`fuzz/corpus-abnf/` holds seeds generated from the grammar by `tools/abnf-corpus.py` (`make fuzz-abnf-corpus`): a line
+of every command rule, tagged requests, sessions and scenario lines. `make fuzz-run` adds them to each harness's
+corpus. They are written again whenever the grammar changes: `make check-generated` fails until they are.

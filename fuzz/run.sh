@@ -11,6 +11,8 @@ for h in "$@"; do
     rm -rf "$work"
     mkdir -p "$work"
     cp -r "fuzz/corpus/$h/." "$work/"
+    # and the seeds generated from the grammar (tools/abnf-corpus.py)
+    [ ! -d "fuzz/corpus-abnf/$h" ] || cp -r "fuzz/corpus-abnf/$h/." "$work/"
     echo "fuzz_$h: ${secs}s"
     "$build/fuzz_$h" -max_total_time="$secs" -max_len=4096 -timeout=10 -rss_limit_mb=2048 \
         -artifact_prefix="$build/artifacts/$h-" "$work"

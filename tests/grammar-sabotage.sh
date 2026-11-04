@@ -34,5 +34,6 @@ arm "no tagged request" 'request          = \[tag SP\] command' 'request        
 arm "a tag takes an @" 'tag-char         = ALPHA' 'tag-char         = "@" / ALPHA'
 arm "hello grants one twice" 'hello-reply      = %s"resp" SP %s"0" SP int' 'hello-reply      = %s"resp" SP %s"0" SP int *(SP extension)'
 arm "an error word of another number" 'error-reply      = %s"resp -1 ' 'error-reply      = %s"resp -3 '
+arm "a feedback line numbered 0" '%x31-39 \*DIGIT' '%x30-39 *DIGIT'
 
 [ "$failed" = 0 ] && echo "grammar sabotage ok" || { echo "grammar sabotage FAILED"; exit 1; }

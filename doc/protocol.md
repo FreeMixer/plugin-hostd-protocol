@@ -41,7 +41,7 @@ Discovery: the daemon declares itself in files, not on the socket. The verb tabl
 The verb table and the grammar
 ------------------------------
 
-`protocol/plugin-hostd-protocol.json` is the one table of the protocol: every command, each once, with its origin, its argument types, its reply and its refusals, and every feedback line. It is merged from `protocol/mod-host.json`, `protocol/plugin-hostd.json`, `data/verbs.json`, `include/plugin-hostd/omx_clap_core_host_verbs.h` by `tools/protocol-table.py`; 48 commands of origin mod-host, 27 commands of origin plugin-hostd, 11 commands of origin omx-clap-core, 1 command of origin plugin-hostd-protocol, 21 feedback lines.
+`protocol/plugin-hostd-protocol.json` is the one table of the protocol: every command, each once, with its origin, its argument types, its reply and its refusals, and every feedback line. It is merged from `protocol/mod-host.json`, `protocol/plugin-hostd.json`, `data/verbs.json`, `include/plugin-hostd/omx_clap_core_host_verbs.h` by `tools/protocol-table.py`; 48 commands of origin mod-host, 27 commands of origin plugin-hostd, 11 commands of origin omx-clap-core, 2 commands of origin plugin-hostd-protocol, 21 feedback lines.
 
 `grammar/plugin-hostd-protocol.abnf` is the grammar of a line, in ABNF (RFC 5234, with RFC 7405's case-sensitive strings): the lexical core, written once by hand (`grammar/core.abnf`), and a rule per command, per feedback line and per parse refusal generated from the table by `tools/abnf-gen.py`. Every line of the scenario corpus and every reply the library writes in the golden transcript is held to it (`make test-grammar`).
 
@@ -59,18 +59,21 @@ A client that never sends `hello` is answered exactly as mod-host answers it: th
 
 ```abnf
 cmd-hello                = %s"hello" SP int tail
-hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags] [SP ext-errors]
-extension        = ext-tags / ext-errors
+hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags] [SP ext-errors] [SP ext-seq]
+extension        = ext-tags / ext-errors / ext-seq
 ext-tags         = %s"tags"
 ext-errors       = %s"errors"
+ext-seq          = %s"seq"
 request          = [tag SP] command
 answer           = [tag SP] reply
 tag              = "@" 1*tag-char
 tag-char         = ALPHA / DIGIT / "-" / "_" / "."
+event            = [seq SP] feedback
+seq              = "#" %x31-39 *DIGIT
 error-reply      = %s"resp -1 reply.host.instance-invalid" / ...
 ```
 
-- The client names the protocol version it speaks and the extensions it asks for: `hello 1 tags errors`. The daemon answers with its own protocol version and, of the extensions asked for, the ones it grants, each once and in the order of the table below: `resp 0 1 tags errors`. An extension the daemon does not know is not granted, and is no error.
+- The client names the protocol version it speaks and the extensions it asks for: `hello 1 tags errors seq`. The daemon answers with its own protocol version and, of the extensions asked for, the ones it grants, each once and in the order of the table below: `resp 0 1 tags errors seq`. An extension the daemon does not know is not granted, and is no error.
 - The version is the one the protocol JSON carries. It changes only when a word, a code or the shape of a verb changes incompatibly; what is added comes as a new extension. A client checks the version and uses only the extensions granted.
 - A version that is not a whole number of 1 or more is refused with -902, and nothing changes.
 - Each `hello` replaces what the one before it granted, so `hello 1` alone goes back to mod-host mode. A new connection starts with nothing granted.
@@ -80,6 +83,7 @@ error-reply      = %s"resp -1 reply.host.instance-invalid" / ...
 |---|---|
 | `tags` | request tags: a line may start with @<tag>, and its answer then starts with the same @<tag> |
 | `errors` | error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one |
+| `seq` | event sequence numbers: every feedback line starts with #<n>, 1 for the first after this hello and one more for each, so a gap is a missed line |
 
 ### Request tags
 
@@ -96,7 +100,7 @@ In a session granted `tags`, a request may start with a tag: `@` and one or more
 - A tag with nothing after it is answered `<tag> not found`.
 - A first word that starts with `@` but is not a tag (`@` alone, or with any other character) is read as a verb, and answered `not found`. So is every line that starts with `@` in a session not granted `tags`, as mod-host answers it.
 - The answer to a tagged `hello` carries its tag, also when that `hello` drops `tags`.
-- Events and feedback lines go out on the feedback port as before and never carry a tag, also when a tagged request caused them.
+- Events and feedback lines go out on the feedback port and never carry a tag, also when a tagged request caused them.
 
 ### Error words
 
@@ -110,6 +114,36 @@ In a session granted `errors`, a refusal `resp <n>` is followed by one more word
 - The words are those of the [reply codes](#reply-codes), 40 numbers in all; a number the protocol declares no code for goes out bare.
 - Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse refusal (`not found`, `few arguments`, which are words already) go out as they are.
 - With `tags` as well, the tag comes first: `@a9 resp -3 reply.host.instance-non-exists`.
+
+### Event sequence numbers
+
+In a session granted `seq`, every line on the feedback port starts with its number, `#` and a whole number, then one space: 1 for the first line after the `hello` that granted `seq`, one more for each line after it. A number that is not one more than the last one read is a line the client missed:
+
+```
+< #1 output_set 3 level 0.25
+< #2 output_set 3 level 0.5
+< #4 output_set 3 level 0.75     (line 3 was missed)
+```
+
+- A `hello` that grants `seq` again starts the numbers again at 1; one that drops it drops the numbers.
+- A line the host could not send keeps its number, so the client sees the gap.
+- Requests and answers on the command port carry no number; an event a tagged request causes carries its number and no tag.
+
+Bulk verbs
+----------
+
+A bulk verb does in one line what a client would send once an instance or a parameter. It is a verb like any other and needs no `hello`: it changes no line a client already sends, and a host that does not serve it answers `not found`, as mod-host does, or -902. A host built on this library answers them over its backend once it calls `host_dispatch_register()`.
+
+| verb | form | reply | codes | meaning |
+|---|---|---|---|---|
+| `param_get_many` | `param_get_many int word ...` | `resp 0 <value> ...` | -3 reply.host.instance-non-exists; -103 reply.host.param-symbol-invalid; -901 reply.host.memory-allocation; -902 reply.host.invalid-operation | The values of several parameters of one instance in one line: <instance> <symbol> [<symbol> ...], each value as param_get writes it, in the order asked. A symbol the instance does not have refuses the whole line with param_get's code (-103), an instance that does not exist with -3, and no value is answered then. |
+
+`param_get_many`:
+
+```
+> param_get_many 3 gain cutoff :bypass
+< resp 0 0.2500 440.0000 0.0000
+```
 
 2. mod-host's verbs on plugin-hostd
 -----------------------------------

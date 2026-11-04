@@ -236,7 +236,14 @@ struct omx_host_verb {
 #define OMX_VERB_HELLO_CODES_COUNT 1u
 #define OMX_VERB_HELLO_CODES_INIT { -902 } /* reply.host.invalid-operation */
 
-#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 29u
+/* PLUGIN_HOSTD_PROTOCOL_VERBS.paramGetMany (data/verbs.json): The values of several parameters of one instance in one line: <instance> <symbol> [<symbol> ...], each value as param_get writes it, in the order asked. A symbol the instance does not have refuses the whole line with param_get's code (-103), an instance that does not exist with -3, and no value is answered then. */
+#define OMX_VERB_PARAM_GET_MANY "param_get_many"
+#define OMX_VERB_PARAM_GET_MANY_FMT "param_get_many %i %s ..."
+#define OMX_VERB_PARAM_GET_MANY_REPLY "resp 0 <value> ..."
+#define OMX_VERB_PARAM_GET_MANY_CODES_COUNT 4u
+#define OMX_VERB_PARAM_GET_MANY_CODES_INIT { -3, -103, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.host.memory-allocation, reply.host.invalid-operation */
+
+#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 30u
 
 /* Every verb, in the order of its items, with what each host owes it. */
 static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void) {
@@ -270,6 +277,7 @@ static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void)
     { OMX_VERB_PLAN_CLEAR, OMX_VERB_PLAN_CLEAR_FMT, OMX_VERB_PLAN_CLEAR_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_ESTIMATE, OMX_VERB_ESTIMATE_FMT, OMX_VERB_ESTIMATE_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_HELLO, OMX_VERB_HELLO_FMT, OMX_VERB_HELLO_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
+    { OMX_VERB_PARAM_GET_MANY, OMX_VERB_PARAM_GET_MANY_FMT, OMX_VERB_PARAM_GET_MANY_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
   };
   return table;
 }

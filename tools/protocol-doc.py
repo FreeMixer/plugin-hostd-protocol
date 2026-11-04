@@ -415,7 +415,7 @@ def sessions(w):
     w("")
     w("```abnf")
     for line in grammar_rules(["cmd-hello", "hello-reply", "extension"] + [f"ext-{e['word']}" for e in exts]
-                              + ["request", "answer", "tag", "tag-char"]):
+                              + ["request", "answer", "tag", "tag-char", "event", "seq"]):
         w(line)
     if any(e["word"] == "errors" for e in exts):
         w("error-reply      = " + " / ".join(grammar_rules(["error-reply"])[0].split("= ", 1)[1:]) + " / ...")
@@ -458,8 +458,8 @@ def sessions(w):
           "verb, and answered `not found`. So is every line that starts with `@` in a session not granted `tags`, as "
           "mod-host answers it.")
         w("- The answer to a tagged `hello` carries its tag, also when that `hello` drops `tags`.")
-        w("- Events and feedback lines go out on the feedback port as before and never carry a tag, also when a tagged "
-          "request caused them.")
+        w("- Events and feedback lines go out on the feedback port and never carry a tag, also when a tagged request "
+          "caused them.")
         w("")
     if any(e["word"] == "errors" for e in exts):
         codes = TABLE["reply_codes"]
@@ -480,6 +480,53 @@ def sessions(w):
         w("- Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse "
           "refusal (`not found`, `few arguments`, which are words already) go out as they are.")
         w("- With `tags` as well, the tag comes first: `@a9 resp -3 " + ex["code"] + "`.")
+        w("")
+    if any(e["word"] == "seq" for e in exts):
+        w("### Event sequence numbers")
+        w("")
+        w("In a session granted `seq`, every line on the feedback port starts with its number, `#` and a whole number, "
+          "then one space: 1 for the first line after the `hello` that granted `seq`, one more for each line after it. "
+          "A number that is not one more than the last one read is a line the client missed:")
+        w("")
+        w("```")
+        w("< #1 output_set 3 level 0.25")
+        w("< #2 output_set 3 level 0.5")
+        w("< #4 output_set 3 level 0.75     (line 3 was missed)")
+        w("```")
+        w("")
+        w("- A `hello` that grants `seq` again starts the numbers again at 1; one that drops it drops the numbers.")
+        w("- A line the host could not send keeps its number, so the client sees the gap.")
+        w("- Requests and answers on the command port carry no number; an event a tagged request causes carries its "
+          "number and no tag.")
+        w("")
+
+
+def bulk(w):
+    """the protocol's own verbs other than hello, from the table and their declaration"""
+    own = VERBS["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"]
+    rows = [c for c in TABLE["commands"] if c["origin"] == "plugin-hostd-protocol" and c["verb"] != "hello"]
+    if not rows:
+        return
+    docs = {v["verb"]: v["doc"] for v in own.values()}
+    w("Bulk verbs")
+    w("----------")
+    w("")
+    w("A bulk verb does in one line what a client would send once an instance or a parameter. It is a verb like any "
+      "other and needs no `hello`: it changes no line a client already sends, and a host that does not serve it answers "
+      "`not found`, as mod-host does, or -902. A host built on this library answers them over its backend once it "
+      "calls `host_dispatch_register()`.")
+    w("")
+    w("\n".join(table(["verb", "form", "reply", "codes", "meaning"],
+                      [[code(c["verb"]), code(" ".join([c["verb"]] + c["forms"][0]["args"] + (["..."] if c["forms"][0]["tail"] else []))),
+                        code(c["reply"]), cell(codes_cell(c["codes"])), cell(docs.get(c["verb"], "-"))] for c in rows])))
+    w("")
+    for c in rows:
+        w(f"`{c['verb']}`:")
+        w("")
+        w("```")
+        w(f"> {c['verb']} 3 gain cutoff :bypass")
+        w("< resp 0 0.2500 440.0000 0.0000")
+        w("```")
         w("")
 
 
@@ -573,6 +620,7 @@ def page():
     w("")
 
     sessions(w)
+    bulk(w)
 
     # 2. mod-host's verbs
     w("2. mod-host's verbs on plugin-hostd")

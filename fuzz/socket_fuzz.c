@@ -1,6 +1,7 @@
 /* The socket layer of the fuzz harnesses (fuzz/README.md). It stands in for src/socket.c, which the harnesses do not
    link: socket_send() copies the reply into fuzz_reply, where the harness reads it, so a run opens no socket and
    touches no descriptor. The shipped library does not contain this file. */
+#include <stdio.h>
 #include <string.h>
 
 #include "../include/socket.h"
@@ -9,6 +10,10 @@
 
 /* no connection here: a harness that needs a new session calls it itself */
 void (*socket_session_start)(void);
+size_t (*socket_feedback_prefix)(char *buf, size_t size);
+
+/* the last feedback line, as src/socket.c writes it: the prefix the session gives, then the line */
+char fuzz_feedback[FUZZ_REPLY_MAX];
 
 char fuzz_reply[FUZZ_REPLY_MAX];
 size_t fuzz_reply_len;
@@ -28,7 +33,9 @@ int socket_send(int destination, const char *buffer, int size)
 
 int socket_send_feedback(const char *buffer)
 {
-    (void)buffer;
+    char prefix[32];
+    size_t n = socket_feedback_prefix ? socket_feedback_prefix(prefix, sizeof(prefix)) : 0;
+    snprintf(fuzz_feedback, sizeof(fuzz_feedback), "%.*s%s", (int)n, prefix, buffer);
     return -1;
 }
 

@@ -14,6 +14,8 @@
  *   - an event a tagged request causes goes out on the feedback port untagged;
  *   - a session granted errors reads a refusal's error word after its number, for a number the protocol declares a
  *     code for and for nothing else;
+ *   - a session granted seq numbers each feedback line, 1 for the first after that hello and one more for each, and
+ *     a hello that grants it again starts again at 1; no other session numbers one;
  *   - a new connection starts with nothing granted.
  *
  * Copyright (C) 2026 Pau Aliagas <linuxnow@gmail.com>
@@ -290,12 +292,30 @@ int main(void)
     expect(&c, "tagged, with an error word", "@e1 param_get 9 gain", "@e1 resp -3 reply.host.instance-non-exists");
     expect(&c, "hello", "hello 1 tags", "resp 0 1 tags");
     expect(&c, "words dropped", "param_get 9 gain", "resp -3");
+
+    /* -- event sequence numbers */
+    expect(&c, "no number", "emit 4", "resp 0");
+    expect_feedback(&c, "an event of a session not granted seq", "remote_pages_changed 4");
+    expect(&c, "hello", "hello 1 seq", "resp 0 1 seq");
+    expect(&c, "numbered", "emit 5", "resp 0");
+    expect_feedback(&c, "the first event after the grant", "#1 remote_pages_changed 5");
+    expect(&c, "numbered", "emit 6", "resp 0");
+    expect_feedback(&c, "the next event", "#2 remote_pages_changed 6");
+    expect(&c, "hello", "hello 1 seq tags", "resp 0 1 tags seq");
+    expect(&c, "numbered, tagged", "@n emit 7", "@n resp 0");
+    expect_feedback(&c, "the first event after a hello that grants seq again", "#1 remote_pages_changed 7");
+    expect(&c, "hello", "hello 1", "resp 0 1");
+    expect(&c, "numbers dropped", "emit 8", "resp 0");
+    expect_feedback(&c, "an event after seq is dropped", "remote_pages_changed 8");
+    expect(&c, "hello", "hello 1 seq", "resp 0 1 seq");
     close_session(&c);
 
     /* -- a new connection starts with nothing granted */
     c = open_session();
     expect(&c, "a new connection", "@t1 param_get 3 gain", "not found");
     expect(&c, "a new connection", "param_get 3 gain", "resp 0 0.2500");
+    expect(&c, "a new connection", "emit 9", "resp 0");
+    expect_feedback(&c, "an event of a new connection", "remote_pages_changed 9");
     close_session(&c);
 
     g_running = 0;

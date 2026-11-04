@@ -96,6 +96,8 @@ static cmd_t g_commands[PROTOCOL_MAX_COMMANDS];
 static const char *const g_extensions[] = OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_INIT;
 #define EXTENSION_COUNT (sizeof(g_extensions) / sizeof(g_extensions[0]))
 static unsigned char g_granted[EXTENSION_COUNT];
+// the number of the last feedback line of a session granted seq; feedback may go out from any thread
+static unsigned long g_seq;
 
 
 /*
@@ -155,6 +157,7 @@ static int typed(const cmd_t *command, const proto_t *proto)
 static void session_start(void)
 {
     memset(g_granted, 0, sizeof(g_granted));
+    __atomic_store_n(&g_seq, 0, __ATOMIC_SEQ_CST);
 }
 
 static int granted(const char *extension)
@@ -201,6 +204,8 @@ static void hello_cb(proto_t *proto)
         protocol_response_int(ERR_MEMORY_ALLOCATION, proto);
         return;
     }
+    /* the numbers start again at 1 after a hello that grants seq */
+    (void)__atomic_exchange_n(&g_seq, 0, __ATOMIC_SEQ_CST);
     memcpy(g_granted, want, sizeof(g_granted));
     pos = snprintf(buffer, size, "resp 0 %d", PLUGIN_HOSTD_PROTOCOL_VERSION);
     for (i = 0; i < EXTENSION_COUNT; i++)
@@ -208,6 +213,18 @@ static void hello_cb(proto_t *proto)
             pos += snprintf(buffer + pos, size - pos, " %s", g_extensions[i]);
     protocol_response(buffer, proto);
     FREE(buffer);
+}
+
+/* what a feedback line starts with: "#<n> " in a session granted seq, n one more than the line before; else nothing */
+static size_t feedback_prefix(char *buf, size_t size)
+{
+    unsigned long n;
+
+    buf[0] = '\0';
+    if (!granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_SEQ))
+        return 0;
+    n = __atomic_add_fetch(&g_seq, 1, __ATOMIC_SEQ_CST);
+    return (size_t)snprintf(buf, size, "#%lu ", n);
 }
 
 /* in a session granted errors, a refusal "resp <n>" alone is followed by the error word the protocol declares for n,
@@ -478,6 +495,7 @@ void protocol_response_int(int resp, proto_t *proto)
 int protocol_add_hello(void)
 {
     socket_session_start = session_start;
+    socket_feedback_prefix = feedback_prefix;
     return protocol_add_command(OMX_VERB_HELLO_FMT, hello_cb);
 }
 

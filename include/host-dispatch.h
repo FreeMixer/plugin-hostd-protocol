@@ -81,6 +81,8 @@ typedef struct HOST_PLUGIN_INFO_T {
 ************************************************************************************************************************
 */
 
+/* Registers the backend's verbs, and param_get_many, the values of several parameters of an instance in one line,
+   answered over the backend's param_get (doc/protocol.md). */
 void host_dispatch_register(const host_backend_t *backend);
 /* Registers monitor_output, answered as mod-host does; NULL answers ERR_INVALID_OPERATION.
    Call it before host_dispatch_register_unsupported(). */

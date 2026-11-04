@@ -9,18 +9,31 @@ dispatch:fuzz/corpus/dispatch/extra-23 plugin-hostd#372
 dispatch:fuzz/corpus/dispatch/param-info-inf plugin-hostd#371
 dispatch:fuzz/corpus/dispatch/param-info-nan plugin-hostd#371
 dispatch:fuzz/corpus/dispatch/param-info-neg-inf plugin-hostd#371
+# param_get_many, which mod-host does not know: ours answers it over the backend
+fuzz/corpus/protocol/scenario-12 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-13 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-14 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-12 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-13 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-14 plugin-hostd-protocol#9
+scenario-15 plugin-hostd-protocol#9
+scenario-16 plugin-hostd-protocol#9
+scenario-17 plugin-hostd-protocol#9
 # mod-host does not know hello, which ours registers: hello, a tagged line of the session it opens and a refusal with
 # its error word answer otherwise; an untagged line, a word "@" alone, a tagged line after the tags are dropped and a
 # refusal after the error words are dropped answer as mod-host does
-scenario-32 plugin-hostd-protocol#9
-scenario-33 plugin-hostd-protocol#9
-scenario-34 plugin-hostd-protocol#9
 scenario-35 plugin-hostd-protocol#9
+scenario-36 plugin-hostd-protocol#9
+scenario-37 plugin-hostd-protocol#9
 scenario-38 plugin-hostd-protocol#9
-scenario-40 plugin-hostd-protocol#9
 scenario-41 plugin-hostd-protocol#9
-scenario-42 plugin-hostd-protocol#9
 scenario-43 plugin-hostd-protocol#9
 scenario-44 plugin-hostd-protocol#9
 scenario-45 plugin-hostd-protocol#9
+scenario-46 plugin-hostd-protocol#9
 scenario-47 plugin-hostd-protocol#9
+scenario-48 plugin-hostd-protocol#9
+scenario-50 plugin-hostd-protocol#9
+scenario-51 plugin-hostd-protocol#9
+scenario-52 plugin-hostd-protocol#9
+scenario-53 plugin-hostd-protocol#9

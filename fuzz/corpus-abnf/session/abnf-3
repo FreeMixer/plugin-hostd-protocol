@@ -1,0 +1,13 @@
+hello 1 errors tags
+@_- history_get !!
+set_bpb inf
+@.. pin_layout 75
+@. preset_show -791 "18"
+@.k descriptor_get ͖
+@k- hello 55 "%!"
+hello -954
+midi_map 290 J -138 06 2 nan
+@_ chain_clear -37
+history_get ~
+@_ param_get_many -198 "" ! ""
+@9- add ^ -46 "Â" ""

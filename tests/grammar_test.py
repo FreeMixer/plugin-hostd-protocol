@@ -71,7 +71,7 @@ def must(rule, line, where):
 
 def must_not(rule, line, where):
     if parses(rule, line):
-        fail(f"{where}: {line!r} is a {rule}, and must not be")
+        fail(f"{where}: {line!r} is {'an' if rule[0] in 'aeiou' else 'a'} {rule}, and must not be")
 
 
 # ---- the scenario corpus ----
@@ -173,8 +173,15 @@ for line in ("@a7 resp 0 0.2500", "@a8 few arguments", "resp -3"):
     must("answer", line, "an answer")
 for line in ("@ resp 0", "@a7resp 0"):
     must_not("answer", line, "not an answer")
-must_not("feedback", "@a7 " + " ".join([table["feedback"][0]["line"]] + [SAMPLE[a] for a in (table["feedback"][0]["args"] or [])]),
-         "a tagged feedback line")
+fb0 = " ".join([table["feedback"][0]["line"]] + [SAMPLE[a] for a in (table["feedback"][0]["args"] or [])])
+must_not("feedback", "@a7 " + fb0, "a tagged feedback line")
+must_not("event", "@a7 " + fb0, "a tagged event")
+for n in ("1", "17", "4294967296"):
+    must("event", f"#{n} " + fb0, "a numbered feedback line")
+must("event", fb0, "a feedback line without a number")
+for n in ("#0", "#", "#x", "#-1", "#01"):
+    must_not("event", f"{n} " + fb0, "not a numbered feedback line")
+must_not("request", "#1 " + fb0.split(" ")[0], "a numbered request")
 
 codes = table["reply_codes"]
 for c in codes:

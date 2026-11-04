@@ -73,7 +73,8 @@
 /* PLUGIN_HOSTD_PROTOCOL_EXTENSIONS (data/verbs.json) */
 #define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS "tags" ///< request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>
 #define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS "errors" ///< error words: a refusal resp <n> is followed by the stable word of its code, reply.<group>.<reason>, when the protocol declares one
-#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_COUNT 2u
-#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_INIT { "tags", "errors" }
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_SEQ "seq" ///< event sequence numbers: every feedback line starts with #<n>, 1 for the first after this hello and one more for each, so a gap is a missed line
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_COUNT 3u
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_INIT { "tags", "errors", "seq" }
 
 #endif /* PLUGIN_HOSTD_PROTOCOL_VOCABULARY_H */

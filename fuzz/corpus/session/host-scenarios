@@ -13,4 +13,7 @@ hello 1 errors tags
 @e2 param_set 9 gain 0.5
 hello 1
 param_get 9 gain
+hello 1 seq tags
+@s1 param_get 9 gain
+hello 1
 hello 0 tags

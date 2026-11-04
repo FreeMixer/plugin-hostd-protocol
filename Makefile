@@ -241,6 +241,8 @@ abi-check: abi-stage
 #   protocol/plugin-hostd-protocol.json   tools/protocol-table.py, the one table merged from the three above and
 #                                         data/verbs.json; it refuses a word of ours that changes a mod-host word
 #   grammar/plugin-hostd-protocol.abnf    tools/abnf-gen.py, grammar/core.abnf and a rule per word of the table
+#   fuzz/corpus-abnf/                     tools/abnf-corpus.py, seeds from the grammar (check-generated reads the
+#                                         SHA-256 of the grammar they were written from)
 #   src/reply-words.h                     tools/reply-words.py, the error word of each refusal number of the table
 #   README.md                             the region host-verbs, tools/protocol-gen splice
 #   doc/protocol.md                       tools/protocol-doc.py, from all of the above
@@ -274,6 +276,7 @@ check-generated: $(GEN)
 	python3 tools/abnf-gen.py --check; \
 	python3 tools/reply-words.py --check; \
 	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
+	sha256sum -c --quiet $(ABNF_CORPUS)/GRAMMAR.sha256 || { echo "$(ABNF_CORPUS) is not written from this grammar: run make fuzz-abnf-corpus"; exit 1; }; \
 	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
 	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
 	echo "generated files are current"
@@ -311,7 +314,7 @@ CONTRACT_SCHEMA_MAJOR = 3
 CONTRACTDIR = $(or $(shell $(PKG_CONFIG) --variable=contractdir omx-contract 2>/dev/null),$(DATADIR)/omx-contract/contract.d)
 INSTALL_CONTRACT_DIR = $(firstword $(wildcard $(shell $(PKG_CONFIG) --variable=datadir omx-contract 2>/dev/null)/install-contract-dir.sh) $(wildcard $(OMX_CONTRACT_DIR)/tools/install-contract-dir.sh))
 
-check-protocol-tools: check-rendered test-rendered-sabotage check-schema test-grammar check-contract-dir
+check-protocol-tools: check-rendered test-rendered-sabotage check-schema test-grammar check-contract-dir test-abnf-corpus
 
 # data/verbs.json as the package plugin-hostd-protocol of omx-contract's contract directory,
 # <contractdir>/<schema major>/plugin-hostd-protocol/, with the MANIFEST.json omx-contract's script writes
@@ -385,6 +388,16 @@ fuzz-run: fuzz
 fuzz-corpus:
 	sh fuzz/gen-corpus.sh fuzz/corpus
 
+# the seeds generated from the grammar (tools/abnf-corpus.py, python's abnf module): fuzz-run adds them to each
+# harness's corpus. check-generated fails when the grammar changed since they were written; test-abnf-corpus (in
+# check-protocol-tools) writes them again and compares
+ABNF_CORPUS = fuzz/corpus-abnf
+fuzz-abnf-corpus:
+	$(PYTHON) tools/abnf-corpus.py $(ABNF_CORPUS)
+
+test-abnf-corpus:
+	$(PYTHON) tools/abnf-corpus.py --check $(ABNF_CORPUS)
+
 clean:
 	rm -rf src/*.o $(LIB_SO) $(LIB_SONAME) $(LIB_FILE) $(TEST_PROGS) build
 
@@ -393,4 +406,4 @@ clean:
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
         test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi \
-        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus clean
+        abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus fuzz-abnf-corpus test-abnf-corpus clean
