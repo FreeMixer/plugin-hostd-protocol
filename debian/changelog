@@ -1,3 +1,34 @@
+plugin-hostd-protocol (0.3.0) unstable; urgency=medium
+
+  * hello: a client asks for the protocol version and the extensions it
+    wants, and a host that calls protocol_add_hello() answers with the
+    declared ones it grants. A client that never sends hello, or whose hello
+    is refused, is answered as mod-host answers it.
+  * Request tags: a session granted them sends "@<tag> " before a command
+    and gets the tag back on the answer.
+  * Error words: in a session granted them, a refusal "resp <n>" carries
+    the code the protocol declares for n.
+  * Event sequence numbers: in a session granted them, every feedback line
+    starts with "#<n> ", so a client sees a line it missed.
+  * param_get_many and param_set_many: several values of one instance in one
+    line. param_set_many checks every pair before it sets any and sets
+    nothing when one is refused.
+  * The default lv2_worker is omx-clap-host. mod-host runs an LV2 plugin only
+    when lv2_worker or lv2_worker_set names it (#13).
+  * worker_list and plan: a worker is pinned to the whole set of audio cores,
+    so the core field reads - (#15).
+  * A track_info name is held to UTF-8 and refuses the C1 control characters
+    (#11). A word "..." where a pattern ends in "..." is read as an argument
+    (#12).
+  * Fuzz harnesses for the parser and the session, with their records,
+    sabotage arms and a coverage floor, run in CI.
+  * The packages install their licence and a short README and no other
+    markdown; their descriptions point to openmixer.org.
+  * protocol_add_hello() and host_scenario_set_host() are the exported symbols
+    added; nothing is removed.
+
+ -- Pau Aliagas <linuxnow@gmail.com>  Wed, 04 Nov 2026 18:00:00 +0100
+
 plugin-hostd-protocol (0.2.0) unstable; urgency=medium
 
   * The whole declared protocol moves here from plugin-hostd:

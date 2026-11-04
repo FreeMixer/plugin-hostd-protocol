@@ -1,5 +1,5 @@
 Name: plugin-hostd-protocol
-Version: 0.2.0
+Version: 0.3.0
 Release: 1%{?dist}
 License: GPL-3.0-or-later
 Summary: The plugin-hostd protocol library, a superset of mod-host's text protocol
@@ -102,6 +102,23 @@ make test
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog
+* Wed Nov 04 2026 Pau Aliagas <linuxnow@gmail.com> - 0.3.0-1
+- hello: the protocol version and the extensions a host grants; a client that
+  sends no hello, or whose hello is refused, is answered as mod-host answers it
+- Request tags, error words and event sequence numbers, each an extension a
+  session asks for in its hello
+- param_get_many and param_set_many: several values of one instance in one line,
+  param_set_many all or nothing
+- The default lv2_worker is omx-clap-host; mod-host runs an LV2 plugin only when
+  named (#13)
+- worker_list and plan: the core field reads -, a worker pinned to the whole
+  audio set (#15)
+- A track_info name is held to UTF-8 without C1 controls (#11); a word "..."
+  where a pattern ends in "..." is an argument (#12)
+- Fuzz harnesses with records, sabotage arms and a coverage floor run in CI
+- The packages install their licence and a short README and no other markdown
+- protocol_add_hello() and host_scenario_set_host() are the exported symbols added
+
 * Tue Nov 03 2026 Pau Aliagas <linuxnow@gmail.com> - 0.2.0-1
 - protocol_parse() reads every form registered for a verb and runs the first whose
   arguments fit in number and type, so both forms of preset_show dispatch through the
