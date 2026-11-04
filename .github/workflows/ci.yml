@@ -36,7 +36,8 @@ jobs:
           if command -v dnf >/dev/null; then dnf -y install 'omx-contract-devel >= 3.9.0' 'omx-contract-devel < 4'; else
             apt-get -y install --no-install-recommends libomx-contract-dev
             v=$(dpkg-query -W -f='${Version}' libomx-contract-dev)
-            dpkg --compare-versions "$v" ge 3.9.0~ && dpkg --compare-versions "$v" lt 4~
+            dpkg --compare-versions "$v" ge 3.9.0~
+            dpkg --compare-versions "$v" lt 4~
           fi
           pkg-config --exists omx-contract
       - name: Trust the checkout
