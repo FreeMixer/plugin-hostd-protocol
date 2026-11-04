@@ -74,6 +74,7 @@ make test
 
 %files
 %license COPYING
+%doc README.md
 %{_libdir}/libplugin-hostd-protocol.so.0
 %{_libdir}/libplugin-hostd-protocol.so.%{version}
 # the declared protocol a program reads at run time: the verb table, the grammar, the protocol's JSON and mod-host's
@@ -84,6 +85,8 @@ make test
 %{_datadir}/plugin-hostd-protocol/mod-host.json
 
 %files devel
+%license COPYING
+%doc README.md
 %{_libdir}/libplugin-hostd-protocol.so
 %{_libdir}/pkgconfig/plugin-hostd-protocol.pc
 %{_includedir}/plugin-hostd-protocol/
@@ -95,6 +98,7 @@ make test
 
 %files contract
 %license COPYING
+%doc README.md
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog

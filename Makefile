@@ -220,7 +220,7 @@ abi-check: abi-stage
 #   protocol/plugin-hostd-protocol.json   tools/protocol-table.py, the one table merged from the three above and
 #                                         data/verbs.json; it refuses a word of ours that changes a mod-host word
 #   grammar/plugin-hostd-protocol.abnf    tools/abnf-gen.py, grammar/core.abnf and a rule per word of the table
-#   README.md                             the region host-verbs, tools/protocol-gen splice
+#   doc/overview.md                       the region host-verbs, tools/protocol-gen splice
 #   doc/protocol.md                       tools/protocol-doc.py, from all of the above
 #
 # protocol-gen holds the parameter scales of protocol.h to omx-contract's PARAM_SCALES, so it builds against
@@ -240,7 +240,7 @@ gen: $(GEN)
 	    mv protocol/plugin-hostd-protocol.json.new protocol/plugin-hostd-protocol.json
 	python3 tools/abnf-gen.py > grammar/plugin-hostd-protocol.abnf.new && \
 	    mv grammar/plugin-hostd-protocol.abnf.new grammar/plugin-hostd-protocol.abnf
-	$(GEN) splice README.md > README.md.new && mv README.md.new README.md
+	$(GEN) splice doc/overview.md > doc/overview.md.new && mv doc/overview.md.new doc/overview.md
 	$(MAKE) --no-print-directory protocol-doc
 
 check-generated: $(GEN)
@@ -249,9 +249,9 @@ check-generated: $(GEN)
 	python3 tools/mod-host-json.py include > $$tmp/mod-host.json; cmp $$tmp/mod-host.json protocol/mod-host.json; \
 	python3 tools/protocol-table.py --check; \
 	python3 tools/abnf-gen.py --check; \
-	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
+	$(GEN) splice doc/overview.md > $$tmp/readme; cmp $$tmp/readme doc/overview.md; \
 	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
-	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
+	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" doc/overview.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
 	echo "generated files are current"
 
 protocol-doc:
