@@ -31,12 +31,9 @@ jobs:
       # omx-contract's C headers, which the declared protocol's generator is built against, are the OpenMixer channel's
       - name: Add the OpenMixer channel
         uses: FreeMixer/.github/.github/actions/add-openmixer@v1
-      # a dedupe/all run builds on its siblings' dedupe/all (.github/wave-deps); @main until FreeMixer/.github moves v1 past it
-      - uses: FreeMixer/.github/.github/actions/wave-deps@main
-
       - name: omx-contract's headers
         run: |
-          if command -v dnf >/dev/null; then dnf -y install 'omx-contract-devel >= 3.4.0'; else apt-get -y install --no-install-recommends libomx-contract-dev; fi
+          if command -v dnf >/dev/null; then dnf -y install 'omx-contract-devel >= 3.9.0' 'omx-contract-devel < 4'; else apt-get -y install --no-install-recommends 'libomx-contract-dev>=3.9.0~' 'libomx-contract-dev<<4~'; fi
           pkg-config --exists omx-contract
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -63,13 +60,10 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Add the OpenMixer channel
         uses: FreeMixer/.github/.github/actions/add-openmixer@v1
-      # a dedupe/all run builds on its siblings' dedupe/all (.github/wave-deps); @main until FreeMixer/.github moves v1 past it
-      - uses: FreeMixer/.github/.github/actions/wave-deps@main
-
       - name: omx-contract and omx-clap-core's and plugin-db's packages of the contract directory
         run: |
           set -euo pipefail
-          dnf -y install 'omx-contract >= 3.4.0' 'omx-contract-devel >= 3.4.0' omx-clap-core-contract plugin-db-contract
+          dnf -y install 'omx-contract >= 3.9.0' 'omx-contract < 4' 'omx-contract-devel >= 3.9.0' 'omx-contract-devel < 4' omx-clap-core-contract 'plugin-db-contract >= 0.1.0' 'plugin-db-contract < 0.2'
           if rpm -q plugin-hostd-contract; then echo "plugin-hostd-contract is installed: it declares the same items"; exit 1; fi
       - name: The python ABNF parser
         run: |
