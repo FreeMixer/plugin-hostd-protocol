@@ -37,6 +37,7 @@
 #include "omx_clap_core_vocabulary.h"
 #include "plugin_hostd_protocol_host_verbs.h"
 #include "plugin_hostd_protocol_vocabulary.h"
+#include "plugin_db_vocabulary.h"
 
 /* bumped when a name, a code or the shape of a verb or an event changes incompatibly */
 #define PLUGIN_HOSTD_PROTOCOL_VERSION 1
@@ -389,13 +390,14 @@ static inline int phd_pool_name_valid(const char *name)
 /* the layout word of a pin whose layout has not been learned yet: a pin of the store, of a pins file or learned by the
  * daemon may hold it, pin_set may not */
 #define PHD_PIN_LAYOUT_UNKNOWN   "-"
-/* the optional last word of a pin line: the qualification verdict of the pinned bytes */
-#define PHD_PIN_VERDICT_KEY      "verdict="
+/* the optional last word of a pin line: the qualification verdict of the pinned bytes. The words of a pin are
+ * plugin-db's (data/pin.json), rendered beside this header */
+#define PHD_PIN_VERDICT_KEY      OMX_PLUGIN_DB_PIN_KEYS_VERDICT "="
 
 /* the verdicts: X(id, name, meaning); only in-process lets a plugin share a worker under pin_mode first-use */
-#define PHD_PIN_VERDICT_IN_PROCESS "in-process"
-#define PHD_PIN_VERDICT_ISOLATED   "isolated"
-#define PHD_PIN_VERDICT_REFUSED    "refused"
+#define PHD_PIN_VERDICT_IN_PROCESS OMX_PLUGIN_DB_PIN_VERDICTS_IN_PROCESS
+#define PHD_PIN_VERDICT_ISOLATED   OMX_PLUGIN_DB_PIN_VERDICTS_ISOLATED
+#define PHD_PIN_VERDICT_REFUSED    OMX_PLUGIN_DB_PIN_VERDICTS_REFUSED
 #define PHD_PIN_VERDICTS(X) \
     X(IN_PROCESS, PHD_PIN_VERDICT_IN_PROCESS, "qualified to run in a worker that other plugins share") \
     X(ISOLATED, PHD_PIN_VERDICT_ISOLATED, "qualified to run, in a worker of its own") \
@@ -403,17 +405,17 @@ static inline int phd_pool_name_valid(const char *name)
 
 /* the optional word after the verdict: whether the plugin's qualification measured the CLAP thread pool (docs/thread-pool.md of
  * omx-clap-core) real-time safe and faster at the quantum, X(id, name, meaning); a plugin with no word runs serial */
-#define PHD_PIN_POOL_KEY   "pool="
-#define PHD_PIN_POOL_CORES "cores"
-#define PHD_PIN_POOL_OFF   "off"
+#define PHD_PIN_POOL_KEY   OMX_PLUGIN_DB_PIN_KEYS_POOL "="
+#define PHD_PIN_POOL_CORES OMX_PLUGIN_DB_PIN_POOLS_CORES
+#define PHD_PIN_POOL_OFF   OMX_PLUGIN_DB_PIN_POOLS_OFF
 #define PHD_PIN_POOLS(X) \
     X(CORES, PHD_PIN_POOL_CORES, "its worker starts with the thread pool on, one helper per core of its cpu set but one, and " \
                                  "no other plugin shares the worker") \
     X(OFF, PHD_PIN_POOL_OFF, "measured, and not faster or not safe with the pool: the worker keeps no option")
 
 /* what pin_changed names as changed */
-#define PHD_PIN_CHANGED_FILES  "files"
-#define PHD_PIN_CHANGED_LAYOUT "layout"
+#define PHD_PIN_CHANGED_FILES  OMX_PLUGIN_DB_PIN_CHANGES_FILES
+#define PHD_PIN_CHANGED_LAYOUT OMX_PLUGIN_DB_PIN_CHANGES_LAYOUT
 
 /* the pin modes: X(id, name, meaning), read while require_pins is 1 */
 #define PHD_PIN_MODE_STRICT    "strict"
