@@ -66,10 +66,10 @@ jobs:
       # a dedupe/all run builds on its siblings' dedupe/all (.github/wave-deps); @main until FreeMixer/.github moves v1 past it
       - uses: FreeMixer/.github/.github/actions/wave-deps@main
 
-      - name: omx-contract and omx-clap-core's and plugin-pin's packages of the contract directory
+      - name: omx-contract and omx-clap-core's and plugin-db's packages of the contract directory
         run: |
           set -euo pipefail
-          dnf -y install 'omx-contract >= 3.4.0' 'omx-contract-devel >= 3.4.0' omx-clap-core-contract plugin-pin-contract
+          dnf -y install 'omx-contract >= 3.4.0' 'omx-contract-devel >= 3.4.0' omx-clap-core-contract plugin-db-contract
           if rpm -q plugin-hostd-contract; then echo "plugin-hostd-contract is installed: it declares the same items"; exit 1; fi
       - name: The python ABNF parser
         run: |

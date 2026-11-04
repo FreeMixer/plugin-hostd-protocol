@@ -51,7 +51,7 @@ done
 # the declared protocol: each header stands alone under plugin-hostd/, the files the .pc names are the installed ones,
 # and a consumer of protocol.h reads a verb, a reply code and the table of what each host owes each verb
 for h in protocol.h search_paths.h plugin_hostd_protocol_host_verbs.h plugin_hostd_protocol_vocabulary.h \
-         omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h plugin_pin_vocabulary.h; do
+         omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h plugin_db_vocabulary.h; do
     [ -f "$prefix/include/$name/plugin-hostd/$h" ] || fail "plugin-hostd/$h is not installed"
 done
 for h in "$prefix/include/$name"/plugin-hostd/*.h; do
