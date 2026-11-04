@@ -11,7 +11,15 @@
 ; words; the types below are what a sender writes, and what the tests hold every line of the scenario corpus and every
 ; line the library answers to.
 
-message          = command / reply / feedback
+message          = request / answer / feedback
+
+; a request is a command, and an answer a reply, each after a tag in a session that hello granted the extension tags:
+; the answer to a tagged request starts with the request's tag. Without that grant a line that starts with "@" is a
+; command whose verb no host has, answered "not found" as mod-host answers it. Feedback lines never carry a tag.
+request          = [tag SP] command
+answer           = [tag SP] reply
+tag              = "@" 1*tag-char
+tag-char         = ALPHA / DIGIT / "-" / "_" / "."
 
 ; a reply: resp, the status, and the words the verb's reply grammar gives; or a parse refusal (generated, as
 ; protocol-error), which mod-host writes as the bare message
@@ -127,6 +135,7 @@ command          = cmd-add
                  / cmd-supervisor-reset
                  / cmd-worker-env
                  / cmd-worker-list
+                 / cmd-hello
 
 ; mod-host: include/mod-host.h EFFECT_ADD; extended by plugin-hostd
 cmd-add                  = %s"add" SP word SP int tail
@@ -301,6 +310,8 @@ cmd-supervisor-reset     = %s"supervisor_reset" tail
 cmd-worker-env           = %s"worker_env" SP word SP word SP word
 ; plugin-hostd: data/verbs.json PLUGIN_HOSTD_VERBS.workerList
 cmd-worker-list          = %s"worker_list"
+; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.hello
+cmd-hello                = %s"hello" SP int tail
 
 ; words a client of mod-ui may send that no host answers; each is refused and has no rule: set_midi_program_change_pedalboard_bank_channel, set_midi_program_change_pedalboard_snapshot_channel
 
@@ -368,6 +379,12 @@ fb-worker-died             = %s"worker_died" tail
 fb-worker-respawned        = %s"worker_respawned" tail
 ; plugin-hostd: <count>
 fb-xruns                   = %s"xruns" tail
+
+; the extensions hello grants, and hello's reply: the daemon's version, then each extension it grants, once and in
+; this order
+extension        = ext-tags
+ext-tags         = %s"tags"
+hello-reply      = %s"resp" SP %s"0" SP int [SP ext-tags]
 
 ; mod-host's parse refusals, written as their message
 protocol-error   = %s"not found" / %s"many arguments" / %s"few arguments" / %s"invalid argument"

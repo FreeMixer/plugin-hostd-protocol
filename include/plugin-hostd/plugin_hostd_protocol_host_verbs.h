@@ -229,7 +229,14 @@ struct omx_host_verb {
 #define OMX_VERB_ESTIMATE_CODES_COUNT 5u
 #define OMX_VERB_ESTIMATE_CODES_INIT { -533, -534, -535, -901, -902 } /* reply.plugin-hostd.no-record, reply.plugin-hostd.no-cell, reply.plugin-hostd.unknown-plugin, reply.host.memory-allocation, reply.host.invalid-operation */
 
-#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 28u
+/* PLUGIN_HOSTD_PROTOCOL_VERBS.hello (data/verbs.json): Open a session: <version> [<extension> ...], the protocol version the client speaks and the extensions it asks for. The reply is the daemon's protocol version and, of the extensions asked for, the ones it grants, in the order of PLUGIN_HOSTD_PROTOCOL_EXTENSIONS; an extension the daemon does not know is not granted and is no error. Each hello replaces what the one before it granted, and a new connection starts with none. -902 for a version that is not a whole number of 1 or more, and nothing changes. */
+#define OMX_VERB_HELLO "hello"
+#define OMX_VERB_HELLO_FMT "hello %i ..."
+#define OMX_VERB_HELLO_REPLY "resp 0 <version> <extension> ..."
+#define OMX_VERB_HELLO_CODES_COUNT 1u
+#define OMX_VERB_HELLO_CODES_INIT { -902 } /* reply.host.invalid-operation */
+
+#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 29u
 
 /* Every verb, in the order of its items, with what each host owes it. */
 static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void) {
@@ -262,6 +269,7 @@ static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void)
     { OMX_VERB_PLAN_GET, OMX_VERB_PLAN_GET_FMT, OMX_VERB_PLAN_GET_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_PLAN_CLEAR, OMX_VERB_PLAN_CLEAR_FMT, OMX_VERB_PLAN_CLEAR_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_ESTIMATE, OMX_VERB_ESTIMATE_FMT, OMX_VERB_ESTIMATE_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
+    { OMX_VERB_HELLO, OMX_VERB_HELLO_FMT, OMX_VERB_HELLO_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
   };
   return table;
 }

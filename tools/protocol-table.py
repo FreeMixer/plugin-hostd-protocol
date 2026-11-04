@@ -8,7 +8,8 @@
 #
 #   protocol/mod-host.json        mod-host's commands and feedback, written from include/mod-host.h (check-generated)
 #   protocol/plugin-hostd.json    what include/plugin-hostd/protocol.h declares (check-generated)
-#   data/verbs.json               the verbs plugin-hostd adds, as omx-contract declares them (check-rendered)
+#   data/verbs.json               the verbs plugin-hostd adds, the protocol's own (hello) and the extensions hello
+#                                 grants, as omx-contract declares them (check-rendered)
 #   include/plugin-hostd/omx_clap_core_host_verbs.h   omx-clap-core's verbs, as omx-contract renders them
 #
 # A word of ours never shadows or changes a mod-host word. A verb of another origin that has a mod-host word either
@@ -155,6 +156,12 @@ def table():
     for word, (key, v) in declared.items():
         entries.append(ours(word, "plugin-hostd", f"data/verbs.json PLUGIN_HOSTD_VERBS.{key}", v["format"], v["reply"],
                             [resolve(c["ref"]) for c in v.get("codes", [])], v.get("doc", "")))
+    # the verbs of the protocol itself (hello), which the library answers for the host that registers them
+    for key, v in verbs["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"].items():
+        if v["verb"] in declared:
+            fail(f"{v['verb']}: declared by both PLUGIN_HOSTD_VERBS and PLUGIN_HOSTD_PROTOCOL_VERBS")
+        entries.append(ours(v["verb"], "plugin-hostd-protocol", f"data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.{key}",
+                            v["format"], v["reply"], [resolve(c["ref"]) for c in v.get("codes", [])], v.get("doc", "")))
     for word, v in shared.items():
         entries.append(ours(word, "omx-clap-core", f"omx-clap-core data/verbs.json {v['item']}", v["format"],
                             v["reply"], v["codes"], v["doc"]))
@@ -220,6 +227,9 @@ def table():
         "refused": mod_ui,
         "feedback": sorted(feedback.values(), key=lambda e: (e["origin"] != "mod-host", e["line"])),
         "protocol_errors": mod["protocol_errors"],
+        # what hello can grant, in the order its reply names them
+        "extensions": [{"word": w["word"], "doc": w.get("doc", "")}
+                       for w in verbs["PLUGIN_HOSTD_PROTOCOL_EXTENSIONS"]["words"].values()],
     }
 
 

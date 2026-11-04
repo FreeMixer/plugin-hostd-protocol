@@ -11,7 +11,15 @@
 ; words; the types below are what a sender writes, and what the tests hold every line of the scenario corpus and every
 ; line the library answers to.
 
-message          = command / reply / feedback
+message          = request / answer / feedback
+
+; a request is a command, and an answer a reply, each after a tag in a session that hello granted the extension tags:
+; the answer to a tagged request starts with the request's tag. Without that grant a line that starts with "@" is a
+; command whose verb no host has, answered "not found" as mod-host answers it. Feedback lines never carry a tag.
+request          = [tag SP] command
+answer           = [tag SP] reply
+tag              = "@" 1*tag-char
+tag-char         = ALPHA / DIGIT / "-" / "_" / "."
 
 ; a reply: resp, the status, and the words the verb's reply grammar gives; or a parse refusal (generated, as
 ; protocol-error), which mod-host writes as the bare message

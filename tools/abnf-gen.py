@@ -5,8 +5,9 @@
 # grammar/plugin-hostd-protocol.abnf: the lexical core (grammar/core.abnf, written by hand once) and, after it, the
 # rules generated from the verb table (protocol/plugin-hostd-protocol.json): one rule per command, its words typed as
 # its format line types them (an alternation where a word has more than one form, told apart by the number of its
-# arguments), one per feedback line and one per parse refusal. Nothing of a verb is typed here; a verb
-# that moves in the table moves the grammar, and `make check-generated` is red until it is written again.
+# arguments), one per feedback line, one per extension hello grants with hello's reply, and one per parse refusal.
+# Nothing of a verb is typed here; a verb that moves in the table moves the grammar, and `make check-generated` is red
+# until it is written again.
 #
 #   tools/abnf-gen.py            prints grammar/plugin-hostd-protocol.abnf
 #   tools/abnf-gen.py --check    exits 1 when grammar/plugin-hostd-protocol.abnf is not what it prints
@@ -94,6 +95,17 @@ def grammar():
             w(f"{rule_name('fb', f['line']).ljust(width)}= {literal(f['line'])} tail")
         else:
             w(f"{rule_name('fb', f['line']).ljust(width)}= {body(f['line'], f['args'], f['tail'])}")
+    w("")
+    w("; the extensions hello grants, and hello's reply: the daemon's version, then each extension it grants, once and in")
+    w("; this order")
+    exts = table["extensions"]
+    if not exts:
+        fail(f"{TABLE}: no extension for hello to grant")
+    w("extension        = " + " / ".join(rule_name("ext", e["word"]) for e in exts))
+    width = max([len(rule_name("ext", e["word"])) + 1 for e in exts] + [len("extension        ")])
+    for e in exts:
+        w(f"{rule_name('ext', e['word']).ljust(width)}= {literal(e['word'])}")
+    w('hello-reply      = %s"resp" SP %s"0" SP int' + "".join(f" [SP {rule_name('ext', e['word'])}]" for e in exts))
     w("")
     w("; mod-host's parse refusals, written as their message")
     w("protocol-error   = " + " / ".join(literal(e["message"]) for e in table["protocol_errors"]))

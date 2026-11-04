@@ -70,4 +70,9 @@
 #define OMX_REPLY_PLUGIN_HOSTD_UNKNOWN_PLUGIN "reply.plugin-hostd.unknown-plugin" ///< the uri names no plugin installed here
 #define OMX_REPLY_PLUGIN_HOSTD_UNKNOWN_PLUGIN_RESP (-535)
 
+/* PLUGIN_HOSTD_PROTOCOL_EXTENSIONS (data/verbs.json) */
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS "tags" ///< request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_COUNT 1u
+#define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_INIT { "tags" }
+
 #endif /* PLUGIN_HOSTD_PROTOCOL_VOCABULARY_H */
