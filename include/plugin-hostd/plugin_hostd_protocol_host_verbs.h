@@ -35,7 +35,7 @@ struct omx_host_verb {
 };
 #endif /* OMX_HOST_VERB_TYPES_H */
 
-/* PLUGIN_HOSTD_VERBS.workerList (data/verbs.json): The workers, one record each: <core> is the audio core the setting placement pinned the worker to, - for none; <pool> is on for a worker started with the CLAP thread pool (the pin of its plugin carries pool=cores, and no other plugin shares the worker), qualified for every other. */
+/* PLUGIN_HOSTD_VERBS.workerList (data/verbs.json): The workers, one record each: <core> is always -: the setting placement pins a worker to the whole set of audio cores, never to one core of its own, so no worker has a core to report; <pool> is on for a worker started with the CLAP thread pool (the pin of its plugin carries pool=cores, and no other plugin shares the worker), qualified for every other. */
 #define OMX_VERB_WORKER_LIST "worker_list"
 #define OMX_VERB_WORKER_LIST_FMT "worker_list"
 #define OMX_VERB_WORKER_LIST_REPLY "resp <n> <worker>:<pid>:<format>:<state>:<core>:<pool>:<place>:<i>,<i>,..."
@@ -201,7 +201,7 @@ struct omx_host_verb {
 #define OMX_VERB_HISTORY_CLEAR_CODES_COUNT 2u
 #define OMX_VERB_HISTORY_CLEAR_CODES_INIT { -901, -902 } /* reply.host.memory-allocation, reply.host.invalid-operation */
 
-/* PLUGIN_HOSTD_VERBS.plan (data/verbs.json): The instances, in signal order, are planned into the fewest workers their pins and costs allow: <chain> <instance> [<instance> ...]. Each run of consecutive members that may share a worker becomes a chain of place chain:<chain>.<k>, the others stay alone in a worker of their own; the reply names the segments in order, the members of a segment joined by commas and the segments by semicolons, then the same with each member replaced by the audio core of the worker that runs it now, - for one the setting placement did not pin. With the setting grouping off the plan is answered and kept, and nothing moves. */
+/* PLUGIN_HOSTD_VERBS.plan (data/verbs.json): The instances, in signal order, are planned into the fewest workers their pins and costs allow: <chain> <instance> [<instance> ...]. Each run of consecutive members that may share a worker becomes a chain of place chain:<chain>.<k>, the others stay alone in a worker of their own; the reply names the segments in order, the members of a segment joined by commas and the segments by semicolons, then the same with each member replaced by -, the core field, which the setting placement leaves empty because it pins a worker to the whole set of audio cores and not to one core. With the setting grouping off the plan is answered and kept, and nothing moves. */
 #define OMX_VERB_PLAN "plan"
 #define OMX_VERB_PLAN_FMT "plan %i %i ..."
 #define OMX_VERB_PLAN_REPLY "resp 0 <instance>,...;<instance>,...;... <core>,...;<core>,...;..."
