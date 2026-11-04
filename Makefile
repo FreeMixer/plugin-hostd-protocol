@@ -97,7 +97,7 @@ TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenari
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
       test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi version-check \
-      check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
+      check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
 test-protocol: tests/protocol_test
@@ -266,6 +266,10 @@ test-verb-table:
 	python3 tests/verb_table.py
 	python3 tests/verb_table_sabotage.py
 
+# the default lv2_worker is omx-clap-host: mod-host runs an LV2 plugin only when lv2_worker or lv2_worker_set names it
+test-default-lv2-worker:
+	python3 tests/default_lv2_worker.py protocol/plugin-hostd.json
+
 # mod-host.json follows its headers: a moved verb, code or message in a scratch copy moves the JSON
 test-mod-host-json:
 	python3 tests/mod_host_json.py include
@@ -364,7 +368,7 @@ fuzz-corpus:
 clean:
 	rm -rf src/*.o $(LIB_SO) $(LIB_SONAME) $(LIB_FILE) $(TEST_PROGS) build
 
-.PHONY: gen check-generated protocol-doc check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage \
+.PHONY: gen check-generated protocol-doc check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker \
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \

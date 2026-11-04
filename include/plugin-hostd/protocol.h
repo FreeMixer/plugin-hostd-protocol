@@ -1071,7 +1071,8 @@ static inline int phd_is_note_verb(const char *verb)
 
 #define PHD_DEFAULT_MOD_HOST          "mod-host"
 #define PHD_DEFAULT_CLAP_HOST         "omx-clap-host"
-#define PHD_DEFAULT_LV2_WORKER        PHD_LV2_WORKER_AUTO
+/* the LV2 isolated tier is omx-clap-host's adapter; mod-host runs a plugin only when lv2_worker or lv2_worker_set names it */
+#define PHD_DEFAULT_LV2_WORKER        PHD_LV2_WORKER_CLAP_HOST
 #define PHD_DEFAULT_STATE_ROOT        "/tmp"
 #define PHD_DEFAULT_READY_TIMEOUT_MS  5000
 #define PHD_DEFAULT_RPC_TIMEOUT_MS    5000
@@ -1149,10 +1150,10 @@ static inline int phd_is_note_verb(const char *verb)
 #define PHD_CONF_STRINGS(X) \
     X(mod_host, path, PHD_DEFAULT_MOD_HOST, "", "worker for " PHD_FORMAT_LV2 " (a name on PATH or a path)") \
     X(clap_host, path, PHD_DEFAULT_CLAP_HOST, "", "worker for " PHD_FORMAT_CLAP) \
-    X(lv2_worker, word, PHD_DEFAULT_LV2_WORKER, "", "who runs an LV2 plugin: mod-host (the mod_host program), omx-clap-host " \
-      "(the clap_host program, through its LV2 adapter, a plugin it cannot run refused with a code) or auto (the adapter " \
-      "first, mod-host for what it refuses, each such plugin in a worker of its own unless its add names a placement); " \
-      OMX_VERB_LV2_WORKER_SET " overrides it for one plugin") \
+    X(lv2_worker, word, PHD_DEFAULT_LV2_WORKER, "", "who runs an LV2 plugin: omx-clap-host (the clap_host program, through " \
+      "its LV2 adapter, a plugin it cannot run refused with a code), mod-host (the mod_host program, only when named here or " \
+      "by " OMX_VERB_LV2_WORKER_SET ") or auto (the adapter first, mod-host for what it refuses, each such plugin in a worker " \
+      "of its own unless its add names a placement); " OMX_VERB_LV2_WORKER_SET " overrides it for one plugin") \
     X(lv2_path, pathlist, PHD_DEFAULT_LV2_PATH, "LV2_PATH", "where bundles are searched") \
     X(lv2_extra, pathlist, "", "", "the site's own bundle folders, searched after lv2_path: the one declaration of them, " \
       "which plugin-qualify and omx-panel read too") \
