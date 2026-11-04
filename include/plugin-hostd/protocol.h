@@ -641,7 +641,10 @@ static inline int phd_pool_name_valid(const char *name)
     X(TRACK_INFO, OMX_VERB_TRACK_INFO, "<instance> <name> <#RRGGBB | " PHD_NO_COLOR "> [bus | return | master]", \
       "resp 0", REPLACE, \
       "the strip's name (\"\" for none), colour and kind, absent for an input channel; a worker whose plugin format " \
-      "has a track-info extension passes them on; any other word is -902") \
+      "has a track-info extension passes them on; any other word is -902, and so is a name of 256 bytes or more, one " \
+      "that is not UTF-8 as RFC 3629 spells it (an overlong form, a surrogate, a code point past U+10FFFF, a lead " \
+      "byte without its tails) or one that holds a control character of Unicode's class Cc: U+0000 to U+001F, U+007F " \
+      "or U+0080 to U+009F") \
     X(REMOTE_PAGES, OMX_VERB_REMOTE_PAGES, "<instance>", "resp <count>", NONE, \
       "the plugin's remote-control pages, from clap.remote-controls; 0 for an instance of a format whose worker has none") \
     X(REMOTE_PAGE_GET, OMX_VERB_REMOTE_PAGE_GET, "<instance> <page>", \

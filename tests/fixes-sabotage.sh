@@ -32,5 +32,7 @@ sabotage() {
 
 sabotage "#371" src/host-dispatch.c 'if (isnan(value) || isinf(value))' 'if (0)'
 sabotage "#372" src/protocol.c ' \&\& (j == 0 || match > 0)' ''
+sabotage "#11" src/host-dispatch.c 'if (\*p == 0xc2 \&\& p\[1\] < 0xa0)' 'if (0)'
+sabotage "#12" src/protocol.c ' \&\& strcmp(g_commands\[i\]\.list\[j\], "\.\.\.") != 0' ''
 
 [ "$failed" = 0 ] && echo "fixes sabotage ok" || { echo "fixes sabotage FAILED"; exit 1; }

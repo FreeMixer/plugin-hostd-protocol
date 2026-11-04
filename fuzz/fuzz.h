@@ -41,4 +41,57 @@ static char *fuzz_message(const uint8_t *data, size_t size)
     return copy;
 }
 
+/* The words of a message by the protocol's quoting rule, as mod-host's parser reads them: trailing blanks go; a space
+   outside quotes ends a word, and a run of them is one; a '"' opens a quoted run, in which a space belongs to the word
+   and '""' stands for one '"'; the '"' that closes the run ends the word's text, and what follows it up to the next
+   space is dropped; '\"' is a '"' anywhere. Then each '"' left in a word goes, and the character after it stays
+   whatever it is. buf holds strlen(m) + 1 bytes and receives the words; words gets the first max of them. Answers how
+   many words the message has, max or more. */
+static inline unsigned fuzz_words(const char *m, char *buf, char **words, unsigned max)
+{
+    size_t len = strlen(m);
+    unsigned n = 1;
+    int quoted = 0;
+    while (len > 0 && (m[len - 1] == ' ' || m[len - 1] == '\t' || m[len - 1] == '\r' || m[len - 1] == '\n'))
+        len--;
+    memcpy(buf, m, len);
+    buf[len] = '\0';
+    if (max > 0)
+        words[0] = buf;
+    for (char *p = buf; *p; p++)
+    {
+        if (*p == ' ' && !quoted)
+        {
+            *p = '\0';
+            while (p[1] == ' ')
+                p++;
+            if (n < max)
+                words[n] = p + 1;
+            n++;
+        }
+        else if (*p == '\\' && p[1] == '"')
+            *p++ = '"';
+        else if (*p == '"' && !quoted)
+            quoted = 1;
+        else if (*p == '"' && p[1] == '"')
+            p++;
+        else if (*p == '"')
+        {
+            *p = '\0';
+            quoted = 0;
+        }
+    }
+    for (unsigned i = 0; i < n && i < max; i++)
+        for (char *q = words[i]; *q; q++)
+            if (*q == '"')
+                memmove(q, q + 1, strlen(q));
+    return n;
+}
+
+/* a word the parser may take for a pattern's wildcard or its "...", which match more than the word itself */
+static inline int fuzz_wildcard(const char *word)
+{
+    return strchr(word, '%') != NULL || strstr(word, "...") != NULL;
+}
+
 #endif

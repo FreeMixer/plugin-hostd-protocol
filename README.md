@@ -186,6 +186,8 @@ the grammar against the scenario corpus, the golden transcript and the table (`t
   range or default is not finite (plugin-hostd#371).
 - `protocol_parse()` runs the callback of the command the message names, and no other: `zzz %s 5` is not found, where
   it ran `add` (plugin-hostd#372).
+- `protocol_parse()` reads a word `...` at the `...` of a pattern as one of the words the `...` takes: `add urn:x 5 ... c`
+  runs `add`, where it answered `many arguments` (#12).
 - A verb may have more than one form, told apart by its number of arguments (`preset_show <uri>` is mod-host's,
   `preset_show <instance> <key>` plugin-hostd's): `protocol_parse()` reads every command registered for the verb and
   runs the first whose arguments fit, in number and then in types (`%i` a whole number, `%f` a number), where it read

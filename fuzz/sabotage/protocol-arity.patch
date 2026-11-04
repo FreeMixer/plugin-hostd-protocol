@@ -1,0 +1,16 @@
+Breaks check_arity of fuzz/fuzz_protocol.c:29 (a callback only runs with the argument count its pattern allows).
+Caught by the seed input "extra-14" of fuzz_protocol.
+
+diff --git a/src/protocol.c b/src/protocol.c
+index 4a19214..f55254b 100644
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -217,7 +217,7 @@ void protocol_parse(msg_t *msg)
+         }
+ 
+         // few arguments
+-        if (proto.list_count < (g_commands[i].count - variable_arguments))
++        if (0)
+             result = PROTOCOL_FEW_ARGUMENTS;
+         // many arguments
+         else if (proto.list_count > g_commands[i].count && !variable_arguments)
