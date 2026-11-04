@@ -1,4 +1,4 @@
-Breaks check_set_many of fuzz/fuzz_session.c:139 (param_set_many sets nothing when a pair is refused as it is checked).
+Breaks check_set_many of fuzz/fuzz_session.c:142 (param_set_many sets nothing when a pair is refused as it is checked).
 Caught by the seed input "setmany" of fuzz_session.
 
 diff --git a/src/host-dispatch.c b/src/host-dispatch.c

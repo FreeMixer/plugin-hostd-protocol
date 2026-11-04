@@ -83,8 +83,11 @@ static unsigned g_nstore, g_sets;
 
 static float *stored(const char *symbol, int add)
 {
+    /* a symbol longer than a name the store holds is never stored: it reads as its length over 4 */
+    if (strlen(symbol) >= sizeof(g_store[0].name))
+        return NULL;
     for (unsigned i = 0; i < g_nstore; i++)
-        if (strncmp(g_store[i].name, symbol, sizeof(g_store[i].name) - 1) == 0)
+        if (strcmp(g_store[i].name, symbol) == 0)
             return &g_store[i].value;
     if (!add || g_nstore == STORE_MAX)
         return NULL;
@@ -295,8 +298,18 @@ static size_t parse_untagged(const char *line, char *out, size_t size)
         int checked_refused = 0;
         for (unsigned i = 0; i < g_ncalls && i < MANY_MAX; i++)
             checked_refused |= g_calls[i].resp < 0;
-        check_set_many(len > 6 && strncmp(out, "resp -", 6) == 0,
-                       nbefore == g_nstore && memcmp(before, g_store, sizeof(before)) == 0, checked_refused, g_sets);
+        /* every value reads as before: one set back to what it held may now be stored with that same value */
+        int unchanged = 1;
+        for (unsigned i = 0; i < g_nstore; i++)
+        {
+            float was = (float)strlen(g_store[i].name) / 4.0f;
+            for (unsigned j = 0; j < nbefore; j++)
+                if (strcmp(before[j].name, g_store[i].name) == 0)
+                    was = before[j].value;
+            /* NaN is a value a line may set, and reads as itself */
+            unchanged = unchanged && (g_store[i].value == was || (g_store[i].value != g_store[i].value && was != was));
+        }
+        check_set_many(len > 6 && strncmp(out, "resp -", 6) == 0, unchanged, checked_refused, g_sets);
         return len;
     }
     size_t len = parse(line, out, size);
