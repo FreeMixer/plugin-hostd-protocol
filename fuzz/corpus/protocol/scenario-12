@@ -1,1 +1,1 @@
-param_get_many 3 gain :bypass
+param_get_many 3 gain

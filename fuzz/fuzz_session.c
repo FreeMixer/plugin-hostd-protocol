@@ -7,8 +7,9 @@
    a session granted errors follows a refusal "resp <n>" alone with the code the protocol declares for n, and any
    other answer, or any answer in a session not granted errors, goes out as the callback wrote it; a session granted
    seq numbers each feedback line from 1 after the hello that granted it, one more each, and no other session numbers
-   one; param_get_many answers every value the backend's param_get gives, in order, or the first refusal alone; and a
-   new connection starts with nothing granted. The harness keeps its own model of the grant: it sends a line that
+   one; param_get_many answers every value the backend's param_get gives, in order, or the first refusal alone;
+   param_set_many leaves every value as it was when it refuses the line, and sets none when a pair is refused as it is
+   checked; and a new connection starts with nothing granted. The harness keeps its own model of the grant: it sends a line that
    holds "hello" only in the plain shape "hello <word> ...", which it reads itself. */
 #include "fuzz.h"
 #include "../src/session.h"
@@ -75,10 +76,38 @@ static void emit_cb(proto_t *proto)
 static struct { int resp; float value; } g_calls[MANY_MAX];
 static unsigned g_ncalls;
 
+/* the values param_set set, by symbol; every other value is the symbol's length over 4 */
+#define STORE_MAX 16
+static struct { char name[32]; float value; } g_store[STORE_MAX];
+static unsigned g_nstore, g_sets;
+
+static float *stored(const char *symbol, int add)
+{
+    for (unsigned i = 0; i < g_nstore; i++)
+        if (strncmp(g_store[i].name, symbol, sizeof(g_store[i].name) - 1) == 0)
+            return &g_store[i].value;
+    if (!add || g_nstore == STORE_MAX)
+        return NULL;
+    snprintf(g_store[g_nstore].name, sizeof(g_store[g_nstore].name), "%s", symbol);
+    return &g_store[g_nstore++].value;
+}
+
+/* param_set refuses what param_get refuses, and a value above 1000 as it sets it */
+static int b_param_set(int instance, const char *symbol, float value)
+{
+    int resp = instance > 8 ? -3 : symbol[0] == 'x' ? -103 : value > 1000.0f ? -207 : 0;
+    float *p;
+    g_sets++;
+    if (resp == 0 && (p = stored(symbol, 1)) != NULL)
+        *p = value;
+    return resp;
+}
+
 static int b_param_get(int instance, const char *symbol, float *value)
 {
     int resp = instance > 8 ? -3 : symbol[0] == 'x' ? -103 : 0;
-    *value = (float)strlen(symbol) / 4.0f;
+    float *p = stored(symbol, 0);
+    *value = p ? *p : (float)strlen(symbol) / 4.0f;
     if (g_ncalls < MANY_MAX)
     {
         g_calls[g_ncalls].resp = resp;
@@ -88,7 +117,7 @@ static int b_param_get(int instance, const char *symbol, float *value)
     return resp;
 }
 
-static const host_backend_t g_backend = { .param_get = b_param_get };
+static const host_backend_t g_backend = { .param_set = b_param_set, .param_get = b_param_get };
 
 /* param_get_many answers "resp 0" and each value its backend gave, in the order of the calls, when every call
    answered one; else the code of the call that refused, which is the last one made, alone. */
@@ -97,6 +126,16 @@ __attribute__((noinline)) static void check_many(const char *got, size_t len, co
     /* mutant: src/host-dispatch.c:180 `if (resp < SUCCESS)` -> `if (resp < -100)`
        input: many */
     if (len != strlen(want) + 1 || memcmp(got, want, len) != 0)
+        abort();
+}
+
+/* param_set_many is all or nothing: a line it refuses leaves every value as it was, and a line refused as its pairs are
+   checked sets no value at all. */
+__attribute__((noinline)) static void check_set_many(int refused, int unchanged, int checked_refused, unsigned sets)
+{
+    /* mutant: src/host-dispatch.c:228 `if (checked < SUCCESS)` -> `if (0)`
+       input: setmany */
+    if ((refused && !unchanged) || (checked_refused && sets != 0))
         abort();
 }
 
@@ -245,6 +284,21 @@ static int many_model(char *want, size_t size)
 static size_t parse_untagged(const char *line, char *out, size_t size)
 {
     char want[4096];
+    if (strncmp(line, "param_set_many ", 15) == 0)
+    {
+        /* the values before the line, and the param_set calls it makes */
+        __typeof__(g_store) before;
+        unsigned nbefore = g_nstore;
+        memcpy(before, g_store, sizeof(before));
+        g_sets = 0;
+        size_t len = parse(line, out, size);
+        int checked_refused = 0;
+        for (unsigned i = 0; i < g_ncalls && i < MANY_MAX; i++)
+            checked_refused |= g_calls[i].resp < 0;
+        check_set_many(len > 6 && strncmp(out, "resp -", 6) == 0,
+                       nbefore == g_nstore && memcmp(before, g_store, sizeof(before)) == 0, checked_refused, g_sets);
+        return len;
+    }
     size_t len = parse(line, out, size);
     if (strncmp(line, "param_get_many ", 15) == 0 && many_model(want, sizeof(want)))
     {
@@ -381,7 +435,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     if (size > FUZZ_MAX_INPUT)
         return 0;
 
-    /* a connection: nothing granted */
+    /* a connection: nothing granted, and the backend's values as they start */
+    g_nstore = 0;
+    memset(g_store, 0, sizeof(g_store));
     socket_session_start();
     g_tags = g_errors = g_seq = 0;
     g_seq_last = 0;

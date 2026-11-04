@@ -1,9 +1,6 @@
 hello 1 errors seq tags
-midi_map 5 "" 5 3 nan -infinity
-@C param_set 1 "\"ʓ" !
-@. chain_get -2
-@.._ load Π!
-cc_unmap 050 "\" "
+@._b state_load "\""
+@. descriptor_get ""
 plan 129 -86
 plan_get 01
 all_notes_off -443
@@ -11,3 +8,6 @@ chain 03 -712 "ʹ"
 @_S estimate -67 16 "" "\"Ϋ" R
 state_load Ͼ>
 @--. worker_list
+help
+@- quit
+descriptor_get Nͯ;

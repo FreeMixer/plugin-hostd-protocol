@@ -1,4 +1,4 @@
-Breaks check_errors of fuzz/fuzz_session.c:203 (a refusal carries its error word only in a session granted errors).
+Breaks check_errors of fuzz/fuzz_session.c:242 (a refusal carries its error word only in a session granted errors).
 Caught by the seed input "errors" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c

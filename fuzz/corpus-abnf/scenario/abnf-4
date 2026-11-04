@@ -1,5 +1,3 @@
-@6- instance_info -7 => @. resp -25 "ƶ"
-all_notes_off 0 => @hk few arguments
 help => @1-A resp 0 ""
 remote_page_get 023 -956 => invalid argument
 transport_sync !̭ => @8.. resp -57
@@ -8,3 +6,5 @@ transport_sync !̭ => @8.. resp -57
 plan_get 88 => @. resp 00
 feature_enable GĈ 920 => @_ many arguments
 set_bpb -inf => @X. resp 3 "" ""
+@_5- plan -483 5 => resp -27 "" !!
+@-7_ hide_external_ui 672 => resp -716

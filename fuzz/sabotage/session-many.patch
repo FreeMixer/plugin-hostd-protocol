@@ -1,4 +1,4 @@
-Breaks check_many of fuzz/fuzz_session.c:100 (param_get_many answers each value, or the first refusal alone).
+Breaks check_many of fuzz/fuzz_session.c:129 (param_get_many answers each value, or the first refusal alone).
 Caught by the seed input "many" of fuzz_session.
 
 diff --git a/src/host-dispatch.c b/src/host-dispatch.c

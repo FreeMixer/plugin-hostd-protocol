@@ -16,6 +16,8 @@
  *     code for and for nothing else;
  *   - a session granted seq numbers each feedback line, 1 for the first after that hello and one more for each, and
  *     a hello that grants it again starts again at 1; no other session numbers one;
+ *   - param_set_many sets every pair or none: a pair refused as it is checked, or as it is set, leaves every value as
+ *     it was, and the answer names its code and position;
  *   - a new connection starts with nothing granted.
  *
  * Copyright (C) 2026 Pau Aliagas <linuxnow@gmail.com>
@@ -44,11 +46,46 @@ static int g_port;
 static int g_failures;
 static volatile int g_running = 1;
 
+/* instance 3 has gain and cutoff; a value above 1000 is one the host refuses as it sets it */
+static float g_gain = 0.25f, g_cutoff = 0.5f;
+
+static float *param_of(int instance, const char *symbol, int *code)
+{
+    *code = instance != 3 ? ERR_INSTANCE_NON_EXISTS : SUCCESS;
+    if (*code == SUCCESS && strcmp(symbol, "gain") == 0)
+        return &g_gain;
+    if (*code == SUCCESS && strcmp(symbol, "cutoff") == 0)
+        return &g_cutoff;
+    if (*code == SUCCESS)
+        *code = ERR_LV2_INVALID_PARAM_SYMBOL;
+    return NULL;
+}
+
 static int b_param_get(int instance, const char *symbol, float *value)
 {
-    (void)symbol;
-    *value = 0.25f;
-    return instance == 3 ? SUCCESS : ERR_INSTANCE_NON_EXISTS;
+    int code;
+    float *p = param_of(instance, symbol, &code);
+
+    if (p)
+        *value = *p;
+    return code;
+}
+
+/* every param_set the backend was asked for */
+static volatile int g_sets;
+
+static int b_param_set(int instance, const char *symbol, float value)
+{
+    int code;
+
+    g_sets++;
+    float *p = param_of(instance, symbol, &code);
+
+    if (p && value > 1000.0f)
+        return ERR_JACK_VALUE_OUT_OF_RANGE;
+    if (p)
+        *p = value;
+    return code;
 }
 
 static int b_remove(int instance)
@@ -56,7 +93,7 @@ static int b_remove(int instance)
     return instance == 3 ? SUCCESS : ERR_INSTANCE_NON_EXISTS;
 }
 
-static const host_backend_t g_backend = { .remove = b_remove, .param_get = b_param_get };
+static const host_backend_t g_backend = { .remove = b_remove, .param_set = b_param_set, .param_get = b_param_get };
 
 /* emit <instance>: an event on the feedback port, then resp 0 */
 static void emit_cb(proto_t *proto)
@@ -219,6 +256,7 @@ int main(void)
     pthread_t thread;
     conn_t c;
     size_t i;
+    int sets;
 
     setvbuf(stdout, NULL, _IOLBF, 0);
     signal(SIGPIPE, SIG_IGN);
@@ -308,6 +346,29 @@ int main(void)
     expect(&c, "numbers dropped", "emit 8", "resp 0");
     expect_feedback(&c, "an event after seq is dropped", "remote_pages_changed 8");
     expect(&c, "hello", "hello 1 seq", "resp 0 1 seq");
+    close_session(&c);
+
+    /* -- param_set_many, all or nothing */
+    c = open_session();
+    expect(&c, "all set", "param_set_many 3 gain 0.5 cutoff 0.75", "resp 0");
+    expect(&c, "all set", "param_get_many 3 gain cutoff", "resp 0 0.5000 0.7500");
+    sets = g_sets;
+    expect(&c, "a refused middle pair", "param_set_many 3 gain 0.1 nope 0.2 cutoff 0.3", "resp -103 2");
+    if (g_sets != sets)
+    {
+        printf("FAIL a refused middle pair: %d values set, and set back, where none may be\n", g_sets - sets);
+        g_failures++;
+    }
+    else
+        printf("ok   a refused middle pair: no value set\n");
+    expect(&c, "nothing set", "param_get_many 3 gain cutoff", "resp 0 0.5000 0.7500");
+    expect(&c, "a value refused as it is set", "param_set_many 3 gain 0.1 cutoff 5000", "resp -207 2");
+    expect(&c, "the ones before it set back", "param_get_many 3 gain cutoff", "resp 0 0.5000 0.7500");
+    expect(&c, "a value that is no number", "param_set_many 3 gain 0.1 cutoff loud", "resp -902 2");
+    expect(&c, "a pair with no value", "param_set_many 3 gain 0.1 cutoff", "resp -902 2");
+    expect(&c, "an instance that does not exist", "param_set_many 9 gain 0.1", "resp -3 1");
+    expect(&c, "nothing set", "param_get_many 3 gain cutoff", "resp 0 0.5000 0.7500");
+    expect(&c, "back as it was", "param_set_many 3 gain 0.25 cutoff 0.5", "resp 0");
     close_session(&c);
 
     /* -- a new connection starts with nothing granted */

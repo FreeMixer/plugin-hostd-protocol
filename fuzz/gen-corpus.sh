@@ -90,6 +90,8 @@ printf 'emit 1\nhello 1 seq\nemit 2\nemit 3\nhello 1 seq tags\nemit 4\n@a emit 5
     > "$out/session/seq"
 printf 'param_get_many 3 gain cutoff\nparam_get_many 3 gain xbad gain\nparam_get_many 9 gain\nhello 1 errors\nparam_get_many 9 gain\nparam_get_many 3 a "b c" ddd\nparam_get_many 3\n' \
     > "$out/session/many"
+printf 'param_set_many 3 a 0.5 bb 0.25\nparam_get_many 3 a bb\nparam_set_many 3 a 0.1 xbad 0.2 bb 0.3\nparam_get_many 3 a bb\nparam_set_many 3 a 0.1 bb 2000\nparam_set_many 9 a 1\nparam_set_many 3 a notanumber\nparam_set_many 3 a 1 bb\n' \
+    > "$out/session/setmany"
 
 # the scenario file reader: the real file, and its edges
 cp "$scen" "$out/scenario/host-scenarios"

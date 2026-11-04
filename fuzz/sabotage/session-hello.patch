@@ -1,4 +1,4 @@
-Breaks check_hello of fuzz/fuzz_session.c:184 (hello grants the extensions asked for that the library knows).
+Breaks check_hello of fuzz/fuzz_session.c:223 (hello grants the extensions asked for that the library knows).
 Caught by the seed input "mixed" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c

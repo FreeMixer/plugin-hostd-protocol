@@ -243,7 +243,14 @@ struct omx_host_verb {
 #define OMX_VERB_PARAM_GET_MANY_CODES_COUNT 4u
 #define OMX_VERB_PARAM_GET_MANY_CODES_INIT { -3, -103, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.host.memory-allocation, reply.host.invalid-operation */
 
-#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 30u
+/* PLUGIN_HOSTD_PROTOCOL_VERBS.paramSetMany (data/verbs.json): Several parameters of one instance in one line, all or nothing: <instance> <symbol> <value> [<symbol> <value> ...]. Every pair is checked before any is set: a symbol the instance does not have (-103), an instance that does not exist (-3), a value that is not a number or a pair with no value (-902). The first pair refused refuses the line, answered resp <code> <position> with the pair's position from 1, and no value is set. Should the host refuse a value as it sets it, the values set before it are set back, and the line is refused the same way. */
+#define OMX_VERB_PARAM_SET_MANY "param_set_many"
+#define OMX_VERB_PARAM_SET_MANY_FMT "param_set_many %i %s %f ..."
+#define OMX_VERB_PARAM_SET_MANY_REPLY "resp 0"
+#define OMX_VERB_PARAM_SET_MANY_CODES_COUNT 4u
+#define OMX_VERB_PARAM_SET_MANY_CODES_INIT { -3, -103, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.host.memory-allocation, reply.host.invalid-operation */
+
+#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 31u
 
 /* Every verb, in the order of its items, with what each host owes it. */
 static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void) {
@@ -278,6 +285,7 @@ static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void)
     { OMX_VERB_ESTIMATE, OMX_VERB_ESTIMATE_FMT, OMX_VERB_ESTIMATE_REPLY, { OMX_HOST_VERB_REQUIRED, OMX_HOST_VERB_UNSUPPORTED, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_HELLO, OMX_VERB_HELLO_FMT, OMX_VERB_HELLO_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_PARAM_GET_MANY, OMX_VERB_PARAM_GET_MANY_FMT, OMX_VERB_PARAM_GET_MANY_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
+    { OMX_VERB_PARAM_SET_MANY, OMX_VERB_PARAM_SET_MANY_FMT, OMX_VERB_PARAM_SET_MANY_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
   };
   return table;
 }

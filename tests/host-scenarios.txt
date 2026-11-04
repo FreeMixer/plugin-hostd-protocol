@@ -32,6 +32,12 @@ bypass 9 1 => resp -3
 param_get_many 3 $PARAM :bypass => resp 0 0.2500 0.0000 | not found
 @param_get_many param_get_many 3 $PARAM no_such_symbol => resp -103
 @param_get_many param_get_many 9 $PARAM => resp -3
+# param_set_many, all or nothing: a refused middle pair leaves every value as it was
+param_set_many 3 $PARAM 0.5 no_such_symbol 0.75 $PARAM 0.6 => resp -103 2 | not found
+@param_set_many param_get 3 $PARAM => resp 0 0.2500
+@param_set_many param_set_many 3 $PARAM 0.5 => resp 0
+@param_set_many param_get_many 3 $PARAM => resp 0 0.5000
+@param_set_many param_set 3 $PARAM 0.25 => resp 0
 
 # presets: a preset the host cannot load is refused as a bad URI or as unloadable state
 preset_load 3 urn:no:such:preset => resp -104 | resp -105 | resp -902

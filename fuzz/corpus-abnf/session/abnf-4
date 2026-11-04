@@ -1,13 +1,13 @@
 hello 1 errors seq tags
-hide_external_ui -211
-pin_clear "Ƞ\""
-state_load "/-"
-@B panel_get "\"\""
-midi_learn -2 CȖѪ +nan -inf
-@-. preset_list -2
-pin_changed
+patch_set -7 "" Ă!
+@. pin_changed
 @- lv2_worker_set "\"" ŀ
 @.. history_get ""
 remote_pages 7
 note_out_drops -240
 param_set -218 ˇ !eǫ
+hmi_map 11 "m" 860 -38 6 -5 -0 "F\"" inf +.6 -3
+hide_external_ui -11
+param_monitor -7 "\"!" ! +.87
+@- cc_map 494 "l\"" -76 09 "\"G" +inf +.43e+18 73.E-842 -6 -19 "" -58 !7ͅ A
+quit

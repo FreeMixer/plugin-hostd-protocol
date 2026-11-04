@@ -20,31 +20,40 @@ dispatch:fuzz/corpus/dispatch/track-info-c1-inside plugin-hostd-protocol#11
 # a word "..." where add's pattern has its "...": mod-host read it as a fixed word, ours as the tail
 fuzz/corpus/protocol/extra-24 plugin-hostd-protocol#12
 dispatch:fuzz/corpus/dispatch/extra-24 plugin-hostd-protocol#12
-# param_get_many, which mod-host does not know: ours answers it over the backend
-fuzz/corpus/protocol/scenario-12 plugin-hostd-protocol#9
-fuzz/corpus/protocol/scenario-13 plugin-hostd-protocol#9
-fuzz/corpus/protocol/scenario-14 plugin-hostd-protocol#9
+# the bulk verbs, which mod-host does not know: ours answers them over the backend
 dispatch:fuzz/corpus/dispatch/scenario-12 plugin-hostd-protocol#9
 dispatch:fuzz/corpus/dispatch/scenario-13 plugin-hostd-protocol#9
 dispatch:fuzz/corpus/dispatch/scenario-14 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-15 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-22 plugin-hostd-protocol#9
+dispatch:fuzz/corpus/dispatch/scenario-23 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-12 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-13 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-14 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-15 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-22 plugin-hostd-protocol#9
+fuzz/corpus/protocol/scenario-23 plugin-hostd-protocol#9
+# the scenario lines of the bulk verbs and of the hello session: mod-host knows neither bulk verbs nor hello; an untagged
+# line, a word "@" alone, a tagged line after the tags are dropped and a refusal after the error words are dropped
+# answer as mod-host does
 scenario-15 plugin-hostd-protocol#9
 scenario-16 plugin-hostd-protocol#9
 scenario-17 plugin-hostd-protocol#9
-# mod-host does not know hello, which ours registers: hello, a tagged line of the session it opens and a refusal with
-# its error word answer otherwise; an untagged line, a word "@" alone, a tagged line after the tags are dropped and a
-# refusal after the error words are dropped answer as mod-host does
-scenario-35 plugin-hostd-protocol#9
-scenario-36 plugin-hostd-protocol#9
-scenario-37 plugin-hostd-protocol#9
-scenario-38 plugin-hostd-protocol#9
+scenario-18 plugin-hostd-protocol#9
+scenario-20 plugin-hostd-protocol#9
+scenario-21 plugin-hostd-protocol#9
+scenario-40 plugin-hostd-protocol#9
 scenario-41 plugin-hostd-protocol#9
+scenario-42 plugin-hostd-protocol#9
 scenario-43 plugin-hostd-protocol#9
-scenario-44 plugin-hostd-protocol#9
-scenario-45 plugin-hostd-protocol#9
 scenario-46 plugin-hostd-protocol#9
-scenario-47 plugin-hostd-protocol#9
 scenario-48 plugin-hostd-protocol#9
+scenario-49 plugin-hostd-protocol#9
 scenario-50 plugin-hostd-protocol#9
 scenario-51 plugin-hostd-protocol#9
 scenario-52 plugin-hostd-protocol#9
 scenario-53 plugin-hostd-protocol#9
+scenario-55 plugin-hostd-protocol#9
+scenario-56 plugin-hostd-protocol#9
+scenario-57 plugin-hostd-protocol#9
+scenario-58 plugin-hostd-protocol#9

@@ -1,10 +1,10 @@
-hmi_map -8 f!ê -85 -5 -30 -294 1 "\"" infinity inf -30 => @.._ resp -2 "!U" ">\""
-@N instance_info -81 => invalid argument
-@27C pin_reload => @A-3 resp 2 "5" Ǎ
-preset_show -30 5 => @_ not found
+@2 instance_info 56 => @24 not found
+@0. all_notes_off -2 => invalid argument
 @tN hmi_map 2 "Ѩ¯" 389 8 -7 858 4 "\"" -infinity -6 -40 => resp 73 "\"!" "ʍ"
 @- quarantine_clear !u! => @3 resp -532
 cv_unmap -3 "\"" => @. few arguments
 policy_set "" ͛Ȩ => @6-- resp -804 "ɨ\""
 note_input -179 => not found
 @2_. midi_map 74 Ѷɬ 8 -69 nan inf => @T-4 many arguments
+@.8. transport_sync "" => not found
+worker_list => not found

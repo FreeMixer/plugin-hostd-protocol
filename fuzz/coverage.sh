@@ -38,7 +38,7 @@ funcs() {
         host_dispatch_unsupported_cb protocol_parse answer ;;
     scenario) echo src/host-scenario.c :: trim substitute host_scenario_load host_scenario_free ;;
     session) echo src/protocol.c src/host-dispatch.c :: session_start granted hello_cb tag_char answer feedback_prefix \
-        error_word protocol_parse protocol_add_hello param_get_many_cb ;;
+        error_word protocol_parse protocol_add_hello param_get_many_cb param_set_many_cb refuse_pair ;;
     *) echo "coverage.sh: no function list for harness '$1'" >&2; exit 2 ;;
     esac
 }

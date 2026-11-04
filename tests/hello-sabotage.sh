@@ -45,6 +45,9 @@ sabotage "a feedback line numbered without the grant" src/protocol.c \
     'if (!granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_SEQ))' 'if (0)'
 sabotage "a hello that grants seq does not start again at 1" src/protocol.c \
     '(void)__atomic_exchange_n(\&g_seq, 0, __ATOMIC_SEQ_CST);' ''
+sabotage "param_set_many sets before it checks" src/host-dispatch.c 'if (checked < SUCCESS)' 'if (0)'
+sabotage "param_set_many sets nothing back" src/host-dispatch.c \
+    'g_backend->param_set(instance, proto->list\[2 + 2 \* j\], held\[j\]);' ';'
 sabotage "a required verb not found is a verb not served" src/host-scenario.c 'if (level == VERB_REQUIRED)' 'if (0)' \
     runner_test
 sabotage "the host named is not read" src/host-scenario.c '(!g_host || strcmp(hosts\[h\], g_host) == 0)' '(!g_host || hosts[h] != NULL)' runner_test

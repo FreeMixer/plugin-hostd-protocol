@@ -142,6 +142,7 @@ command          = cmd-add
                  / cmd-worker-list
                  / cmd-hello
                  / cmd-param-get-many
+                 / cmd-param-set-many
 
 ; mod-host: include/mod-host.h EFFECT_ADD; extended by plugin-hostd
 cmd-add                  = %s"add" SP word SP int tail
@@ -320,6 +321,8 @@ cmd-worker-list          = %s"worker_list"
 cmd-hello                = %s"hello" SP int tail
 ; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.paramGetMany
 cmd-param-get-many       = %s"param_get_many" SP int SP word tail
+; plugin-hostd-protocol: data/verbs.json PLUGIN_HOSTD_PROTOCOL_VERBS.paramSetMany
+cmd-param-set-many       = %s"param_set_many" SP int SP word SP float tail
 
 ; words a client of mod-ui may send that no host answers; each is refused and has no rule: set_midi_program_change_pedalboard_bank_channel, set_midi_program_change_pedalboard_snapshot_channel
 

@@ -1,9 +1,6 @@
-hello 1 errors tags
-@_- history_get !!
-set_bpb inf
-@.. pin_layout 75
-@. preset_show -791 "18"
-@.k descriptor_get ͖
+hello 1 errors seq tags
+quarantine_clear [!
+track_info -791 "18" "²" @͖
 @k- hello 55 "%!"
 hello -954
 midi_map 290 J -138 06 2 nan
@@ -11,3 +8,6 @@ midi_map 290 J -138 06 2 nan
 history_get ~
 @_ param_get_many -198 "" ! ""
 @9- add ^ -46 "Â" ""
+@.3- output_data_ready
+@_9 param_set_many -110 "Ƞ\"" nan !̣ N
+midi_learn -8 "\"\"" 3 +inf

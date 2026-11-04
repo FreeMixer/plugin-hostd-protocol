@@ -514,18 +514,28 @@ def bulk(w):
     w("A bulk verb does in one line what a client would send once an instance or a parameter. It is a verb like any "
       "other and needs no `hello`: it changes no line a client already sends, and a host that does not serve it answers "
       "`not found`, as mod-host does, or -902. A host built on this library answers them over its backend once it "
-      "calls `host_dispatch_register()`.")
+      "calls `host_dispatch_register()`. `param_set_many` is all or nothing: every pair is checked before any value "
+      "is set, and a line refused answers `resp <code> <position>`, the first refused pair's code and its position from "
+      "1.")
     w("")
     w("\n".join(table(["verb", "form", "reply", "codes", "meaning"],
                       [[code(c["verb"]), code(" ".join([c["verb"]] + c["forms"][0]["args"] + (["..."] if c["forms"][0]["tail"] else []))),
                         code(c["reply"]), cell(codes_cell(c["codes"])), cell(docs.get(c["verb"], "-"))] for c in rows])))
     w("")
+    examples = {
+        "param_get_many": [("3 gain cutoff :bypass", "resp 0 0.2500 440.0000 0.0000"), ("3 gain nope", "resp -103")],
+        "param_set_many": [("3 gain 0.5 cutoff 880", "resp 0"),
+                           ("3 gain 0.75 nope 1 cutoff 440", "resp -103 2     (nothing is set: gain stays 0.5)")],
+    }
     for c in rows:
+        if c["verb"] not in examples:
+            fail(f"{c['verb']}: a bulk verb with no example on the page; give it one")
         w(f"`{c['verb']}`:")
         w("")
         w("```")
-        w(f"> {c['verb']} 3 gain cutoff :bypass")
-        w("< resp 0 0.2500 440.0000 0.0000")
+        for args, reply in examples[c["verb"]]:
+            w(f"> {c['verb']} {args}")
+            w(f"< {reply}")
         w("```")
         w("")
 
