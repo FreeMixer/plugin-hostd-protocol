@@ -60,9 +60,9 @@ remove 3 => resp 0
 remove 3 => $REMOVE_TWICE
 
 # hello, request tags and error words (doc/protocol.md, Sessions): mod-host does not know hello,
-# and the lines after it are skipped there. An extension the host does not know is not granted,
-# and no error.
-hello 1 tags no_such_extension => resp 0 1 tags | not found
+# and plugin-hostd refuses it, and the lines after it are skipped there. An extension the host
+# does not know is not granted, and no error.
+hello 1 tags no_such_extension => resp 0 1 tags | resp -902 | not found
 @hello @t1 param_get 9 $PARAM => @t1 resp -3
 @hello @t.2 param_set 9 $PARAM 0.5 => @t.2 resp -3
 @hello @t-3 bypass 9 1 => @t-3 resp -3

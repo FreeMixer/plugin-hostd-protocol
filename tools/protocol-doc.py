@@ -431,8 +431,9 @@ def sessions(w):
     w("- A version that is not a whole number of 1 or more is refused with -902, and nothing changes.")
     w(f"- Each `hello` replaces what the one before it granted, so `hello {version}` alone goes back to mod-host mode. A "
       "new connection starts with nothing granted.")
-    w("- A host that does not know `hello` answers `not found`, as mod-host does, and the client stays in mod-host mode. "
-      "A host built on this library answers it once it calls `protocol_add_hello()`.")
+    w("- A host that does not know `hello` answers `not found`, as mod-host does, and one that grants nothing may refuse "
+      "it with -902; on any answer but `resp 0` the client stays in mod-host mode. A host built on this library "
+      "answers it once it calls `protocol_add_hello()`.")
     w("")
     w("\n".join(table(["extension", "what it grants"], [[code(e["word"]), cell(e["doc"])] for e in exts])))
     w("")
