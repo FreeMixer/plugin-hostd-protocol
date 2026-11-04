@@ -538,6 +538,14 @@
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 0
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 0
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 0
 > track_info 0 Kick\xc3 #FF8000
 < resp -902
@@ -1100,6 +1108,14 @@
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 1
 > track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 1
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 1
+> track_info 0 a\xc2\x9fb #FF8000
 < resp -902
 = 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 1
@@ -1666,6 +1682,14 @@
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 2
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 2
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 2
 > track_info 0 Kick\xc3 #FF8000
 < resp -902
@@ -2228,6 +2252,14 @@
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 3
 > track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 3
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 3
+> track_info 0 a\xc2\x9fb #FF8000
 < resp -902
 = 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 3
@@ -2794,6 +2826,14 @@
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 4
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 4
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 4
 > track_info 0 Kick\xc3 #FF8000
 < resp -902
@@ -3356,6 +3396,14 @@
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 5
 > track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 5
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 5
+> track_info 0 a\xc2\x9fb #FF8000
 < resp -902
 = 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 5
@@ -3922,6 +3970,14 @@
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 6
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 6
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 6
 > track_info 0 Kick\xc3 #FF8000
 < resp -902
@@ -4486,6 +4542,14 @@
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 7
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 7
+> track_info 0 a\xc2\x9fb #FF8000
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 7
 > track_info 0 Kick\xc3 #FF8000
 < resp -902
@@ -5048,6 +5112,14 @@
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 8
 > track_info 0 \xf4\x90\x80\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1 answer 8
+> track_info 0 \xc2\x80 #FF8000
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/track-info-c1-inside answer 8
+> track_info 0 a\xc2\x9fb #FF8000
 < resp -902
 = 
 # dispatch:fuzz/corpus/dispatch/track-info-no-tail answer 8

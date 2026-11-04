@@ -160,8 +160,8 @@ golden-modhost:
 	LC_ALL=C GOLDEN_PORT=$(GOLDEN_PORT) $$tmp/golden $(MODHOST_INPUTS) > tests/golden/mod-host-protocol.txt
 comma := ,
 
-# the fixes of plugin-hostd#371 and #372 (tests/fixes_test.c), against the sources with AddressSanitizer and
-# UndefinedBehaviorSanitizer
+# the fixes of plugin-hostd#371 and #372, and of #11 (tests/fixes_test.c), against the sources with AddressSanitizer
+# and UndefinedBehaviorSanitizer
 test-fixes: tests/fixes_test
 	./tests/fixes_test
 

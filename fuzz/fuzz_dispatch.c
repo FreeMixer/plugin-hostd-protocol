@@ -122,6 +122,30 @@ static int rfc3629(const unsigned char *s)
     return 1;
 }
 
+/* A string of RFC 3629 UTF-8 that holds a control character of Unicode's class Cc: a code point below U+0020, U+007F, or
+   U+0080..U+009F (C2 80..C2 9F), each decoded from the string rather than read off a byte. */
+static int has_control(const unsigned char *s)
+{
+    while (*s)
+    {
+        unsigned long cp;
+        unsigned tails;
+        if (*s < 0x80)
+            cp = *s, tails = 0;
+        else if (*s < 0xe0)
+            cp = *s & 0x1f, tails = 1;
+        else if (*s < 0xf0)
+            cp = *s & 0x0f, tails = 2;
+        else
+            cp = *s & 0x07, tails = 3;
+        for (s++; tails > 0 && *s; tails--, s++)
+            cp = (cp << 6) | (*s & 0x3f);
+        if (cp < 0x20 || (cp >= 0x7f && cp <= 0x9f))
+            return 1;
+    }
+    return 0;
+}
+
 /* The whole reply the dispatcher must give for a verb whose answer comes from the backend above alone: the words of the
    command and the salt decide it. Answers 0 for a verb or a word count this does not cover. */
 static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
@@ -154,13 +178,12 @@ static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
     }
     else if (strcmp(w[0], "track_info") == 0 && n >= 4)
     {
-        /* a name of UTF-8 (RFC 3629) below 256 bytes with no control character, a colour "-" or "#" and six hex
-           digits, a kind of bus, return or master, and at most one word after the colour */
+        /* a name of UTF-8 (RFC 3629) below 256 bytes with no control character of Unicode's class Cc (U+0000..U+001F,
+           U+007F, U+0080..U+009F), a colour "-" or "#" and six hex digits, a kind of bus, return or master, and at
+           most one word after the colour */
         const char *name = w[2], *color = w[3], *kind = n > 4 ? w[4] : NULL;
-        int valid = strlen(name) < 256 && n <= 5 && rfc3629((const unsigned char *)name);
-        for (const char *c = name; *c; c++)
-            if ((unsigned char)*c < 0x20 || *c == 0x7f)
-                valid = 0;
+        int valid = strlen(name) < 256 && n <= 5 && rfc3629((const unsigned char *)name) &&
+                    !has_control((const unsigned char *)name);
         valid = valid && (strcmp(color, "-") == 0 ||
                           (strlen(color) == 7 && color[0] == '#' && strspn(color + 1, "0123456789abcdefABCDEF") == 6));
         valid = valid && (!kind || strcmp(kind, "bus") == 0 || strcmp(kind, "return") == 0 || strcmp(kind, "master") == 0);
@@ -240,14 +263,16 @@ __attribute__((noinline)) static void check_value(int modeled, const char *expec
 {
     /* mutant: src/host-dispatch.c:144 `resp, value);` -> `resp, 0.0);`
        input: param-get
-       mutant: src/host-dispatch.c:385 `info.max` -> `info.min`
+       mutant: src/host-dispatch.c:389 `info.max` -> `info.min`
        input: extra-8
-       mutant: src/host-dispatch.c:316 `"Infinity"` -> `"inf"`
+       mutant: src/host-dispatch.c:320 `"Infinity"` -> `"inf"`
        input: param-info-inf
        mutant: src/utils.c:203 `quote = 0;` -> ``
        input: track-info-quoted
-       mutant: src/host-dispatch.c:197 ` && *p >= 0xc2` -> ``
-       input: track-info-overlong */
+       mutant: src/host-dispatch.c:198 ` && *p >= 0xc2` -> ``
+       input: track-info-overlong
+       mutant: src/host-dispatch.c:210 `if (*p == 0xc2 && p[1] < 0xa0)` -> `if (0)`
+       input: track-info-c1 */
     if (modeled && strcmp(fuzz_reply, expect) != 0)
         abort();
 }

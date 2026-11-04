@@ -179,7 +179,8 @@ static void monitor_output_cb(proto_t *proto)
     protocol_response_int(resp, proto);
 }
 
-/* a name: valid UTF-8 (RFC 3629), at most 255 bytes, no control character */
+/* a name: valid UTF-8 (RFC 3629), at most 255 bytes, no control character of Unicode's class Cc (U+0000..U+001F, U+007F,
+   U+0080..U+009F) */
 static int valid_name(const char *s)
 {
     const unsigned char *p = (const unsigned char *)s;
@@ -204,6 +205,9 @@ static int valid_name(const char *s)
             return 0;
         /* RFC 3629: the shortest form, no surrogate and nothing past U+10FFFF narrow the second byte after E0, ED, F0, F4 */
         if ((*p == 0xe0 && p[1] < 0xa0) || (*p == 0xed && p[1] > 0x9f) || (*p == 0xf0 && p[1] < 0x90) || (*p == 0xf4 && p[1] > 0x8f))
+            return 0;
+        /* the C1 control characters U+0080..U+009F */
+        if (*p == 0xc2 && p[1] < 0xa0)
             return 0;
         for (p++; extra > 0; extra--, p++)
             if ((*p & 0xc0) != 0x80)
