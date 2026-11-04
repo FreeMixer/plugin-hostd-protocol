@@ -289,8 +289,9 @@ int host_scenario_run(const host_scenario_list_t *list, host_scenario_exchange_t
             return -1;
         }
 
+        /* a verb the host does not serve: refused with -902, or one it does not know, as mod-host answers hello */
         verb_of(sc->command, verb, sizeof(verb));
-        if (strcmp(reply, "resp -902") == 0 && absent_count < HOST_SCENARIO_MAX_ABSENT)
+        if ((strcmp(reply, "resp -902") == 0 || strcmp(reply, "not found") == 0) && absent_count < HOST_SCENARIO_MAX_ABSENT)
         {
             for (j = 0; j < absent_count; j++)
             {
@@ -364,6 +365,7 @@ int host_scenario_direct_open(host_scenario_direct_t *direct, const host_backend
     direct->backend = backend;
     host_dispatch_register(backend);
     host_dispatch_register_unsupported();
+    protocol_add_hello();
     return 0;
 }
 

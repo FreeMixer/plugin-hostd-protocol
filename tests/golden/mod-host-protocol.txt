@@ -122,6 +122,42 @@
 > remove 3
 < resp -3
 = remove(3)
+# scenario-32 answer 0
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 0
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 0
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 0
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
+# scenario-37 answer 0
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 0
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 0
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 0
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 0
 > cpu_load
 < not found
@@ -182,6 +218,10 @@
 > param_set -1 gain nan
 < resp -3
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 0
+> zzz %s 5
+< resp -101
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
@@ -374,6 +414,10 @@
 > param_set -1 gain nan
 < resp -3
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 0
+> zzz %s 5
+< resp -101
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
@@ -406,6 +450,18 @@
 > param_get 3 gain
 < resp -3
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 0
+> param_info 3 inf
+< resp -3
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 0
+> param_info 3 nan
+< resp -3
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 0
+> param_info 3 -inf
+< resp -3
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 0
 > add http://example.org/plugin 3
 < resp -3
@@ -634,6 +690,42 @@
 > remove 3
 < resp -4
 = remove(3)
+# scenario-32 answer 1
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 1
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 1
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 1
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
+# scenario-37 answer 1
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 1
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 1
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 1
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 1
 > cpu_load
 < not found
@@ -694,6 +786,10 @@
 > param_set -1 gain nan
 < resp 0
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 1
+> zzz %s 5
+< resp -902
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
@@ -886,6 +982,10 @@
 > param_set -1 gain nan
 < resp 0
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 1
+> zzz %s 5
+< resp -902
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
@@ -918,6 +1018,18 @@
 > param_get 3 gain
 < resp -4
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 1
+> param_info 3 inf
+< resp -4
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 1
+> param_info 3 nan
+< resp -4
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 1
+> param_info 3 -inf
+< resp -4
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 1
 > add http://example.org/plugin 3
 < resp -4
@@ -1146,6 +1258,42 @@
 > remove 3
 < resp -101
 = remove(3)
+# scenario-32 answer 2
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 2
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 2
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 2
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
+# scenario-37 answer 2
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 2
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 2
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 2
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 2
 > cpu_load
 < not found
@@ -1206,6 +1354,10 @@
 > param_set -1 gain nan
 < resp -1
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 2
+> zzz %s 5
+< resp -205
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
@@ -1398,6 +1550,10 @@
 > param_set -1 gain nan
 < resp -1
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 2
+> zzz %s 5
+< resp -205
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
@@ -1430,6 +1586,18 @@
 > param_get 3 gain
 < resp -101
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 2
+> param_info 3 inf
+< resp -101
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 2
+> param_info 3 nan
+< resp -101
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 2
+> param_info 3 -inf
+< resp -101
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 2
 > add http://example.org/plugin 3
 < resp -101
@@ -1658,6 +1826,42 @@
 > remove 3
 < resp -902
 = remove(3)
+# scenario-32 answer 3
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 3
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 3
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 3
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
+# scenario-37 answer 3
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 3
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 3
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 3
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 3
 > cpu_load
 < not found
@@ -1718,6 +1922,10 @@
 > param_set -1 gain nan
 < resp -2
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 3
+> zzz %s 5
+< resp -105
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
@@ -1910,6 +2118,10 @@
 > param_set -1 gain nan
 < resp -2
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 3
+> zzz %s 5
+< resp -105
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
@@ -1942,6 +2154,18 @@
 > param_get 3 gain
 < resp -902
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 3
+> param_info 3 inf
+< resp -902
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 3
+> param_info 3 nan
+< resp -902
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 3
+> param_info 3 -inf
+< resp -902
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 3
 > add http://example.org/plugin 3
 < resp -902
@@ -2170,6 +2394,42 @@
 > remove 3
 < resp -205
 = remove(3)
+# scenario-32 answer 4
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 4
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 4
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 4
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
+# scenario-37 answer 4
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 4
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 4
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 4
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 4
 > cpu_load
 < not found
@@ -2230,6 +2490,10 @@
 > param_set -1 gain nan
 < resp -3
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 4
+> zzz %s 5
+< resp 5
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
@@ -2422,6 +2686,10 @@
 > param_set -1 gain nan
 < resp -3
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 4
+> zzz %s 5
+< resp 5
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
@@ -2454,6 +2722,18 @@
 > param_get 3 gain
 < resp -205
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 4
+> param_info 3 inf
+< resp -205
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 4
+> param_info 3 nan
+< resp -205
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 4
+> param_info 3 -inf
+< resp -205
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 4
 > add http://example.org/plugin 3
 < resp -205
@@ -2682,6 +2962,42 @@
 > remove 3
 < resp -105
 = remove(3)
+# scenario-32 answer 5
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 5
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 5
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 5
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
+# scenario-37 answer 5
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 5
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 5
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 5
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 5
 > cpu_load
 < not found
@@ -2742,6 +3058,10 @@
 > param_set -1 gain nan
 < resp -4
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 5
+> zzz %s 5
+< resp -1
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
@@ -2934,6 +3254,10 @@
 > param_set -1 gain nan
 < resp -4
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 5
+> zzz %s 5
+< resp -1
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
@@ -2966,6 +3290,18 @@
 > param_get 3 gain
 < resp -105
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 5
+> param_info 3 inf
+< resp -105
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 5
+> param_info 3 nan
+< resp -105
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 5
+> param_info 3 -inf
+< resp -105
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 5
 > add http://example.org/plugin 3
 < resp -105
@@ -3194,6 +3530,42 @@
 > remove 3
 < resp 0
 = remove(3)
+# scenario-32 answer 6
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 6
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 6
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 6
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 6
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
+# scenario-37 answer 6
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 6
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 6
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 6
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 6
 > cpu_load
 < not found
@@ -3254,6 +3626,10 @@
 > param_set -1 gain nan
 < resp -101
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 6
+> zzz %s 5
+< resp -2
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
@@ -3446,6 +3822,10 @@
 > param_set -1 gain nan
 < resp -101
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 6
+> zzz %s 5
+< resp -2
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
@@ -3478,6 +3858,18 @@
 > param_get 3 gain
 < resp 0 0.7500
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 6
+> param_info 3 inf
+< resp 0 hz log 20 i.nf 440.125 0 stable
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 6
+> param_info 3 nan
+< resp 0 hz log 20 20000 n.an 0 stable
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 6
+> param_info 3 -inf
+< resp 0 hz log -i.nf 20000 440.125 0 stable
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 6
 > add http://example.org/plugin 3
 < resp 3
@@ -3706,6 +4098,42 @@
 > remove 3
 < resp -1
 = remove(3)
+# scenario-32 answer 7
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 7
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 7
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 7
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
+# scenario-37 answer 7
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 7
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 7
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 7
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 7
 > cpu_load
 < not found
@@ -3766,6 +4194,10 @@
 > param_set -1 gain nan
 < resp -902
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 7
+> zzz %s 5
+< resp -3
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
@@ -3958,6 +4390,10 @@
 > param_set -1 gain nan
 < resp -902
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 7
+> zzz %s 5
+< resp -3
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
@@ -3990,6 +4426,18 @@
 > param_get 3 gain
 < resp -1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 7
+> param_info 3 inf
+< resp -1
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 7
+> param_info 3 nan
+< resp -1
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 7
+> param_info 3 -inf
+< resp -1
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 7
 > add http://example.org/plugin 3
 < resp -1
@@ -4218,6 +4666,42 @@
 > remove 3
 < resp -2
 = remove(3)
+# scenario-32 answer 8
+> hello 1 tags no_such_extension
+< not found
+= 
+# scenario-33 answer 8
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-34 answer 8
+> @t.2 param_set 9 gain 0.5
+< not found
+= 
+# scenario-35 answer 8
+> @t-3 bypass 9 1
+< not found
+= 
+# scenario-36 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
+# scenario-37 answer 8
+> @ param_get 9 gain
+< not found
+= 
+# scenario-38 answer 8
+> @t1 hello 1
+< not found
+= 
+# scenario-39 answer 8
+> @t1 param_get 9 gain
+< not found
+= 
+# scenario-40 answer 8
+> hello 0 tags
+< not found
+= 
 # fuzz/corpus/protocol/extra-1 answer 8
 > cpu_load
 < not found
@@ -4278,6 +4762,10 @@
 > param_set -1 gain nan
 < resp -205
 = param_set(-1,gain,nan)
+# fuzz/corpus/protocol/extra-23 answer 8
+> zzz %s 5
+< resp -4
+= add(%s,5,NULL)
 # fuzz/corpus/protocol/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
@@ -4470,6 +4958,10 @@
 > param_set -1 gain nan
 < resp -205
 = param_set(-1,gain,nan)
+# dispatch:fuzz/corpus/dispatch/extra-23 answer 8
+> zzz %s 5
+< resp -4
+= add(%s,5,NULL)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
@@ -4502,6 +4994,18 @@
 > param_get 3 gain
 < resp -2
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/param-info-inf answer 8
+> param_info 3 inf
+< resp -2
+= param_info(3,inf)
+# dispatch:fuzz/corpus/dispatch/param-info-nan answer 8
+> param_info 3 nan
+< resp -2
+= param_info(3,nan)
+# dispatch:fuzz/corpus/dispatch/param-info-neg-inf answer 8
+> param_info 3 -inf
+< resp -2
+= param_info(3,-inf)
 # dispatch:fuzz/corpus/dispatch/scenario-1 answer 8
 > add http://example.org/plugin 3
 < resp -2

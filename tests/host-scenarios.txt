@@ -3,7 +3,8 @@
 # accepted are separated by "|". The runner substitutes $URI (a plugin the host loads),
 # $BAD_URI (one it cannot), $PARAM (a control of $URI that takes 0.25), $DIR (a writable
 # directory), $PORT_A and $PORT_B (two ports the host can link). A verb that answers
-# "resp -902" is not served by the host; a line starting with "@verb" is skipped after that.
+# "resp -902", or "not found", is not served by the host; a line starting with "@verb" is skipped
+# after that.
 # $REMOVE_TWICE is what a second remove of the same instance answers: "resp -3" for a host that
 # refuses it, "resp 0" for mod-host, whose remove is idempotent.
 
@@ -57,3 +58,15 @@ param_info 3 :bypass => resp -103 | resp -902
 # remove
 remove 3 => resp 0
 remove 3 => $REMOVE_TWICE
+
+# hello and request tags (doc/protocol.md, Sessions): mod-host does not know hello, and the lines
+# after it are skipped there. An extension the host does not know is not granted, and no error.
+hello 1 tags no_such_extension => resp 0 1 tags | not found
+@hello @t1 param_get 9 $PARAM => @t1 resp -3
+@hello @t.2 param_set 9 $PARAM 0.5 => @t.2 resp -3
+@hello @t-3 bypass 9 1 => @t-3 resp -3
+@hello param_get 9 $PARAM => resp -3
+@hello @ param_get 9 $PARAM => not found
+@hello @t1 hello 1 => @t1 resp 0 1
+@hello @t1 param_get 9 $PARAM => not found
+hello 0 tags => resp -902 | not found

@@ -1,0 +1,6 @@
+param_get 3 gain
+@a param_get 3 gain
+hello 1 tags tags zzz
+@a@b remove 3
+hello 2
+hello -1 tags

@@ -4,7 +4,11 @@
 #include <string.h>
 
 #include "../include/socket.h"
+#include "../src/session.h"
 #include "fuzz.h"
+
+/* no connection here: a harness that needs a new session calls it itself */
+void (*socket_session_start)(void);
 
 char fuzz_reply[FUZZ_REPLY_MAX];
 size_t fuzz_reply_len;

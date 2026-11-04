@@ -5,14 +5,15 @@ set -eu
 out=${1:-fuzz/corpus}
 scen=tests/host-scenarios.txt
 
-for h in protocol dispatch scenario; do
+for h in protocol dispatch scenario session; do
     rm -rf "$out/$h"
     mkdir -p "$out/$h"
 done
 
-# every command of the scenario file, with its $NAMEs given a value
+# every command of the scenario file, with its $NAMEs given a value; a line of a session (hello, and a line that
+# follows it, guarded by @hello) means something only after its hello, so the session seed below carries those
 n=0
-sed -e 's/^@[^ ]* //' -e 's/ *=>.*$//' -e '/^#/d' -e '/^$/d' \
+sed -e '/^hello /d' -e '/^@hello /d' -e 's/^@[^ ]* //' -e 's/ *=>.*$//' -e '/^#/d' -e '/^$/d' \
     -e 's#\$URI#http://example.org/plugin#g' -e 's#\$BAD_URI#urn:no:such:plugin#g' \
     -e 's#\$PARAM#gain#g' -e 's#\$DIR#/tmp/state#g' -e 's#\$PORT_A#system:capture_1#g' \
     -e 's#\$PORT_B#system:playback_1#g' "$scen" | sort -u | while IFS= read -r cmd; do
@@ -60,6 +61,14 @@ printf '\006param_get 3 gain' > "$out/dispatch/param-get"
 printf '\002param_info 3 inf' > "$out/dispatch/param-info-inf"
 printf '\002param_info 3 -inf' > "$out/dispatch/param-info-neg-inf"
 printf '\002param_info 3 nan' > "$out/dispatch/param-info-nan"
+
+# the sessions of fuzz_session (fuzz/fuzz_session.c): one command a line, run in order on one connection
+sed -n -e '/^hello /p' -e 's/^@hello //p' "$scen" | sed -e 's/ *=>.*$//' -e 's#\$PARAM#gain#g' \
+    > "$out/session/host-scenarios"
+printf 'hello 1 tags\n@a param_get 3 gain\n@a.b-c_d frobnicate 1\n@ remove 3\n@x\nhello 1\n@a param_get 3 gain\n' \
+    > "$out/session/tags"
+printf 'param_get 3 gain\n@a param_get 3 gain\nhello 1 tags tags zzz\n@a@b remove 3\nhello 2\nhello -1 tags\n' \
+    > "$out/session/mixed"
 
 # the scenario file reader: the real file, and its edges
 cp "$scen" "$out/scenario/host-scenarios"

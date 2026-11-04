@@ -2,3 +2,18 @@
 # "%i %s %f" names no verb; mod-host ran add with the URI "%s" and the instance 0, ours answers "not found"
 fuzz/corpus/protocol/extra-20 plugin-hostd#372
 dispatch:fuzz/corpus/dispatch/extra-20 plugin-hostd#372
+# "zzz %s 5" names no verb either; mod-host ran it as add (written again over the whole seed corpus)
+fuzz/corpus/protocol/extra-23 plugin-hostd#372
+dispatch:fuzz/corpus/dispatch/extra-23 plugin-hostd#372
+# a param_info value that is not finite: mod-host wrote a word no float takes (n.an), ours NaN, Infinity or -Infinity
+dispatch:fuzz/corpus/dispatch/param-info-inf plugin-hostd#371
+dispatch:fuzz/corpus/dispatch/param-info-nan plugin-hostd#371
+dispatch:fuzz/corpus/dispatch/param-info-neg-inf plugin-hostd#371
+# mod-host does not know hello, which ours registers: hello, and a tagged line of the session it opens, answer otherwise;
+# an untagged line, a word "@" alone and a tagged line after the tags are dropped answer as mod-host does
+scenario-32 plugin-hostd-protocol#9
+scenario-33 plugin-hostd-protocol#9
+scenario-34 plugin-hostd-protocol#9
+scenario-35 plugin-hostd-protocol#9
+scenario-38 plugin-hostd-protocol#9
+scenario-40 plugin-hostd-protocol#9

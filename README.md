@@ -191,6 +191,12 @@ the grammar against the scenario corpus, the golden transcript and the table (`t
   runs the first whose arguments fit, in number and then in types (`%i` a whole number, `%f` a number), where it read
   only the first one registered. A line no form takes is refused as the first form refuses it, so a verb of one form
   answers as mod-host answers it (`make test-forms`, and `test-forms-sabotage` puts the first-form reading back).
+- A host that calls `protocol_add_hello()` answers `hello`, which names the protocol version and grants extensions, the
+  first of them request tags: a line may start with `@<tag>`, and its answer then carries the tag
+  ([doc/protocol.md](doc/protocol.md), Sessions). A client that never sends `hello` is answered as mod-host answers it,
+  and a new connection starts with nothing granted (`make test-hello`, and `test-hello-sabotage` breaks each rule).
+- The scenario runner takes a verb a host answers `not found` for one it does not serve, as it takes `resp -902`, so the
+  lines after `hello` are skipped against mod-host.
 
 ## Credit
 

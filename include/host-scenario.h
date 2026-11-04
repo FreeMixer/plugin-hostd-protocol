@@ -61,7 +61,8 @@ typedef struct HOST_SCENARIO_VAR_T {
 } host_scenario_var_t;
 
 /* One line of the file after substitution: the command, the '|'-separated replies accepted, and the
-   verb whose absence (an earlier "resp -902") skips the line, or NULL. */
+   verb whose absence (an earlier "resp -902", or "not found" from a host that does not know the verb) skips the
+   line, or NULL. */
 typedef struct HOST_SCENARIO_T {
     char *command;
     char *reply;

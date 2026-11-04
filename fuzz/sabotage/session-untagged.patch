@@ -1,0 +1,15 @@
+Breaks check_untagged of fuzz/fuzz_session.c:80 (a line no tag is read for is answered "not found").
+Caught by the seed input "mixed" of fuzz_session.
+
+diff --git a/src/protocol.c b/src/protocol.c
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -260,7 +260,7 @@
+     size_t tag_size = 0;
+ 
+     // a session granted tags: a first word "@<tag>" is the request's tag, and the command follows it after one space
+-    if (data[0] == '@' && granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS))
++    if (data[0] == '@' && 1)
+     {
+         size_t n = 1;
+ 

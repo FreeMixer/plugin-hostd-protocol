@@ -41,7 +41,7 @@ HEADERS = include/host-backend.h include/host-dispatch.h include/host-errors.h i
 # the declared protocol (doc/protocol.md): plugin-hostd's protocol.h and the headers it includes, rendered by
 # omx-contract from data/verbs.json and from omx-clap-core's package of the contract directory; installed under
 # <includedir>/plugin-hostd-protocol/plugin-hostd/, so a consumer includes <plugin-hostd/protocol.h> with this package's
-# Cflags. No source of the library includes them.
+# Cflags. src/protocol.c reads the protocol version, hello's line and the extensions hello grants from them.
 RENDERED = include/plugin-hostd/plugin_hostd_protocol_host_verbs.h include/plugin-hostd/plugin_hostd_protocol_vocabulary.h \
            include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h
 PROTOCOL_HEADERS = include/plugin-hostd/protocol.h include/plugin-hostd/search_paths.h $(RENDERED)
@@ -52,7 +52,7 @@ PC_DATADIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(DATADIR))
 
 all: $(LIB_SO)
 
-$(OBJ): $(HEADERS)
+$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
 
 src/%.o: src/%.c
 	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
@@ -93,10 +93,11 @@ TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
 # write() calls, which mod-host leaves unchecked too
 SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test tests/forms_test \
+             tests/hello_test \
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi version-check \
+      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-hello-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
@@ -178,6 +179,18 @@ tests/forms_test: tests/forms_test.c $(SRC) $(HEADERS)
 
 test-forms-sabotage:
 	sh tests/forms-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
+
+# hello and request tags (tests/hello_test.c), over the library's own server and its feedback port, with
+# AddressSanitizer and UndefinedBehaviorSanitizer: a client that never sends hello is answered as before
+HELLO_PORT ?= 15590
+test-hello: tests/hello_test
+	HELLO_PORT=$(HELLO_PORT) ./tests/hello_test
+
+test-hello-sabotage:
+	HELLO_PORT=$(HELLO_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
+
+tests/hello_test: tests/hello_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
 
 # each fix taken out again in a scratch copy of the sources: fixes_test must fail on each
 test-fixes-sabotage:
@@ -343,7 +356,7 @@ version-check:
 FUZZ_CC        ?= clang
 FUZZ_BUILD     ?= build/fuzz
 FUZZ_TIME      ?= 60
-FUZZ_HARNESSES := protocol dispatch scenario
+FUZZ_HARNESSES := protocol dispatch scenario session
 FUZZ_BINS      := $(FUZZ_HARNESSES:%=$(FUZZ_BUILD)/fuzz_%)
 FUZZ_CFLAGS    := -O1 -g -std=gnu99 -D_GNU_SOURCE -fno-omit-frame-pointer -fsanitize=fuzzer,address,undefined \
                   -fno-sanitize-recover=undefined
@@ -368,5 +381,5 @@ clean:
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
-        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-install test-abi \
+        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-hello-sabotage test-install test-abi \
         abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus clean

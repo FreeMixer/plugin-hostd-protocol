@@ -1,0 +1,15 @@
+Breaks check_tagged of fuzz/fuzz_session.c:90 (the answer to a tagged line carries its tag).
+Caught by the seed input "tags" of fuzz_session.
+
+diff --git a/src/protocol.c b/src/protocol.c
+--- a/src/protocol.c
++++ b/src/protocol.c
+@@ -223,7 +223,7 @@
+ 
+     if (tag)
+     {
+-        line = MALLOC(tag_size + 1 + size);
++        line = NULL;
+         /* with no memory for the tag the answer goes out bare, in its place: answers keep the order of requests */
+         if (line)
+         {

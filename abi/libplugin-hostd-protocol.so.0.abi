@@ -20,6 +20,7 @@
     <elf-symbol name='host_scenario_socket_exchange' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='host_scenario_socket_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='protocol_add_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='protocol_add_hello' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='protocol_error_message' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='protocol_parse' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='protocol_remove_commands' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>

@@ -40,6 +40,7 @@ typedef int SOCKET;
 #endif
 
 #include "socket.h"
+#include "session.h"
 
 
 /*
@@ -86,6 +87,9 @@ static int g_buffer_size;
 static void (*g_receive_cb)(msg_t *msg);
 static void (*g_idle_cb)(void);
 static int g_idle_interval_ms;
+
+// called as each controller connects (session.h)
+void (*socket_session_start)(void);
 
 /*
 ************************************************************************************************************************
@@ -373,6 +377,9 @@ void socket_run(int exit_on_failure)
 
     g_clientfd = clientfd;
     g_fbclientfd = fbclientfd;
+
+    /* a new controller: nothing an earlier one's hello granted holds for it */
+    if (socket_session_start) socket_session_start();
 
     while (g_serverfd != INVALID_SOCKET)
     {

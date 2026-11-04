@@ -14,6 +14,7 @@ host_scenario_run
 host_scenario_socket_exchange
 host_scenario_socket_open
 protocol_add_command
+protocol_add_hello
 protocol_error_message
 protocol_parse
 protocol_remove_commands
