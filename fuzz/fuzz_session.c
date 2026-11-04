@@ -228,13 +228,11 @@ static int many_model(char *want, size_t size)
     for (unsigned i = 0; i < g_ncalls; i++)
         if (g_calls[i].resp < 0)
         {
-            char bare[32];
-            /* a refusal is the last call */
+            /* a refusal is the last call; its error word is the errors property's */
             if (i != g_ncalls - 1)
-                snprintf(bare, sizeof(bare), "a call after a refusal");
+                snprintf(want, size, "a call after a refusal");
             else
-                snprintf(bare, sizeof(bare), "resp %d", g_calls[i].resp);
-            with_word(bare, want, size);
+                snprintf(want, size, "resp %d", g_calls[i].resp);
             return 1;
         }
     pos = (size_t)snprintf(want, size, "resp 0");
@@ -250,7 +248,14 @@ static size_t parse_untagged(const char *line, char *out, size_t size)
     size_t len = parse(line, out, size);
     if (strncmp(line, "param_get_many ", 15) == 0 && many_model(want, sizeof(want)))
     {
-        check_many(out, len, want);
+        /* the answer without an error word is param_get_many's; whether the word follows is the errors property's */
+        char bare[4096], worded[4096];
+        snprintf(bare, sizeof(bare), "%.*s", (int)(len ? len - 1 : 0), out);
+        if (strncmp(bare, "resp -", 6) == 0 && strchr(bare + 5, ' '))
+            *strchr(bare + 5, ' ') = '\0';
+        check_many(bare, strlen(bare) + 1, want);
+        with_word(bare, worded, sizeof(worded));
+        check_errors(out, len, worded);
         return len;
     }
     if (g_written[0])
