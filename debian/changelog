@@ -26,6 +26,11 @@ plugin-hostd-protocol (0.3.0) unstable; urgency=medium
     markdown; their descriptions point to openmixer.org.
   * protocol_add_hello() and host_scenario_set_host() are the exported symbols
     added; nothing is removed.
+  * The words of a pin in protocol.h are the ones plugin-db declares
+    (plugin_db_vocabulary.h, rendered from plugin-db 0.1.0's package of the
+    contract directory).
+  * Dependencies carry a floor and a ceiling: omx-contract >= 3.9.0 and
+    < 4 to build, >= 3.2.0 and < 4 to install the contract package.
 
  -- Pau Aliagas <linuxnow@gmail.com>  Wed, 04 Nov 2026 18:00:00 +0100
 

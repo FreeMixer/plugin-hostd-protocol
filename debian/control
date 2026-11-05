@@ -3,7 +3,8 @@ Section: libs
 Priority: optional
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Build-Depends: debhelper-compat (= 13),
-               libomx-contract-dev (>= 3.4.0~),
+               libomx-contract-dev (>= 3.9.0~),
+               libomx-contract-dev (<< 4~),
                pkgconf,
                python3
 Standards-Version: 4.6.2
@@ -43,7 +44,7 @@ Description: plugin-hostd protocol library, development files
 Package: plugin-hostd-protocol-contract
 Architecture: all
 Multi-Arch: foreign
-Depends: omx-contract (>= 3.2.0~), ${misc:Depends}
+Depends: omx-contract (>= 3.2.0~), omx-contract (<< 4~), ${misc:Depends}
 Breaks: plugin-hostd-contract (<< 0.16.0~)
 Description: plugin-hostd protocol, its verbs in omx-contract's contract directory
  data/verbs.json of plugin-hostd-protocol, the verbs and reply codes

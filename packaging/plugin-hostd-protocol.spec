@@ -18,7 +18,7 @@ BuildRequires: libubsan
 BuildRequires: python3
 # the declared protocol: tools/protocol-gen holds protocol.h's parameter scales to omx-contract's C headers, and
 # install-contract writes the contract directory's package with omx-contract's script
-BuildRequires: omx-contract-devel >= 3.4.0
+BuildRequires: (omx-contract-devel >= 3.9.0 with omx-contract-devel < 4)
 
 %description
 libplugin-hostd-protocol is the socket server, line protocol and command
@@ -46,7 +46,7 @@ protocol as JSON, each named by a pkg-config variable.
 %package contract
 Summary: The plugin-hostd protocol's verbs in omx-contract's contract directory
 BuildArch: noarch
-Requires: omx-contract >= 3.2.0
+Requires: (omx-contract >= 3.2.0 with omx-contract < 4)
 # plugin-hostd before 0.16.0 declared the same items in its own package of the contract directory
 Conflicts: plugin-hostd-contract < 0.16.0
 
@@ -118,6 +118,10 @@ make test
 - Fuzz harnesses with records, sabotage arms and a coverage floor run in CI
 - The packages install their licence and a short README and no other markdown
 - protocol_add_hello() and host_scenario_set_host() are the exported symbols added
+- The words of a pin in protocol.h are the ones plugin-db declares
+  (plugin_db_vocabulary.h, rendered from plugin-db 0.1.0's package)
+- Dependencies carry a floor and a ceiling: omx-contract >= 3.9.0 and < 4 to
+  build, >= 3.2.0 and < 4 to install the contract package
 
 * Tue Nov 03 2026 Pau Aliagas <linuxnow@gmail.com> - 0.2.0-1
 - protocol_parse() reads every form registered for a verb and runs the first whose
