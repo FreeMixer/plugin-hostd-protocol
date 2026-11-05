@@ -39,11 +39,12 @@ HEADERS = include/host-backend.h include/host-dispatch.h include/host-errors.h i
           include/host-scenario.h include/protocol.h include/socket.h include/utils.h
 
 # the declared protocol (doc/protocol.md): plugin-hostd's protocol.h and the headers it includes, rendered by
-# omx-contract from data/verbs.json and from omx-clap-core's package of the contract directory; installed under
+# omx-contract from data/verbs.json and from omx-clap-core's and plugin-db's packages of the contract directory; installed under
 # <includedir>/plugin-hostd-protocol/plugin-hostd/, so a consumer includes <plugin-hostd/protocol.h> with this package's
 # Cflags. src/protocol.c reads the protocol version, hello's line and the extensions hello grants from them.
 RENDERED = include/plugin-hostd/plugin_hostd_protocol_host_verbs.h include/plugin-hostd/plugin_hostd_protocol_vocabulary.h \
-           include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h
+           include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h \
+           include/plugin-hostd/plugin_db_vocabulary.h
 PROTOCOL_HEADERS = include/plugin-hostd/protocol.h include/plugin-hostd/search_paths.h $(RENDERED)
 
 PC_LIBDIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(LIBDIR))
@@ -349,7 +350,12 @@ render-verbs check-rendered:
 	  $(OMX_CONTRACT) render --target c --package omx-clap-core --installed --out $$tmp; \
 	for f in omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h; do \
 	  $(if $(filter check-rendered,$@),cmp -s $$tmp/$$f include/plugin-hostd/$$f || { echo "include/plugin-hostd/$$f is not the render of omx-clap-core's package" >&2; exit 1; },cp $$tmp/$$f include/plugin-hostd/$$f); \
-	done; echo "the rendered headers are current"
+	done
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	OMX_CONTRACT_PATH=$(if $(OMX_CONTRACT_PATH),$(OMX_CONTRACT_PATH):)$(CONTRACTDIR) \
+	  $(OMX_CONTRACT) render --target c --package plugin-db --installed --out $$tmp; \
+	$(if $(filter check-rendered,$@),cmp -s $$tmp/plugin_db_vocabulary.h include/plugin-hostd/plugin_db_vocabulary.h || { echo "include/plugin-hostd/plugin_db_vocabulary.h is not the render of plugin-db's package" >&2; exit 1; },cp $$tmp/plugin_db_vocabulary.h include/plugin-hostd/plugin_db_vocabulary.h); \
+	echo "the rendered headers are current"
 
 check-schema:
 	python3 tests/protocol_schema.py protocol/plugin-hostd.json protocol/plugin-hostd.schema.json
