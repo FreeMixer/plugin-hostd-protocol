@@ -1,4 +1,4 @@
-Breaks check_messages of fuzz/fuzz_protocol.c:114 (each error code has its own message).
+Breaks check_messages of fuzz/fuzz_protocol.c:115 (each error code has its own message).
 Caught by the seed input "extra-1" of fuzz_protocol.
 
 diff --git a/src/protocol.c b/src/protocol.c

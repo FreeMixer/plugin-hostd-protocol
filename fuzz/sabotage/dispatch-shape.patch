@@ -1,4 +1,4 @@
-Breaks check_shape of fuzz/fuzz_dispatch.c:220 (the reply is "resp" and an integer, or a protocol error message).
+Breaks check_shape of fuzz/fuzz_dispatch.c:221 (the reply is "resp" and an integer, or a protocol error message).
 Caught by the seed input "extra-4" of fuzz_dispatch.
 
 diff --git a/src/protocol.c b/src/protocol.c

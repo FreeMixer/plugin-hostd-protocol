@@ -1,4 +1,4 @@
-Breaks check_arity of fuzz/fuzz_protocol.c:29 (a callback only runs with the argument count its pattern allows).
+Breaks check_arity of fuzz/fuzz_protocol.c:30 (a callback only runs with the argument count its pattern allows).
 Caught by the seed input "extra-14" of fuzz_protocol.
 
 diff --git a/src/protocol.c b/src/protocol.c

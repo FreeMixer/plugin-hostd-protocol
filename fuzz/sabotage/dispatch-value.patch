@@ -1,4 +1,4 @@
-Breaks check_value of fuzz/fuzz_dispatch.c:206 (the reply carries the value the backend answered).
+Breaks check_value of fuzz/fuzz_dispatch.c:207 (the reply carries the value the backend answered).
 Caught by the seed input "param-get" of fuzz_dispatch.
 
 diff --git a/src/host-dispatch.c b/src/host-dispatch.c

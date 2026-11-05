@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /* The socket layer of the fuzz harnesses (fuzz/README.md). It stands in for src/socket.c, which the harnesses do not
    link: socket_send() copies the reply into fuzz_reply, where the harness reads it, so a run opens no socket and
    touches no descriptor. The shipped library does not contain this file. */

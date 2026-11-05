@@ -1,4 +1,4 @@
-Breaks check_whole of fuzz/fuzz_scenario.c:89 (each line kept has its command and its reply).
+Breaks check_whole of fuzz/fuzz_scenario.c:90 (each line kept has its command and its reply).
 Caught by the seed input "host-scenarios" of fuzz_scenario.
 
 diff --git a/src/host-scenario.c b/src/host-scenario.c

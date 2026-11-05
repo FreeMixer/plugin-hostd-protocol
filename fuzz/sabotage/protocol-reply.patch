@@ -1,4 +1,4 @@
-Breaks check_reply of fuzz/fuzz_protocol.c:103 (the parser answers the reply its row and word count give).
+Breaks check_reply of fuzz/fuzz_protocol.c:104 (the parser answers the reply its row and word count give).
 Caught by the seed input "extra-14" of fuzz_protocol.
 
 diff --git a/src/protocol.c b/src/protocol.c

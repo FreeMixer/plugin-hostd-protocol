@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /* Shared by the libFuzzer harnesses of this directory (fuzz/README.md). */
 #ifndef FUZZ_H
 #define FUZZ_H

@@ -1,4 +1,4 @@
-Breaks check_untagged of fuzz/fuzz_session.c:206 (a line no tag is read for is answered "not found").
+Breaks check_untagged of fuzz/fuzz_session.c:207 (a line no tag is read for is answered "not found").
 Caught by the seed input "mixed" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c
