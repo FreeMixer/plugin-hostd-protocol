@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * Checks that strarr_split() stays inside the string it splits, whatever it holds.
  *

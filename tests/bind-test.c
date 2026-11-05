@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * Checks who reaches the ports socket_start() opens. A port is reached when a connect to it from this machine succeeds:
  * a listening socket takes the connection whether or not socket_run() is accepting yet.

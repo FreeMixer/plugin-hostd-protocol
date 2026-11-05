@@ -1,4 +1,4 @@
-Breaks check_called of fuzz/fuzz_protocol.c:93 (a command of the table in its row's range runs its callback once).
+Breaks check_called of fuzz/fuzz_protocol.c:94 (a command of the table in its row's range runs its callback once).
 Caught by the seed input "extra-1" of fuzz_protocol.
 
 diff --git a/src/protocol.c b/src/protocol.c

@@ -1,4 +1,4 @@
-Breaks check_seq of fuzz/fuzz_session.c:55 (a session granted seq numbers each feedback line one more than the last).
+Breaks check_seq of fuzz/fuzz_session.c:56 (a session granted seq numbers each feedback line one more than the last).
 Caught by the seed input "seq" of fuzz_session.
 
 diff --git a/src/protocol.c b/src/protocol.c

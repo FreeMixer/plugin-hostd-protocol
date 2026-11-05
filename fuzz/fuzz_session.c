@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /* Sessions: hello and request tags (doc/protocol.md, Sessions) through protocol_parse(), over a small table of
    commands whose callbacks answer by their word count, and the library's own hello. An input is one session, a command
    a line, run in order; then a new connection starts. Properties: no crash, no leak; a session not granted tags answers
@@ -49,7 +50,7 @@ static void refuse_cb(proto_t *proto)
    it, 1 for the first after the hello that granted seq. */
 __attribute__((noinline)) static void check_seq(const char *got, const char *want)
 {
-    /* mutant: src/protocol.c:226 `__atomic_add_fetch(&g_seq, 1, __ATOMIC_SEQ_CST)` -> `__atomic_add_fetch(&g_seq, 2, __ATOMIC_SEQ_CST)`
+    /* mutant: src/protocol.c:227 `__atomic_add_fetch(&g_seq, 1, __ATOMIC_SEQ_CST)` -> `__atomic_add_fetch(&g_seq, 2, __ATOMIC_SEQ_CST)`
        input: seq */
     if (strcmp(got, want) != 0)
         abort();
@@ -126,7 +127,7 @@ static const host_backend_t g_backend = { .param_set = b_param_set, .param_get =
    answered one; else the code of the call that refused, which is the last one made, alone. */
 __attribute__((noinline)) static void check_many(const char *got, size_t len, const char *want)
 {
-    /* mutant: src/host-dispatch.c:180 `if (resp < SUCCESS)` -> `if (resp < -100)`
+    /* mutant: src/host-dispatch.c:181 `if (resp < SUCCESS)` -> `if (resp < -100)`
        input: many */
     if (len != strlen(want) + 1 || memcmp(got, want, len) != 0)
         abort();
@@ -136,7 +137,7 @@ __attribute__((noinline)) static void check_many(const char *got, size_t len, co
    checked sets no value at all. */
 __attribute__((noinline)) static void check_set_many(int refused, int unchanged, int checked_refused, unsigned sets)
 {
-    /* mutant: src/host-dispatch.c:228 `if (checked < SUCCESS)` -> `if (0)`
+    /* mutant: src/host-dispatch.c:229 `if (checked < SUCCESS)` -> `if (0)`
        input: setmany */
     if ((refused && !unchanged) || (checked_refused && sets != 0))
         abort();
@@ -200,7 +201,7 @@ static size_t tag_of(const char *line)
    verb no host has, and is answered "not found" with its NUL, as mod-host answers it. */
 __attribute__((noinline)) static void check_untagged(const char *got, size_t len)
 {
-    /* mutant: src/protocol.c:311 `granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS)` -> `1`
+    /* mutant: src/protocol.c:312 `granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS)` -> `1`
        input: mixed */
     if (len != sizeof("not found") || memcmp(got, "not found", len) != 0)
         abort();
@@ -210,7 +211,7 @@ __attribute__((noinline)) static void check_untagged(const char *got, size_t len
    alone, or "not found" for an empty <rest>, which alone is not answered. */
 __attribute__((noinline)) static void check_tagged(const char *got, size_t len, const char *want, size_t want_len)
 {
-    /* mutant: src/protocol.c:274 `line = MALLOC(tag_size + 1 + size);` -> `line = NULL;`
+    /* mutant: src/protocol.c:275 `line = MALLOC(tag_size + 1 + size);` -> `line = NULL;`
        input: tags */
     if (len != want_len || memcmp(got, want, len) != 0)
         abort();
@@ -220,7 +221,7 @@ __attribute__((noinline)) static void check_tagged(const char *got, size_t len, 
    order, for a version of 1 or more; "resp -902" for any other version. */
 __attribute__((noinline)) static void check_hello(const char *got, size_t len, const char *want)
 {
-    /* mutant: src/protocol.c:194 `want[i] = 0;` -> `want[i] = 1;`
+    /* mutant: src/protocol.c:195 `want[i] = 0;` -> `want[i] = 1;`
        input: mixed */
     if (len != strlen(want) + 1 || memcmp(got, want, len) != 0)
         abort();
@@ -229,7 +230,7 @@ __attribute__((noinline)) static void check_hello(const char *got, size_t len, c
 /* A new connection starts with nothing granted, whatever the one before it was granted: a tagged line is no tag. */
 __attribute__((noinline)) static void check_fresh(const char *got, size_t len)
 {
-    /* mutant: src/protocol.c:159 `memset(g_granted, 0, sizeof(g_granted));` -> `(void)g_granted;`
+    /* mutant: src/protocol.c:160 `memset(g_granted, 0, sizeof(g_granted));` -> `(void)g_granted;`
        input: tags */
     if (len != sizeof("not found") || memcmp(got, "not found", len) != 0)
         abort();
@@ -239,7 +240,7 @@ __attribute__((noinline)) static void check_fresh(const char *got, size_t len)
    a code the protocol declares for n, is followed by that code. */
 __attribute__((noinline)) static void check_errors(const char *got, size_t len, const char *want)
 {
-    /* mutant: src/protocol.c:438 `granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS)` -> `1`
+    /* mutant: src/protocol.c:439 `granted(OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_ERRORS)` -> `1`
        input: errors */
     if (len != strlen(want) + 1 || memcmp(got, want, len) != 0)
         abort();

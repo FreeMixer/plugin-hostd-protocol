@@ -1,4 +1,4 @@
-Breaks check_one_answer of fuzz/fuzz_dispatch.c:196 (one answer per command, ended by its NUL).
+Breaks check_one_answer of fuzz/fuzz_dispatch.c:197 (one answer per command, ended by its NUL).
 Caught by the seed input "scenario-1" of fuzz_dispatch.
 
 diff --git a/src/protocol.c b/src/protocol.c

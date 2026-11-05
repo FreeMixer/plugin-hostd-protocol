@@ -1,4 +1,4 @@
-Breaks check_text of fuzz/fuzz_scenario.c:102 (the command and the reply are the text on each side of "=>").
+Breaks check_text of fuzz/fuzz_scenario.c:103 (the command and the reply are the text on each side of "=>").
 Caught by the seed input "guarded" of fuzz_scenario.
 
 diff --git a/src/host-scenario.c b/src/host-scenario.c

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * The protocol's command table holds PROTOCOL_MAX_COMMANDS commands, and one more is refused out loud: a host that
  * registers more than the table holds learns it from the return code and stderr, instead of losing the last

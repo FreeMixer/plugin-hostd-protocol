@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * Who reaches the ports an installed libplugin-hostd-protocol opens (the carried bind-address patch).
  *

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * How many commands an installed libplugin-hostd-protocol takes (the carried protocol-max-commands patch).
  *

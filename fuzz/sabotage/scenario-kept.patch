@@ -1,4 +1,4 @@
-Breaks check_kept of fuzz/fuzz_scenario.c:71 (a load keeps every line that is neither blank nor a comment).
+Breaks check_kept of fuzz/fuzz_scenario.c:72 (a load keeps every line that is neither blank nor a comment).
 Caught by the seed input "guarded" of fuzz_scenario.
 
 diff --git a/src/host-scenario.c b/src/host-scenario.c

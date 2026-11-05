@@ -1,4 +1,4 @@
-Breaks check_answered of fuzz/fuzz_dispatch.c:187 (each command gets a reply).
+Breaks check_answered of fuzz/fuzz_dispatch.c:188 (each command gets a reply).
 Caught by the seed input "scenario-1" of fuzz_dispatch.
 
 diff --git a/src/host-dispatch.c b/src/host-dispatch.c

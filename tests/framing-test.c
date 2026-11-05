@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
 /*
  * What an installed libplugin-hostd-protocol does with the bytes a client sends (mod-audio/mod-host#113).
  *
