@@ -3,7 +3,8 @@ Section: libs
 Priority: optional
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Build-Depends: debhelper-compat (= 13),
-               libomx-contract-dev (>= 3.4.0~),
+               libomx-contract-dev (>= 3.9.0~),
+               libomx-contract-dev (<< 4~),
                pkgconf,
                python3
 Standards-Version: 4.6.2
@@ -20,6 +21,8 @@ Description: plugin-hostd protocol library, a superset of mod-host's text protoc
  The socket server, line protocol and command dispatch that plugin-hostd and
  omx-clap-host answer their controllers with: mod-host's text protocol, so any
  mod-host client works unchanged.
+ .
+ Its documentation is on openmixer.org.
 
 Package: libplugin-hostd-protocol-dev
 Section: libdevel
@@ -35,11 +38,13 @@ Description: plugin-hostd protocol library, development files
  It also carries the declared protocol: plugin-hostd/protocol.h and the
  headers it includes, the one verb table, the grammar of a line in ABNF, and
  the protocol as JSON, each named by a pkg-config variable.
+ .
+ Its documentation is on openmixer.org.
 
 Package: plugin-hostd-protocol-contract
 Architecture: all
 Multi-Arch: foreign
-Depends: omx-contract (>= 3.2.0~), ${misc:Depends}
+Depends: omx-contract (>= 3.2.0~), omx-contract (<< 4~), ${misc:Depends}
 Breaks: plugin-hostd-contract (<< 0.16.0~)
 Description: plugin-hostd protocol, its verbs in omx-contract's contract directory
  data/verbs.json of plugin-hostd-protocol, the verbs and reply codes
@@ -47,3 +52,5 @@ Description: plugin-hostd protocol, its verbs in omx-contract's contract directo
  of omx-contract's contract directory, under
  /usr/share/omx-contract/contract.d/3/plugin-hostd-protocol. plugin-hostd
  before 0.16.0 carried the same items in its own package.
+ .
+ Its documentation is on openmixer.org.

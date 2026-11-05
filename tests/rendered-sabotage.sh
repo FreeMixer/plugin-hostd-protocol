@@ -39,6 +39,7 @@ if check; then echo "ok   control: the copy as it is passes"; else echo "FAIL co
 arm "plugin-hostd's verbs header by hand" include/plugin-hostd/plugin_hostd_protocol_host_verbs.h '"chain_get %i"' '"chain_get %s"'
 arm "the reply codes header by hand" include/plugin-hostd/plugin_hostd_protocol_vocabulary.h '(-522)' '(-599)'
 arm "omx-clap-core's verbs header by hand" include/plugin-hostd/omx_clap_core_host_verbs.h '"note_on %i %i %i %i"' '"note_on %i %i %i"'
+arm "plugin-db's words header by hand" include/plugin-hostd/plugin_db_vocabulary.h '"isolated"' '"alone"'
 arm "verbs.json not rendered" data/verbs.json '"format": "chain_get %i"' '"format": "chain_get %i %i"'
 
 [ "$failed" = 0 ] && echo "rendered sabotage ok" || { echo "rendered sabotage FAILED"; exit 1; }

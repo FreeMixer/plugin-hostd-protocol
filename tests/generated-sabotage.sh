@@ -17,7 +17,7 @@ MAKE=${MAKE:-make}
 fresh() {
     rm -rf "$work/tree"
     mkdir -p "$work/tree"
-    cp -r Makefile VERSION README.md include src data protocol grammar doc tools tests packaging "$work/tree/"
+    cp -r Makefile VERSION include src data protocol grammar doc tools tests packaging "$work/tree/"
     mkdir -p "$work/tree/fuzz" && cp -r fuzz/corpus-abnf "$work/tree/fuzz/"
 }
 
@@ -72,9 +72,9 @@ arm "verbs.json not generated" data/verbs.json '"resp 0 <load_key> <name>"' '"re
 arm "the table by hand" protocol/plugin-hostd-protocol.json '"origin": "omx-clap-core"' '"origin": "mod-host"'
 arm "the grammar by hand" grammar/plugin-hostd-protocol.abnf '%s"bypass" SP int SP int' '%s"bypass" SP int'
 arm "the grammar's core not generated" grammar/core.abnf 'int              = \["-"\] 1\*DIGIT' 'int              = 1*DIGIT'
-arm "the README region by hand" README.md '| `bypass` | mod-ui | required' '| `bypass` | mod-ui | optional'
+arm "the overview region by hand" doc/overview.md '| `bypass` | mod-ui | required' '| `bypass` | mod-ui | optional'
 arm "protocol.md by hand" doc/protocol.md 'is a superset of' 'extends'
-arm "the evidence not generated" doc/evidence/mod-ui-verbs.tsv 'connect' 'konnect'
+arm "the evidence not generated" doc/mod-ui-verbs.tsv 'connect' 'konnect'
 arm "the grammar's seeds not written again" fuzz/corpus-abnf/GRAMMAR.sha256 '^[0-9a-f]' 'g'
 arm "the error words by hand" src/reply-words.h '"reply.host.instance-non-exists"' '"reply.host.no-instance"'
 arm "a reply code not generated" data/verbs.json '"reply.plugin-hostd.no-such-worker"' '"reply.plugin-hostd.no-worker"'

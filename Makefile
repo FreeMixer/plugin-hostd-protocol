@@ -39,11 +39,12 @@ HEADERS = include/host-backend.h include/host-dispatch.h include/host-errors.h i
           include/host-scenario.h include/protocol.h include/socket.h include/utils.h
 
 # the declared protocol (doc/protocol.md): plugin-hostd's protocol.h and the headers it includes, rendered by
-# omx-contract from data/verbs.json and from omx-clap-core's package of the contract directory; installed under
+# omx-contract from data/verbs.json and from omx-clap-core's and plugin-db's packages of the contract directory; installed under
 # <includedir>/plugin-hostd-protocol/plugin-hostd/, so a consumer includes <plugin-hostd/protocol.h> with this package's
 # Cflags. src/protocol.c reads the protocol version, hello's line and the extensions hello grants from them.
 RENDERED = include/plugin-hostd/plugin_hostd_protocol_host_verbs.h include/plugin-hostd/plugin_hostd_protocol_vocabulary.h \
-           include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h
+           include/plugin-hostd/omx_clap_core_host_verbs.h include/plugin-hostd/omx_clap_core_vocabulary.h \
+           include/plugin-hostd/plugin_db_vocabulary.h
 PROTOCOL_HEADERS = include/plugin-hostd/protocol.h include/plugin-hostd/search_paths.h $(RENDERED)
 
 PC_LIBDIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(LIBDIR))
@@ -98,7 +99,7 @@ TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenari
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
       test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi version-check \
-      check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage
+      check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
 test-protocol: tests/protocol_test
@@ -244,7 +245,7 @@ abi-check: abi-stage
 #   fuzz/corpus-abnf/                     tools/abnf-corpus.py, seeds from the grammar (check-generated reads the
 #                                         SHA-256 of the grammar they were written from)
 #   src/reply-words.h                     tools/reply-words.py, the error word of each refusal number of the table
-#   README.md                             the region host-verbs, tools/protocol-gen splice
+#   doc/overview.md                       the region host-verbs, tools/protocol-gen splice
 #   doc/protocol.md                       tools/protocol-doc.py, from all of the above
 #
 # protocol-gen holds the parameter scales of protocol.h to omx-contract's PARAM_SCALES, so it builds against
@@ -265,7 +266,7 @@ gen: $(GEN)
 	python3 tools/abnf-gen.py > grammar/plugin-hostd-protocol.abnf.new && \
 	    mv grammar/plugin-hostd-protocol.abnf.new grammar/plugin-hostd-protocol.abnf
 	python3 tools/reply-words.py > src/reply-words.h.new && mv src/reply-words.h.new src/reply-words.h
-	$(GEN) splice README.md > README.md.new && mv README.md.new README.md
+	$(GEN) splice doc/overview.md > doc/overview.md.new && mv doc/overview.md.new doc/overview.md
 	$(MAKE) --no-print-directory protocol-doc
 
 check-generated: $(GEN)
@@ -275,10 +276,10 @@ check-generated: $(GEN)
 	python3 tools/protocol-table.py --check; \
 	python3 tools/abnf-gen.py --check; \
 	python3 tools/reply-words.py --check; \
-	$(GEN) splice README.md > $$tmp/readme; cmp $$tmp/readme README.md; \
+	$(GEN) splice doc/overview.md > $$tmp/readme; cmp $$tmp/readme doc/overview.md; \
 	sha256sum -c --quiet $(ABNF_CORPUS)/GRAMMAR.sha256 || { echo "$(ABNF_CORPUS) is not written from this grammar: run make fuzz-abnf-corpus"; exit 1; }; \
 	$(GEN) regions > $$tmp/regions; test -s $$tmp/regions; \
-	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" README.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
+	while read r; do grep -q "BEGIN GENERATED protocol:$$r\( .*\)\?$$" doc/overview.md || { echo "region $$r is in no file"; exit 1; }; done < $$tmp/regions; \
 	echo "generated files are current"
 
 protocol-doc:
@@ -292,6 +293,10 @@ check-protocol-doc:
 test-verb-table:
 	python3 tests/verb_table.py
 	python3 tests/verb_table_sabotage.py
+
+# the default lv2_worker is omx-clap-host: mod-host runs an LV2 plugin only when lv2_worker or lv2_worker_set names it
+test-default-lv2-worker:
+	python3 tests/default_lv2_worker.py protocol/plugin-hostd.json
 
 # mod-host.json follows its headers: a moved verb, code or message in a scratch copy moves the JSON
 test-mod-host-json:
@@ -345,7 +350,12 @@ render-verbs check-rendered:
 	  $(OMX_CONTRACT) render --target c --package omx-clap-core --installed --out $$tmp; \
 	for f in omx_clap_core_host_verbs.h omx_clap_core_vocabulary.h; do \
 	  $(if $(filter check-rendered,$@),cmp -s $$tmp/$$f include/plugin-hostd/$$f || { echo "include/plugin-hostd/$$f is not the render of omx-clap-core's package" >&2; exit 1; },cp $$tmp/$$f include/plugin-hostd/$$f); \
-	done; echo "the rendered headers are current"
+	done
+	@set -e; tmp=$$(mktemp -d); trap 'rm -rf $$tmp' EXIT; \
+	OMX_CONTRACT_PATH=$(if $(OMX_CONTRACT_PATH),$(OMX_CONTRACT_PATH):)$(CONTRACTDIR) \
+	  $(OMX_CONTRACT) render --target c --package plugin-db --installed --out $$tmp; \
+	$(if $(filter check-rendered,$@),cmp -s $$tmp/plugin_db_vocabulary.h include/plugin-hostd/plugin_db_vocabulary.h || { echo "include/plugin-hostd/plugin_db_vocabulary.h is not the render of plugin-db's package" >&2; exit 1; },cp $$tmp/plugin_db_vocabulary.h include/plugin-hostd/plugin_db_vocabulary.h); \
+	echo "the rendered headers are current"
 
 check-schema:
 	python3 tests/protocol_schema.py protocol/plugin-hostd.json protocol/plugin-hostd.schema.json
@@ -431,7 +441,7 @@ fuzz-coverage: $(FUZZ_HARNESSES:%=$(FUZZ_COV_BUILD)/fuzz_%)
 clean:
 	rm -rf src/*.o $(LIB_SO) $(LIB_SONAME) $(LIB_FILE) $(TEST_PROGS) build
 
-.PHONY: gen check-generated protocol-doc check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage \
+.PHONY: gen check-generated protocol-doc check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker \
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
