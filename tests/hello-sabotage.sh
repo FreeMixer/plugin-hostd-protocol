@@ -55,4 +55,13 @@ sabotage "any not found is a verb not served" src/host-scenario.c \
     'level = strcmp(reply, "not found") == 0 ? verb_level(verb) : VERB_UNDECLARED;' \
     'level = strcmp(reply, "not found") == 0 ? ((void)verb_level(verb), VERB_NOT_REQUIRED) : VERB_UNDECLARED;' runner_test
 
+# the curve verbs (tests/curve_test.c)
+sabotage "remove keeps the instance's curve bindings" src/host-dispatch.c 'host_curve_forget(atoi(proto->list\[1\]));' '(void)proto;' curve_test
+sabotage "a line of another family keeps the old terms" src/host-curve.c '        b->nterms = 0;' '        (void)b;' curve_test
+sabotage "a refused term keeps the line's other terms" src/host-curve.c '        if (code < 0)' '        if (code < 0 \&\& i == 0)' curve_test
+sabotage "a band_type's value is not read" src/host-curve.c 't->shapes\[(uint32_t)c\]' 't->shapes[0]' curve_test
+sabotage "the instance's rate is not read" src/host-curve.c 'rq.sample_rate = rate;' 'rq.sample_rate = 48000.0;' curve_test
+sabotage "y written to 0.1 dB" src/host-curve.c ' %s,%.2f' ' %s,%.1f' curve_test
+sabotage "a host without the hook answers not found" src/host-dispatch.c ' OMX_VERB_CURVE_BIND_FMT, OMX_VERB_CURVE_POINTS_FMT,' '' curve_test
+
 [ "$failed" = 0 ] && echo "hello sabotage ok" || { echo "hello sabotage FAILED"; exit 1; }

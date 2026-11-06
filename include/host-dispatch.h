@@ -92,6 +92,16 @@ void host_dispatch_register_monitor_output(int (*monitor_output)(int instance, c
 /* Registers track_info, remote_pages, remote_page_get and param_info.
    Call it before host_dispatch_register_unsupported(). */
 void host_dispatch_register_plugin_info(const host_plugin_info_t *info);
+/* What a host gives the curve verbs (doc/protocol.md, Curves): the rate an instance runs at, in Hz, answered SUCCESS,
+   or the instance's refusal (ERR_INSTANCE_NON_EXISTS). The values come from the backend's param_get. */
+typedef struct HOST_CURVE_T {
+    int (*sample_rate)(int instance, double *rate);
+} host_curve_t;
+#define HOST_DISPATCH_HAS_CURVE 1
+/* Registers curve_bind and curve_points over the backend host_dispatch_register() was given and the rate curve gives,
+   drawn by omx-dsp's omx_curve_points; a host that does not call it answers both ERR_INVALID_OPERATION once it calls
+   host_dispatch_register_unsupported(). Call it before host_dispatch_register_unsupported(). */
+void host_dispatch_register_curve(const host_curve_t *curve);
 void host_dispatch_register_unsupported(void);
 void host_dispatch_unsupported_cb(proto_t *proto);
 /* Sends OUTPUT_SET on the feedback socket; -1 without a feedback client or for a symbol too long. */
