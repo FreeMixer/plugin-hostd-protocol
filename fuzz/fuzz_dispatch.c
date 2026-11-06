@@ -5,11 +5,13 @@
    Properties: no crash, no leak, and every reply is one NUL-terminated string: "resp <int>", alone or followed
    by the values of the verb, or one of the four protocol error messages. */
 #include "fuzz.h"
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include "../include/host-backend.h"
 #include "../include/host-dispatch.h"
 #include "../include/host-errors.h"
+#include "../include/plugin-hostd/protocol.h"
 
 static unsigned g_salt;
 
@@ -174,8 +176,18 @@ static int expected_reply(char *out, size_t size, char *const *w, unsigned n)
         snprintf(out, size, "resp %i", instance < 0 ? answer(instance) : instance % 4);
     else if (strcmp(w[0], "add") == 0 && n >= 3)
     {
-        int added = atoi(w[2]);
-        snprintf(out, size, "resp %i", added >= 0 ? added : answer(added));
+        /* the uri whole, a bare clap: uri split at its spaces joined again (phd_add_uri); the instance is the word
+           after it, and with none the add is refused */
+        char joined[PATH_MAX + 256];
+        unsigned next;
+        phd_add_uri(w, n, joined, sizeof(joined), &next);
+        if (n > next)
+        {
+            int added = atoi(w[next]);
+            snprintf(out, size, "resp %i", added >= 0 ? added : answer(added));
+        }
+        else
+            snprintf(out, size, "resp %i", ERR_INVALID_OPERATION);
     }
     else if (strcmp(w[0], "track_info") == 0 && n >= 4)
     {
