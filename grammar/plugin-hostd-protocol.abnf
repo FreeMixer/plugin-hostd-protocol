@@ -368,7 +368,7 @@ fb-instance-replay-refused = %s"instance_replay_refused" tail
 fb-instance-restored       = %s"instance_restored" tail
 ; plugin-hostd: <instance> suspect:<ms> <the command as sent>
 fb-instance-verb-dropped   = %s"instance_verb_dropped" tail
-; plugin-hostd: <uri> <reason> auto | omx-clap-host
+; plugin-hostd: <uri> <reason> omx-clap-host
 fb-lv2-adapter-refused     = %s"lv2_adapter_refused" tail
 ; plugin-hostd: <instance> <symbol> begin | end
 fb-param-gesture           = %s"param_gesture" tail

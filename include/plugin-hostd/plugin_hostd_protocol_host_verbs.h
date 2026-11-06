@@ -124,7 +124,7 @@ struct omx_host_verb {
 #define OMX_VERB_PIN_LAYOUT_FMT "pin_layout %i"
 #define OMX_VERB_PIN_LAYOUT_REPLY "resp 0 <scheme>:<sha256>"
 
-/* PLUGIN_HOSTD_VERBS.lv2WorkerSet (data/verbs.json): The worker of one LV2 plugin, for its adds from now on: <uri> <mod-host | omx-clap-host | auto | ->. */
+/* PLUGIN_HOSTD_VERBS.lv2WorkerSet (data/verbs.json): The worker of one LV2 plugin, for its adds from now on: <uri> <mod-host | omx-clap-host | ->. */
 #define OMX_VERB_LV2_WORKER_SET "lv2_worker_set"
 #define OMX_VERB_LV2_WORKER_SET_FMT "lv2_worker_set %s %s"
 #define OMX_VERB_LV2_WORKER_SET_REPLY "resp 0"

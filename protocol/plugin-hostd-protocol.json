@@ -106,7 +106,7 @@
     {"line": "instance_replay_refused", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<instance> <code>"},
     {"line": "instance_restored", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<instance> <worker>"},
     {"line": "instance_verb_dropped", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<instance> suspect:<ms> <the command as sent>"},
-    {"line": "lv2_adapter_refused", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<uri> <reason> auto | omx-clap-host"},
+    {"line": "lv2_adapter_refused", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<uri> <reason> omx-clap-host"},
     {"line": "param_gesture", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<instance> <symbol> begin | end"},
     {"line": "param_set", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<instance> <symbol> <value>"},
     {"line": "pin_changed", "origin": "plugin-hostd", "args": null, "tail": true, "fields": "<uri> files | layout"},

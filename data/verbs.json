@@ -411,7 +411,7 @@
         "implementedBy": {
           "plugin-hostd": "required"
         },
-        "doc": "The worker of one LV2 plugin, for its adds from now on: <uri> <mod-host | omx-clap-host | auto | ->."
+        "doc": "The worker of one LV2 plugin, for its adds from now on: <uri> <mod-host | omx-clap-host | ->."
       },
       "chain": {
         "verb": "chain",
