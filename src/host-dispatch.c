@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "host-curve.h"
 #include "host-dispatch.h"
 #include "host-errors.h"
 #include "mod-host.h"
@@ -85,6 +86,9 @@ static void remove_cb(proto_t *proto)
         resp = g_backend->remove(atoi(proto->list[1]));
     else
         resp = ERR_INVALID_OPERATION;
+    /* an instance's curve bindings go with it */
+    if (resp >= 0)
+        host_curve_forget(atoi(proto->list[1]));
     protocol_response_int(resp, proto);
 }
 
@@ -526,6 +530,7 @@ static void param_info_cb(proto_t *proto)
 void host_dispatch_register(const host_backend_t *backend)
 {
     g_backend = backend;
+    host_curve_set_backend(backend);
 
     protocol_add_command(EFFECT_ADD, add_cb);
     protocol_add_command(EFFECT_REMOVE, remove_cb);
@@ -568,7 +573,7 @@ void host_dispatch_register_unsupported(void)
         MONITOR_MIDI_PROGRAM, MIDI_LEARN, MIDI_MAP, MIDI_UNMAP, CC_MAP, CC_VALUE_SET, CC_UNMAP, CV_MAP,
         CV_UNMAP, HMI_MAP, HMI_UNMAP, LOAD_COMMANDS, SAVE_COMMANDS, BUNDLE_ADD, BUNDLE_REMOVE,
         STATE_TMPDIR, FEATURE_ENABLE, TRANSPORT, TRANSPORT_SYNC, SHOW_EXTERNAL_UI, OUTPUT_DATA_READY,
-        TRACK_INFO, REMOTE_PAGES, REMOTE_PAGE_GET, PARAM_INFO,
+        TRACK_INFO, REMOTE_PAGES, REMOTE_PAGE_GET, PARAM_INFO, OMX_VERB_CURVE_BIND_FMT, OMX_VERB_CURVE_POINTS_FMT,
         NULL
     };
     const char *const *command;
