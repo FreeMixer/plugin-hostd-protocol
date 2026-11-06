@@ -6,6 +6,9 @@ plugin-hostd-protocol (0.5.0) unstable; urgency=medium
     to -539.
   * host_dispatch_register_curve(): a host answers both over its backend and
     the rate it gives; one that does not answers -902.
+  * Codes -540 (durable-write-failed) and -541 (writer-queue-full) for the
+    daemon's writer thread: history_clear, pin_clear and pin_accept declare
+    them.
   * Builds with libomxdsp-dev >= 0.31.0 and < 0.32.
 
  -- Pau Aliagas <linuxnow@gmail.com>  Fri, 06 Nov 2026 18:00:00 +0100

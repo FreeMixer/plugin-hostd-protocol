@@ -110,6 +110,8 @@ make test
   holds at its rate by omx-dsp's omx_curve_points; codes -536 to -539
 - host_dispatch_register_curve(): a host answers both over its backend and the
   rate it gives; one that does not answers -902
+- codes -540 (durable-write-failed) and -541 (writer-queue-full) for the
+  daemon's writer thread; history_clear, pin_clear and pin_accept declare them
 - builds with omx-dsp-devel >= 0.31.0 and < 0.32
 
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.1-1
