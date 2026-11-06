@@ -6,6 +6,9 @@ plugin-hostd-protocol (0.4.1) unstable; urgency=medium
     the escape and phd_pin_path_encode() and phd_pin_path_decode().
   * add: a clap: uri whose path holds a space and is written bare is one
     uri; phd_add_uri() is that reading, for every host that answers add.
+  * phd_headless_qt(): with no display, a host gives Qt the offscreen
+    platform unless the user set one, so a Qt-linked plugin (synthv1) does
+    not abort as it is instantiated.
 
  -- Pau Aliagas <linuxnow@gmail.com>  Fri, 06 Nov 2026 17:00:00 +0100
 

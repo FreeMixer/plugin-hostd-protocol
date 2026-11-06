@@ -36,6 +36,7 @@
 #include "../include/host-errors.h"
 #include "../include/host-scenario.h"
 #include "../include/plugin-hostd/protocol.h"
+#include "../include/utils.h"
 
 #define TEST_PORT_DEFAULT   15556
 #define TEST_BUFFER_SIZE    1024
@@ -808,6 +809,20 @@ static int check_words(void)
     uri = phd_add_uri(add, 5, joined, 10, &next);
     if (uri != add[1] || next != 2)
         failures++, printf("FAIL add uri too long for its buffer: %s, next %u\n", uri ? uri : "(null)", next);
+    /* no display: Qt is given offscreen; a platform the user set, or a display, is left alone */
+    unsetenv("DISPLAY"), unsetenv("WAYLAND_DISPLAY"), unsetenv("QT_QPA_PLATFORM");
+    phd_headless_qt();
+    if (!getenv("QT_QPA_PLATFORM") || strcmp(getenv("QT_QPA_PLATFORM"), PHD_HEADLESS_QT_PLATFORM))
+        failures++, printf("FAIL no display: QT_QPA_PLATFORM is %s\n", getenv("QT_QPA_PLATFORM") ? getenv("QT_QPA_PLATFORM") : "unset");
+    setenv("QT_QPA_PLATFORM", "xcb", 1);
+    phd_headless_qt();
+    if (strcmp(getenv("QT_QPA_PLATFORM"), "xcb"))
+        failures++, printf("FAIL the user's QT_QPA_PLATFORM is overwritten\n");
+    unsetenv("QT_QPA_PLATFORM"), setenv("WAYLAND_DISPLAY", "wayland-0", 1);
+    phd_headless_qt();
+    if (getenv("QT_QPA_PLATFORM"))
+        failures++, printf("FAIL a display is there and QT_QPA_PLATFORM is set\n");
+    unsetenv("WAYLAND_DISPLAY");
     printf("%s\n", failures ? "pin path words FAILED" : "pin path words ok");
     return failures;
 }

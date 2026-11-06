@@ -132,6 +132,11 @@ float clampf(float value, float min, float max)
 }
 
 
+// a host with no display gives Qt the platform PHD_HEADLESS_QT_PLATFORM (plugin-hostd/protocol.h) unless the user set
+// QT_QPA_PLATFORM: with neither DISPLAY nor WAYLAND_DISPLAY set, a Qt-linked plugin aborts as it is instantiated
+void phd_headless_qt(void);
+
+
 /*
 ************************************************************************************************************************
 *           CONFIGURATION ERRORS

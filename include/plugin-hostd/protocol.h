@@ -49,6 +49,12 @@
 /* a worker prints a line ending with this once its socket accepts */
 #define PHD_WORKER_READY_MARKER "ready!"
 
+/* A host that loads plugins with no display gives Qt one that needs none: a plugin that makes a QApplication as it is
+ * instantiated (synthv1 and the other Qt-linked LV2 plugins) aborts when the platform plugin Qt picks cannot open a
+ * display. With neither DISPLAY nor WAYLAND_DISPLAY set, QT_QPA_PLATFORM is set to this unless the user set it:
+ * phd_headless_qt() of the library (utils.h), called before the host loads a plugin or starts a process that does */
+#define PHD_HEADLESS_QT_PLATFORM "offscreen"
+
 /* ---------------------------------------------------------------- constants */
 
 /* X(name, value, unit, meaning) */
