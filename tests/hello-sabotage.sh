@@ -61,6 +61,8 @@ sabotage "a line of another family keeps the old terms" src/host-curve.c '      
 sabotage "a refused term keeps the line's other terms" src/host-curve.c '        if (code < 0)' '        if (code < 0 \&\& i == 0)' curve_test
 sabotage "a band_type's value is not read" src/host-curve.c 't->shapes\[(uint32_t)c\]' 't->shapes[0]' curve_test
 sabotage "the instance's rate is not read" src/host-curve.c 'rq.sample_rate = rate;' 'rq.sample_rate = 48000.0;' curve_test
+sabotage "a slope's enumeration is not read" src/host-curve.c 'rqt\[i\].value = t->slopes\[(uint32_t)c\], rqt\[i\].unit = OMX_CURVE_UNITS_DB;' 'rqt[i].unit = OMX_CURVE_UNITS_DB;' curve_test
+sabotage "a value that is not finite answered -902" src/host-curve.c 'case OMX_CURVE_VALUE_NOT_FINITE: return OMX_REPLY_PLUGIN_HOSTD_CURVE_VALUE_NOT_FINITE_RESP;' '' curve_test
 sabotage "y written to 0.1 dB" src/host-curve.c ' %s,%.2f' ' %s,%.1f' curve_test
 sabotage "a host without the hook answers not found" src/host-dispatch.c ' OMX_VERB_CURVE_BIND_FMT, OMX_VERB_CURVE_POINTS_FMT,' '' curve_test
 

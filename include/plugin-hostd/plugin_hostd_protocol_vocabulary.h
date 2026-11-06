@@ -81,6 +81,8 @@
 #define OMX_REPLY_PLUGIN_HOSTD_DURABLE_WRITE_FAILED_RESP (-540)
 #define OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL "reply.plugin-hostd.writer-queue-full" ///< the daemon's writer queue holds its most writes (64) or bytes (64 MiB): the write the verb needs was refused, and nothing of it changed
 #define OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL_RESP (-541)
+#define OMX_REPLY_PLUGIN_HOSTD_CURVE_VALUE_NOT_FINITE "reply.plugin-hostd.curve-value-not-finite" ///< curve_points of a binding whose value, as the instance holds it, is not finite, or of an instance that runs at no rate: no curve is drawn
+#define OMX_REPLY_PLUGIN_HOSTD_CURVE_VALUE_NOT_FINITE_RESP (-542)
 
 /* PLUGIN_HOSTD_PROTOCOL_EXTENSIONS (data/verbs.json) */
 #define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS "tags" ///< request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>

@@ -252,14 +252,44 @@ int main(void)
         rq.points = 248u;
         expect_curve(&c, "the band switched off by its type: the high-pass's six anchors only", "curve_points 4 1 248", &rq);
         set(4, 0, 7.0f);
-        expect(&c, "a choice value past the shapes", "curve_points 4 1 64", "resp -536");
+        t[0].value = 7.0f;
+        t[0].shape = OMX_CURVE_SHAPES_UNSHAPED;
+        rq.points = 64u;
+        expect_curve(&c, "a choice value past the shapes is a band not drawn (the high-pass alone)", "curve_points 4 1 64", &rq);
         set(4, 0, 1.0f);
         set(4, 6, 18.0f);
         expect(&c, "an 18 dB/oct head filter", "curve_points 4 1 64", "resp -536");
         set(4, 6, 24.0f);
         set(4, 2, NAN);
-        expect(&c, "a gain that is not a number", "curve_points 4 1 64", "resp -902");
+        expect(&c, "a gain that is not a number", "curve_points 4 1 64", "resp -542");
         set(4, 2, 2.0f);
+    }
+
+    /* -- a head filter's slope from its declared enumeration: the choice value picks the dB per octave */
+    set(4, 20, 1000.0f), set(4, 21, 100.0f), set(4, 22, 1.0f);
+    expect(&c, "bind a high-pass whose slope is a choice of 12 or 24",
+           "curve_bind 4 2 eq_response eq band_freq.0=p20:hz@bell band_gain.0=p0:db band_q.0=p3 hpf_freq=p21:hz hpf_slope=p22@12|24", "resp 0");
+    {
+        set(4, 0, 2.0f), set(4, 3, 1.0f);
+        struct omx_curve_term t[] = {
+            {OMX_CURVE_ROLES_BAND_FREQ, 0, 1000.0f, OMX_CURVE_UNITS_HZ, OMX_CURVE_SHAPES_BELL, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_GAIN, 0, 2.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_Q, 0, 1.0f, OMX_CURVE_UNITS_NONE, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_HPF_FREQ, 0, 100.0f, OMX_CURVE_UNITS_HZ, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_HPF_SLOPE, 0, 24.0, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+        };
+        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_EQ_RESPONSE, OMX_CURVE_FAMILIES_EQ, 48000.0, 40u, 0, 0, 0, t, 5u, 0};
+        expect_curve(&c, "choice 1 of 12|24 is 24 dB per octave", "curve_points 4 2 40", &rq);
+        set(4, 22, 0.0f);
+        t[4].value = 12.0;
+        expect_curve(&c, "choice 0 of 12|24 is 12 dB per octave", "curve_points 4 2 40", &rq);
+        set(4, 22, 2.0f);
+        expect(&c, "a choice past the enumeration is no slope", "curve_points 4 2 40", "resp -537");
+        expect(&c, "a slope with no enumeration and no dB unit", "curve_bind 4 3 eq_response eq hpf_freq=p21:hz hpf_slope=p22", "resp 0");
+        expect(&c, "is term-missing", "curve_points 4 3 40", "resp -537");
+        expect(&c, "a slope enumeration of no number", "curve_bind 4 3 eq_response eq hpf_slope=p22@12|x", "resp -902");
+        expect(&c, "a shape word on a slope", "curve_bind 4 3 eq_response eq hpf_slope=p22@bell", "resp -902");
+        set(4, 22, 1.0f);
     }
 
     /* -- a 32-band binding in three lines answers as the one request it makes */

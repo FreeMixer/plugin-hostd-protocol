@@ -59,7 +59,7 @@ tail             = *(SP word)
 curve-binding    = %s"clear" / (curve-kind SP curve-family 1*(SP curve-term))
 curve-kind       = %s"eq_response" / %s"transfer_curve"
 curve-family     = 1*(%x61-7A / "_")
-curve-term       = curve-role ["." curve-index] "=" curve-symbol [":" curve-unit] ["@" curve-shapes]
+curve-term       = curve-role ["." curve-index] "=" curve-symbol [":" curve-unit] ["@" (curve-shapes / curve-slopes)]
 curve-index      = 1*9DIGIT
 curve-role       = %s"band_type" / %s"band_freq" / %s"band_gain" / %s"band_q" / %s"band_on" / %s"hpf_freq" /
                    %s"hpf_slope" / %s"hpf_on" / %s"lpf_freq" / %s"lpf_slope" / %s"lpf_on" / %s"threshold" /
@@ -68,7 +68,11 @@ curve-role       = %s"band_type" / %s"band_freq" / %s"band_gain" / %s"band_q" / 
 curve-symbol     = [":"] 1*(ALPHA / DIGIT / "_" / "-" / ".")
 curve-unit       = 1*(%x61-7A)
 curve-shapes     = curve-shape *("|" curve-shape)
-curve-shape      = %s"off" / %s"bell" / %s"lowshelf" / %s"highshelf" / %s"highpass" / %s"lowpass" / %s"notch" / "-"
+curve-shape      = %s"off" / %s"bell" / %s"lowshelf" / %s"highshelf" / %s"highpass" / %s"lowpass" / %s"notch" / "-" /
+                   %s"allpass1" / %s"allpass2"
+; a head filter's slope, dB per octave of each choice value from 0: the role's declared enumeration
+curve-slopes     = curve-db *("|" curve-db)
+curve-db         = %x31-39 *2DIGIT
 ; curve_points' reply: the count and each point, x to four significant digits and y to 0.01 dB
 curve-points-reply = %s"resp" SP %s"0" SP 1*DIGIT 1*(SP curve-point)
 curve-point      = curve-x "," curve-y
@@ -474,6 +478,7 @@ error-reply      = %s"resp -1 reply.host.instance-invalid"
                  / %s"resp -539 reply.plugin-hostd.curve-points-range"
                  / %s"resp -540 reply.plugin-hostd.durable-write-failed"
                  / %s"resp -541 reply.plugin-hostd.writer-queue-full"
+                 / %s"resp -542 reply.plugin-hostd.curve-value-not-finite"
                  / %s"resp -901 reply.host.memory-allocation"
                  / %s"resp -902 reply.host.invalid-operation"
 

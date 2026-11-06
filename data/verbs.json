@@ -183,6 +183,11 @@
         "code": "reply.plugin-hostd.writer-queue-full",
         "resp": -541,
         "doc": "the daemon's writer queue holds its most writes (64) or bytes (64 MiB): the write the verb needs was refused, and nothing of it changed"
+      },
+      "curveValueNotFinite": {
+        "code": "reply.plugin-hostd.curve-value-not-finite",
+        "resp": -542,
+        "doc": "curve_points of a binding whose value, as the instance holds it, is not finite, or of an instance that runs at no rate: no curve is drawn"
       }
     }
   },
@@ -906,7 +911,7 @@
           "mod-host": "unsupported"
         },
         "since": "0.5.0",
-        "doc": "Bind a display of an instance's panel description to the instance's parameters, for curve_points: <instance> <display> clear, or <instance> <display> <kind> <family> <term> [<term> ...], the display's index in the description, its kind (eq_response or transfer_curve) and family, and each term <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...] as the description gives the role: the parameter that plays it, its unit, and for a band_type the band shape of each choice value from 0 (a band_freq takes one shape, the band's fixed shape). The terms are added to the display's binding, a term of a role and index already bound replacing it; a line of another kind or family starts the binding again, and clear drops it. Every term is checked before any is kept: an instance that does not exist (-3), a symbol it does not have (-103), a family with no closed form for the kind (-536), a unit the role does not take (-538), a term the grammar does not take (-902). The binding lives with the instance and goes with its remove; it is never saved."
+        "doc": "Bind a display of an instance's panel description to the instance's parameters, for curve_points: <instance> <display> clear, or <instance> <display> <kind> <family> <term> [<term> ...], the display's index in the description, its kind (eq_response or transfer_curve) and family, and each term <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...] as the description gives the role: the parameter that plays it, its unit, for a band_type the band shape of each choice value from 0 (a band_freq takes one shape, the band's fixed shape), and for a head filter's slope the dB per octave of each choice value from 0 (@12|24), the role's declared enumeration. The terms are added to the display's binding, a term of a role and index already bound replacing it; a line of another kind or family starts the binding again, and clear drops it. Every term is checked before any is kept: an instance that does not exist (-3), a symbol it does not have (-103), a family with no closed form for the kind (-536), a unit the role does not take (-538), a term the grammar does not take (-902). The binding lives with the instance and goes with its remove; it is never saved."
       },
       "curvePoints": {
         "verb": "curve_points",
@@ -929,6 +934,9 @@
             "ref": "PLUGIN_HOSTD_REPLY_CODES.curvePointsRange"
           },
           {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curveValueNotFinite"
+          },
+          {
             "ref": "HOST_REPLY_CODES.memoryAllocation"
           },
           {
@@ -941,7 +949,7 @@
           "mod-host": "unsupported"
         },
         "since": "0.5.0",
-        "doc": "The points of a bound display: <instance> <display> <points>, the grid points asked for. Each bound symbol's value is read from the instance as it is now and the instance's rate with it, and omx-dsp's omx_curve_points draws them: an eq_response x in Hz and y in dB, the bands' anchors added (three a drawn band), a transfer_curve input dB to output dB. The reply is the count and each point x,y, x to four significant digits and y to 0.01 dB, ascending in x; at most curve_points_max (omx-dsp's CURVE_POINTS_MAX, 256) points. A display with no binding, or a binding without a term the model needs (-537); a band shape or slope with no closed form (-536); points outside 2 to curve_points_max, the anchors counted (-539); a value that is not finite or an instance not running at a rate (-902)."
+        "doc": "The points of a bound display: <instance> <display> <points>, the grid points asked for. Each bound symbol's value is read from the instance as it is now and the instance's rate with it, and omx-dsp's omx_curve_points draws them: an eq_response x in Hz and y in dB, the bands' anchors added (three a drawn band), a transfer_curve input dB to output dB. The reply is the count and each point x,y, x to four significant digits and y to 0.01 dB, ascending in x; at most curve_points_max (omx-dsp's CURVE_POINTS_MAX, 256) points. A display with no binding, or a binding without a term the model needs (-537); a band shape or slope with no closed form (-536); points outside 2 to curve_points_max, the anchors counted (-539); a value that is not finite or an instance not running at a rate (-542)."
       }
     }
   },

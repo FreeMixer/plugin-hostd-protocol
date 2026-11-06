@@ -40,6 +40,9 @@ typedef struct {
     char symbol[CURVE_SYMBOL_MAX];
     uint32_t nshapes;
     signed char shapes[CURVE_SHAPES_MAX];
+    /* a head filter's slope role: dB per octave of each choice value from 0, the role's declared enumeration */
+    uint32_t nslopes;
+    unsigned short slopes[CURVE_SHAPES_MAX];
 } curve_term_t;
 
 typedef struct curve_binding {
@@ -117,7 +120,8 @@ static int symbol_char(char c)
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '-' || c == '.';
 }
 
-/* one term, <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...]: 0, or the code that refuses it */
+/* one term, <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...], a slope's @<db>|<db>...: 0, or the code that
+   refuses it */
 static int parse_term(const char *w, curve_term_t *t)
 {
     const char *eq = strchr(w, '='), *dot, *p, *sym, *end;
@@ -156,7 +160,23 @@ static int parse_term(const char *w, curve_term_t *t)
         t->unit = (enum omx_curve_units)v;
         p = end;
     }
-    if (*p == '@')
+    if (*p == '@' && (t->role == OMX_CURVE_ROLES_HPF_SLOPE || t->role == OMX_CURVE_ROLES_LPF_SLOPE))
+    {
+        /* <db>|<db>...: the slope of each choice value, from 0 */
+        for (p++;; p = end + 1)
+        {
+            uint32_t db;
+
+            for (end = p; *end && *end != '|'; end++)
+                ;
+            if (end - p > 3 || parse_index(p, end, &db) != 0 || db == 0 || t->nslopes >= CURVE_SHAPES_MAX)
+                return ERR_INVALID_OPERATION;
+            t->slopes[t->nslopes++] = (unsigned short)db;
+            if (!*end)
+                break;
+        }
+    }
+    else if (*p == '@')
     {
         if (t->role != OMX_CURVE_ROLES_BAND_TYPE && t->role != OMX_CURVE_ROLES_BAND_FREQ)
             return ERR_INVALID_OPERATION;
@@ -334,8 +354,9 @@ int host_curve_code(int omx_code)
     case OMX_CURVE_TERM_MISSING: return OMX_REPLY_PLUGIN_HOSTD_CURVE_TERM_MISSING_RESP;
     case OMX_CURVE_UNIT_REFUSED: return OMX_REPLY_PLUGIN_HOSTD_CURVE_UNIT_REFUSED_RESP;
     case OMX_CURVE_POINTS_RANGE: return OMX_REPLY_PLUGIN_HOSTD_CURVE_POINTS_RANGE_RESP;
+    case OMX_CURVE_VALUE_NOT_FINITE: return OMX_REPLY_PLUGIN_HOSTD_CURVE_VALUE_NOT_FINITE_RESP;
     case OMX_CURVE_ROOM: return ERR_MEMORY_ALLOCATION;
-    default: return ERR_INVALID_OPERATION; /* OMX_CURVE_VALUE_NOT_FINITE: a value or a rate that is not a number */
+    default: return ERR_INVALID_OPERATION;
     }
 }
 
@@ -404,6 +425,15 @@ static void curve_points_cb(proto_t *proto)
         }
         else if (t->nshapes)
             rqt[i].shape = t->shapes[0];
+        if (t->nslopes)
+        {
+            /* the slope the choice value selects, in dB per octave; a value past the enumeration is no slope */
+            const double c = nearbyint((double)value);
+            if (c >= 0.0 && c < (double)t->nslopes)
+                rqt[i].value = t->slopes[(uint32_t)c], rqt[i].unit = OMX_CURVE_UNITS_DB;
+            else
+                rqt[i].unit = OMX_CURVE_UNITS_NONE;
+        }
     }
     memset(&rq, 0, sizeof(rq));
     rq.kind = b->kind;

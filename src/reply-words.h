@@ -49,6 +49,7 @@ static const struct reply_word { int resp; const char *code; } g_reply_words[] =
     { -539, "reply.plugin-hostd.curve-points-range" },
     { -540, "reply.plugin-hostd.durable-write-failed" },
     { -541, "reply.plugin-hostd.writer-queue-full" },
+    { -542, "reply.plugin-hostd.curve-value-not-finite" },
     { -901, "reply.host.memory-allocation" },
     { -902, "reply.host.invalid-operation" },
 };

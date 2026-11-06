@@ -391,7 +391,10 @@ static inline int phd_pool_name_valid(const char *name)
                             OMX_VERB_PIN_ACCEPT "): the change is not on disk, and stderr names the path and the error") \
     X(WRITER_QUEUE_FULL, OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL_RESP, "the daemon's writer queue holds its most writes " \
                          "or bytes: the write the verb needs is refused and nothing of the verb changed; the controller " \
-                         "may send it again")
+                         "may send it again") \
+    X(CURVE_VALUE_NOT_FINITE, OMX_REPLY_PLUGIN_HOSTD_CURVE_VALUE_NOT_FINITE_RESP, OMX_VERB_CURVE_POINTS " of a binding " \
+                              "whose value, as the instance holds it, is not finite, or of an instance that runs at no " \
+                              "rate: no curve is drawn")
 
 /* ---------------------------------------------------------------- verbs */
 
