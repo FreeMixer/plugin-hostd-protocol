@@ -1,3 +1,14 @@
+plugin-hostd-protocol (0.4.1) unstable; urgency=medium
+
+  * A path of a pin, and the path of a clap: uri, is written percent-encoded:
+    a separator of pin_set, whitespace, '%', a quote, a backslash and a
+    control byte are %XX, so any file name is one word. protocol.h declares
+    the escape and phd_pin_path_encode() and phd_pin_path_decode().
+  * add: a clap: uri whose path holds a space and is written bare is one
+    uri; phd_add_uri() is that reading, for every host that answers add.
+
+ -- Pau Aliagas <linuxnow@gmail.com>  Fri, 06 Nov 2026 17:00:00 +0100
+
 plugin-hostd-protocol (0.4.0) unstable; urgency=medium
 
   * lv2_worker auto is no longer a word of the protocol: a plugin the chosen

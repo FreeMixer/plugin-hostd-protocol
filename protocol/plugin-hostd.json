@@ -223,7 +223,7 @@
     {"name": "param_set", "fields": "<instance> <symbol> <value>", "meaning": "relayed from a worker: parameter feedback, a value the plugin moved by itself (its automation, an LFO, a preset load, a MIDI map, the user's knob of the plugin's own), as mod-host writes it; a controller updates its control to it. A worker never writes it for a value a controller's param_set gave it, and a worker that writes none changes nothing: the daemon adds no line of its own"}
   ],
   "pin_limits": [
-    {"name": "PATH", "meaning": "a path holding ',', '=' or whitespace cannot be pinned: they are the separators of pin_set's words, and pin_set refuses it as a token outside its grammar"},
+    {"name": "PATH", "meaning": "a path is pinned percent-encoded (%XX): ',', '=', whitespace, '%', a quote, a backslash and a control byte are escaped, so any file name is one word; a path holding one of them as it is, or a stray %, is refused by pin_set as a token outside its grammar"},
     {"name": "LINE", "meaning": "a pin_set line is at most line_max, 4096 bytes, the protocol socket's buffer; a longer one is refused as outside the grammar"},
     {"name": "MANIFEST", "meaning": "a manifest that uses @base makes add answer OMX_REPLY_PLUGIN_HOSTD_PIN_BINARY_MISMATCH_RESP (-509): the daemon does not resolve it, so it cannot know the file the host would load. A file the manifest names by a percent-encoded IRI is pinned as written, one word, and opened decoded; a name with a stray % is refused the same way"}
   ],

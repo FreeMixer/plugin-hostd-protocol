@@ -30,6 +30,7 @@
 ************************************************************************************************************************
 */
 
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,6 +42,7 @@
 #include "socket.h"
 // the bulk verbs, declared with the protocol's own (data/verbs.json)
 #include "plugin-hostd/plugin_hostd_protocol_host_verbs.h"
+#include "plugin-hostd/protocol.h"
 
 
 /*
@@ -63,11 +65,14 @@ static const host_plugin_info_t *g_plugin_info;
 static void add_cb(proto_t *proto)
 {
     int resp;
-    /* proto->list[3] is the optional client-name argument the "..." tail in EFFECT_ADD
-       lets through; a caller that sent only 3 tokens leaves it unset. */
-    const char *client_name = (proto->list_count > 3) ? proto->list[3] : NULL;
-    if (g_backend->add)
-        resp = g_backend->add(proto->list[1], atoi(proto->list[2]), client_name);
+    char joined[PATH_MAX + 256];
+    unsigned next;
+    /* the uri whole, a clap: uri split at the spaces of its path joined again (phd_add_uri); the word after it is the
+       instance, and the optional client name the "..." tail in EFFECT_ADD lets through follows */
+    const char *uri = phd_add_uri(proto->list, proto->list_count, joined, sizeof(joined), &next);
+    const char *client_name = (proto->list_count > next + 1) ? proto->list[next + 1] : NULL;
+    if (g_backend->add && proto->list_count > next)
+        resp = g_backend->add(uri, atoi(proto->list[next]), client_name);
     else
         resp = ERR_INVALID_OPERATION;
     protocol_response_int(resp, proto);
