@@ -9,6 +9,8 @@ plugin-hostd-protocol (0.5.0) unstable; urgency=medium
   * Codes -540 (durable-write-failed) and -541 (writer-queue-full) for the
     daemon's writer thread: history_clear, pin_clear and pin_accept declare
     them.
+  * curve_points answers -542 (curve-value-not-finite) for a value that is
+    not finite; a head filter's slope comes from its enumeration (@12|24).
   * socket_adopt(): a host serves sockets its caller already bound, so a
     supervisor or a harness hands it the port and never closes and binds it
     again; a second bind on the port is refused.

@@ -112,6 +112,8 @@ make test
   rate it gives; one that does not answers -902
 - codes -540 (durable-write-failed) and -541 (writer-queue-full) for the
   daemon's writer thread; history_clear, pin_clear and pin_accept declare them
+- curve_points answers -542 (curve-value-not-finite) for a value that is not
+  finite; a head filter's slope comes from its enumeration (@12|24)
 - socket_adopt(): a host serves sockets its caller already bound; a second
   bind on the port is refused
 - builds with omx-dsp-devel >= 0.32.0 and < 0.33
