@@ -24,6 +24,7 @@ protocol_remove_commands
 protocol_response
 protocol_response_int
 protocol_verbose
+socket_adopt
 socket_finish
 socket_run
 socket_send

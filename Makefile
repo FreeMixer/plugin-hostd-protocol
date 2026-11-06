@@ -105,9 +105,9 @@ TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
 SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test tests/forms_test \
              tests/hello_test tests/curve_test tests/runner_test \
-             tests/socket-test tests/bind-test tests/utils-test
+             tests/socket-test tests/bind-test tests/adopt-test tests/utils-test
 
-test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
+test: test-protocol test-protocol-commands test-utils test-socket test-bind test-adopt test-golden test-golden-modhost \
       test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-curve test-runner test-hello-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker
 
@@ -129,7 +129,11 @@ test-socket: tests/socket-test
 test-bind: tests/bind-test
 	./tests/bind-test
 
-tests/socket-test tests/bind-test: tests/%: tests/%.c src/socket.c include/socket.h
+# socket_adopt: the caller's bound socket served, a second bind on its port refused
+test-adopt: tests/adopt-test
+	./tests/adopt-test
+
+tests/socket-test tests/bind-test tests/adopt-test: tests/%: tests/%.c src/socket.c include/socket.h
 	$(CC) $< -std=gnu99 -D_GNU_SOURCE -O1 -g -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -Iinclude -lpthread -o $@
 tests/utils-test: tests/utils-test.c src/utils.c include/utils.h
 	$(CC) $< -std=gnu99 -D_GNU_SOURCE -O1 -g -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -Iinclude -lm -o $@
