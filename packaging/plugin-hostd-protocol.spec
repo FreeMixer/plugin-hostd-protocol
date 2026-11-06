@@ -1,5 +1,5 @@
 Name: plugin-hostd-protocol
-Version: 0.4.2
+Version: 0.4.3
 Release: 1%{?dist}
 License: GPL-3.0-or-later
 Summary: The plugin-hostd protocol library, a superset of mod-host's text protocol
@@ -102,6 +102,10 @@ make test
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog
+* Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.3-1
+- The descriptor name rule says bytes: each byte of an id's UTF-8 text
+  outside [A-Za-z0-9._-] is one PHD_DESCRIPTOR_SAFE_CHAR, as plugin-hostd
+  reads it and plugin-qualify now writes it
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.2-1
 - The protocol page and protocol.h say how a pin is keyed: by its clap: uri's
   path decoded, so the uri written with the space as it is and written encoded

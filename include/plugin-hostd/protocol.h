@@ -1255,8 +1255,8 @@ static inline int phd_is_note_verb(const char *verb)
 
 /* A scanned descriptor's file in descriptor_dir: <id>@<version>-<hash>.json, the rule plugin-qualify's scanners name
  * theirs by. The id is the CLAP plugin id or the LV2 URI, the version the one the descriptor states
- * (PHD_DESCRIPTOR_NO_VERSION when it states none), each character outside [A-Za-z0-9._-] of both written
- * PHD_DESCRIPTOR_SAFE_CHAR; the hash is the first PHD_DESCRIPTOR_HASH_LEN hex digits of the SHA-256 of the plugin's
+ * (PHD_DESCRIPTOR_NO_VERSION when it states none), each byte of their UTF-8 text outside [A-Za-z0-9._-] written
+ * PHD_DESCRIPTOR_SAFE_CHAR, one for each byte ("é" is "__"); the hash is the first PHD_DESCRIPTOR_HASH_LEN hex digits of the SHA-256 of the plugin's
  * binary (the .clap, or the file the LV2 bundle's manifest names with lv2:binary). Written once, atomically; a changed
  * binary gets a new name and the old file stays. */
 #define PHD_DESCRIPTOR_NAME_SYNTAX    "<id>@<version>-<hash>.json"
