@@ -27,7 +27,7 @@
 #define OMX_PLUGIN_DB_LAYERS_PINNED "pinned" ///< the files of the plugin with their digests and the layout fingerprint, written through plugin-db
 #define OMX_PLUGIN_DB_LAYERS_MEASURED "measured" ///< latency, cost and behaviour per rate and quantum with the conditions, written by the probes; may be wiped
 #define OMX_PLUGIN_DB_LAYERS_JUDGED "judged" ///< the record: verdict, conditions and what it was measured under, written by plugin-qualify's judgement
-#define OMX_PLUGIN_DB_LAYERS_REFERENCE "reference" ///< a record from a reference machine, installed by omx-qualification-records, read only
+#define OMX_PLUGIN_DB_LAYERS_REFERENCE "reference" ///< a record from a reference machine, installed by plugin-db-qualification, read only
 #define OMX_PLUGIN_DB_LAYERS_CORRECTED "corrected" ///< renames, hidden controls and scale a person chose, written by the override module
 #define OMX_PLUGIN_DB_LAYERS_WARNED_OVERRIDE "warned-override" ///< a person's choice to run a refused plugin anyway, alone; it binds the pin it was written for and does not survive an upgrade
 #define OMX_PLUGIN_DB_LAYERS_OBSERVED "observed" ///< crash and xrun history, written by plugin-hostd and the engine
