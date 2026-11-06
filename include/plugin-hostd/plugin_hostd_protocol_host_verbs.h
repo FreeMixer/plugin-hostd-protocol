@@ -95,8 +95,8 @@ struct omx_host_verb {
 #define OMX_VERB_PIN_CLEAR "pin_clear"
 #define OMX_VERB_PIN_CLEAR_FMT "pin_clear %s"
 #define OMX_VERB_PIN_CLEAR_REPLY "resp 0"
-#define OMX_VERB_PIN_CLEAR_CODES_COUNT 2u
-#define OMX_VERB_PIN_CLEAR_CODES_INIT { -901, -902 } /* reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_PIN_CLEAR_CODES_COUNT 4u
+#define OMX_VERB_PIN_CLEAR_CODES_INIT { -901, -902, -540, -541 } /* reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.pinReload (data/verbs.json): Read the pin_file and the pins_dir files again and put the pins in at once; running instances keep running. */
 #define OMX_VERB_PIN_RELOAD "pin_reload"
@@ -116,8 +116,8 @@ struct omx_host_verb {
 #define OMX_VERB_PIN_ACCEPT "pin_accept"
 #define OMX_VERB_PIN_ACCEPT_FMT "pin_accept %s"
 #define OMX_VERB_PIN_ACCEPT_REPLY "resp 0"
-#define OMX_VERB_PIN_ACCEPT_CODES_COUNT 5u
-#define OMX_VERB_PIN_ACCEPT_CODES_INIT { -508, -509, -516, -901, -902 } /* reply.host.pin-absent, reply.plugin-hostd.pin-binary-mismatch, reply.plugin-hostd.pin-refused, reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_PIN_ACCEPT_CODES_COUNT 7u
+#define OMX_VERB_PIN_ACCEPT_CODES_INIT { -508, -509, -516, -901, -902, -540, -541 } /* reply.host.pin-absent, reply.plugin-hostd.pin-binary-mismatch, reply.plugin-hostd.pin-refused, reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.pinLayout (data/verbs.json): Sent by the daemon to a worker that checks layouts, after it accepted an add whose layout pin is unknown: the layout the worker found after init. */
 #define OMX_VERB_PIN_LAYOUT "pin_layout"
@@ -198,8 +198,8 @@ struct omx_host_verb {
 #define OMX_VERB_HISTORY_CLEAR "history_clear"
 #define OMX_VERB_HISTORY_CLEAR_FMT "history_clear %s"
 #define OMX_VERB_HISTORY_CLEAR_REPLY "resp 0"
-#define OMX_VERB_HISTORY_CLEAR_CODES_COUNT 2u
-#define OMX_VERB_HISTORY_CLEAR_CODES_INIT { -901, -902 } /* reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_HISTORY_CLEAR_CODES_COUNT 4u
+#define OMX_VERB_HISTORY_CLEAR_CODES_INIT { -901, -902, -540, -541 } /* reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.plan (data/verbs.json): The instances, in signal order, are planned into the fewest workers their pins and costs allow: <chain> <instance> [<instance> ...]. Each run of consecutive members that may share a worker becomes a chain of place chain:<chain>.<k>, the others stay alone in a worker of their own; the reply names the segments in order, the members of a segment joined by commas and the segments by semicolons, then the same with each member replaced by -, the core field, which the setting placement leaves empty because it pins a worker to the whole set of audio cores and not to one core. With the setting grouping off the plan is answered and kept, and nothing moves. */
 #define OMX_VERB_PLAN "plan"

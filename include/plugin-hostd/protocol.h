@@ -385,7 +385,13 @@ static inline int phd_pool_name_valid(const char *name)
     X(CURVE_UNIT_REFUSED, OMX_REPLY_PLUGIN_HOSTD_CURVE_UNIT_REFUSED_RESP, OMX_VERB_CURVE_BIND " of a term in a unit its role " \
                           "does not take: nothing of the line is kept") \
     X(CURVE_POINTS_RANGE, OMX_REPLY_PLUGIN_HOSTD_CURVE_POINTS_RANGE_RESP, OMX_VERB_CURVE_POINTS " of fewer than 2 points or " \
-                          "more than a curve carries, three anchors a drawn band counted, or of a band index past what fits")
+                          "more than a curve carries, three anchors a drawn band counted, or of a band index past what fits") \
+    X(DURABLE_WRITE_FAILED, OMX_REPLY_PLUGIN_HOSTD_DURABLE_WRITE_FAILED_RESP, "the daemon's writer thread could not " \
+                            "write the file the verb changes (" OMX_VERB_HISTORY_CLEAR ", " OMX_VERB_PIN_CLEAR ", " \
+                            OMX_VERB_PIN_ACCEPT "): the change is not on disk, and stderr names the path and the error") \
+    X(WRITER_QUEUE_FULL, OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL_RESP, "the daemon's writer queue holds its most writes " \
+                         "or bytes: the write the verb needs is refused and nothing of the verb changed; the controller " \
+                         "may send it again")
 
 /* ---------------------------------------------------------------- verbs */
 

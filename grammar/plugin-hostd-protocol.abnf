@@ -472,6 +472,8 @@ error-reply      = %s"resp -1 reply.host.instance-invalid"
                  / %s"resp -537 reply.plugin-hostd.curve-term-missing"
                  / %s"resp -538 reply.plugin-hostd.curve-unit-refused"
                  / %s"resp -539 reply.plugin-hostd.curve-points-range"
+                 / %s"resp -540 reply.plugin-hostd.durable-write-failed"
+                 / %s"resp -541 reply.plugin-hostd.writer-queue-full"
                  / %s"resp -901 reply.host.memory-allocation"
                  / %s"resp -902 reply.host.invalid-operation"
 

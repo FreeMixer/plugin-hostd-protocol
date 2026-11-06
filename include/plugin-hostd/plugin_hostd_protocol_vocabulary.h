@@ -77,6 +77,10 @@
 #define OMX_REPLY_PLUGIN_HOSTD_CURVE_UNIT_REFUSED_RESP (-538)
 #define OMX_REPLY_PLUGIN_HOSTD_CURVE_POINTS_RANGE "reply.plugin-hostd.curve-points-range" ///< curve_points of fewer than 2 points or more than the most a curve carries, an EQ's three anchors a drawn band counted, or of a band index past what fits
 #define OMX_REPLY_PLUGIN_HOSTD_CURVE_POINTS_RANGE_RESP (-539)
+#define OMX_REPLY_PLUGIN_HOSTD_DURABLE_WRITE_FAILED "reply.plugin-hostd.durable-write-failed" ///< the daemon's write of a file the verb changes (the history, a pin file) failed on its writer thread: the change is not on disk
+#define OMX_REPLY_PLUGIN_HOSTD_DURABLE_WRITE_FAILED_RESP (-540)
+#define OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL "reply.plugin-hostd.writer-queue-full" ///< the daemon's writer queue holds its most writes (64) or bytes (64 MiB): the write the verb needs was refused, and nothing of it changed
+#define OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL_RESP (-541)
 
 /* PLUGIN_HOSTD_PROTOCOL_EXTENSIONS (data/verbs.json) */
 #define OMX_PLUGIN_HOSTD_PROTOCOL_EXTENSIONS_TAGS "tags" ///< request tags: a line may start with @<tag>, and its answer then starts with the same @<tag>

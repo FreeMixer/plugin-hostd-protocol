@@ -173,6 +173,16 @@
         "code": "reply.plugin-hostd.curve-points-range",
         "resp": -539,
         "doc": "curve_points of fewer than 2 points or more than the most a curve carries, an EQ's three anchors a drawn band counted, or of a band index past what fits"
+      },
+      "durableWriteFailed": {
+        "code": "reply.plugin-hostd.durable-write-failed",
+        "resp": -540,
+        "doc": "the daemon's write of a file the verb changes (the history, a pin file) failed on its writer thread: the change is not on disk"
+      },
+      "writerQueueFull": {
+        "code": "reply.plugin-hostd.writer-queue-full",
+        "resp": -541,
+        "doc": "the daemon's writer queue holds its most writes (64) or bytes (64 MiB): the write the verb needs was refused, and nothing of it changed"
       }
     }
   },
@@ -345,6 +355,12 @@
           },
           {
             "ref": "HOST_REPLY_CODES.invalidOperation"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.durableWriteFailed"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.writerQueueFull"
           }
         ],
         "implementedBy": {
@@ -399,6 +415,12 @@
           },
           {
             "ref": "HOST_REPLY_CODES.invalidOperation"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.durableWriteFailed"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.writerQueueFull"
           }
         ],
         "implementedBy": {
@@ -670,6 +692,12 @@
           },
           {
             "ref": "HOST_REPLY_CODES.invalidOperation"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.durableWriteFailed"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.writerQueueFull"
           }
         ],
         "implementedBy": {
