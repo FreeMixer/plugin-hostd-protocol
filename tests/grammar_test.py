@@ -197,6 +197,63 @@ for a in answers:
 if error_answers == 0:
     fail("the golden transcript holds no refusal with its error word")
 
+# ---- the curve verbs' words (core.abnf, curve-binding) ----
+# the role and shape words are omx-dsp's: the grammar's alternatives, the words omx_curve.h holds, one for one
+def header_words(table_name):
+    import subprocess
+    try:
+        flags = subprocess.run(["pkg-config", "--cflags-only-I", "omxdsp"], capture_output=True, text=True,
+                               check=True).stdout.split()
+    except (OSError, subprocess.CalledProcessError):
+        fail("no omxdsp for pkg-config: the curve words cannot be held to omx_curve.h")
+        return []
+    for d in [f[2:] for f in flags] + ["/usr/include"]:
+        h = os.path.join(d, "omxdsp", "omx_curve.h")
+        if os.path.exists(h):
+            text = open(h, encoding="utf-8").read()
+            m = re.search(table_name + r"\[[A-Z_]+\] = \{([^}]*)\}", text)
+            if m:
+                return re.findall(r'"([^"]*)"', m.group(1))
+    fail(f"omx_curve.h declares no {table_name}")
+    return []
+
+
+def grammar_words(rule):
+    m = re.search(r"^" + rule + r" += ((?:.*\n)(?:  +.*\n)*)", text, re.M)
+    return re.findall(r'"([^"]*)"', m.group(1)) if m else []
+
+
+for rule, table_name in (("curve-role", "OMX_CURVE_ROLE_WORDS"), ("curve-shape", "OMX_CURVE_SHAPE_WORDS")):
+    have, want = grammar_words(rule), header_words(table_name)
+    if sorted(have) != sorted(want) or not want:
+        fail(f"{rule} is {have}, omx_curve.h's {table_name} is {want}")
+for line in ("clear", "transfer_curve dynamics threshold=thr:dbfs ratio=ratio:ratio knee=k:db makeup=g:db",
+             "eq_response eq band_freq.0=f_0:hz band_gain.0=g_0:coef band_q.0=w_0:oct band_type.0=ft_0@off|bell|lowshelf|highshelf",
+             "eq_response eq band_type.31=t-31@-|bell band_freq.31=f.31:khz@notch hpf_on=:bypass",
+             "transfer_curve gate threshold=t:db range=r:db knee_start=a:db knee_end=b:db ratio=q:coef"):
+    must("curve-binding", line, "a curve binding")
+    must("cmd-curve-bind", "curve_bind 3 0 " + line, "a curve_bind line")
+for line in ("", "clear threshold=t:db", "bar_graph dynamics threshold=t:db", "transfer_curve dynamics",
+             "transfer_curve dynamics threshold", "transfer_curve dynamics attack=a:ms", "eq_response eq band_freq.x=f:hz",
+             "eq_response eq band_freq.=f:hz", "transfer_curve dynamics threshold=", "transfer_curve dynamics threshold=t:",
+             "eq_response eq band_type.0=t@bell|wobble", "eq_response eq band_type.0=t@bell||notch",
+             "transfer_curve dynamics threshold=t/x:db", "transfer_curve Dynamics threshold=t:db"):
+    must_not("curve-binding", line, "not a curve binding")
+curve_replies = 0
+for a in answers:
+    if re.match(r"resp 0 \d+ \S+,", a):
+        must("curve-points-reply", a, "golden transcript, curve_points' reply")
+        curve_replies += 1
+if curve_replies == 0:
+    fail("the golden transcript holds no curve_points reply")
+for line in ("resp 0 1 20,0.0", "resp 0 2 20.00,1", "resp 0 0", "resp 0 3 x,0.00"):
+    must_not("curve-points-reply", line, "not a curve_points reply")
+with open(os.path.join(ROOT, "tests", "golden", "plugin-hostd-protocol.txt"), encoding="utf-8") as f:
+    golden = f.read().split("\n")
+for i, line in enumerate(golden[:-1]):
+    if line.startswith("> curve_bind ") and golden[i + 1] == "< resp 0":
+        must("curve-binding", line[2:].split(" ", 3)[3], "golden transcript, a curve_bind answered resp 0")
+
 # ---- refusals the grammar names ----
 for line in ("", "zzz 3", "add", "remove x", "set_bpm loud", "param_set 3 gain", "bypass 3", "Add urn:golden:amp 3",
              "remove  3", "remove 3 "):

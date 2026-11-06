@@ -1,13 +1,13 @@
 hello 1 errors seq tags
-quarantine_clear [!
-track_info -791 "18" "²" @͖
-@k- hello 55 "%!"
-hello -954
-midi_map 290 J -138 06 2 nan
-@_ chain_clear -37
-history_get ~
-@_ param_get_many -198 "" ! ""
-@9- add ^ -46 "Â" ""
-@.3- output_data_ready
-@_9 param_set_many -110 "Ƞ\"" nan !̣ N
-midi_learn -8 "\"\"" 3 +inf
+@. pin_changed
+@- lv2_worker_set "\"" ŀ
+@.. history_get ""
+param_set_many -7 ! .9E-8 "p\""
+@8NC note_off 98 -73 6 -5
+@R policy_set 0z Λ!(
+pin_reload
+cv_unmap 6 " \""
+@79 param_monitor 37 ! Ъǹ̄ inf
+@wt remove 8
+@.5- state_save ƭ*
+cc_map 054 Κ 55 -74 "" +infinity +73.E-842 -nan 9 -8 ʓ 5 "\""
