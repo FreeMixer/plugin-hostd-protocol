@@ -68,7 +68,7 @@ jobs:
       - name: omx-contract and omx-clap-core's and plugin-db's packages of the contract directory
         run: |
           set -euo pipefail
-          dnf -y install 'omx-contract >= 3.9.0' 'omx-contract < 4' 'omx-contract-devel >= 3.9.0' 'omx-contract-devel < 4' omx-clap-core-contract 'plugin-db-contract >= 0.1.0' 'plugin-db-contract < 0.2'
+          dnf -y install 'omx-contract >= 3.9.0' 'omx-contract < 4' 'omx-contract-devel >= 3.9.0' 'omx-contract-devel < 4' omx-clap-core-contract 'plugin-db-contract >= 0.2.0' 'plugin-db-contract < 0.3'
           if rpm -q plugin-hostd-contract; then echo "plugin-hostd-contract is installed: it declares the same items"; exit 1; fi
       - name: The python ABNF parser
         run: |

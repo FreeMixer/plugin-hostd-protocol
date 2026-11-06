@@ -7,6 +7,7 @@ plugin-hostd-protocol (0.4.0) unstable; urgency=medium
   * pin_accept of a plugin whose pin carries verdict=refused (pins_dir or
     pin_file) is the user's choice to load it anyway, alone in a worker of
     its own; pin_clear takes it back; -516 is no longer its answer.
+  * plugin_db_vocabulary.h is the render of plugin-db 0.2.0's words.
 
  -- Pau Aliagas <linuxnow@gmail.com>  Fri, 06 Nov 2026 01:30:00 +0100
 
