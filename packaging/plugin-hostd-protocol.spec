@@ -1,5 +1,5 @@
 Name: plugin-hostd-protocol
-Version: 0.4.0
+Version: 0.4.1
 Release: 1%{?dist}
 License: GPL-3.0-or-later
 Summary: The plugin-hostd protocol library, a superset of mod-host's text protocol
@@ -102,6 +102,16 @@ make test
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog
+* Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.1-1
+- A path of a pin, and the path of a clap: uri, is written percent-encoded:
+  a separator of pin_set, whitespace, '%', a quote, a backslash and a control
+  byte are %XX, so any file name is one word. protocol.h declares the escape
+  and phd_pin_path_encode() and phd_pin_path_decode()
+- add: a clap: uri whose path holds a space and is written bare is one uri;
+  phd_add_uri() is that reading, for every host that answers add
+- phd_headless_qt(): with no display, a host gives Qt the offscreen platform
+  unless the user set one, so a Qt-linked plugin (synthv1) does not abort
+  as it is instantiated
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.0-1
 - lv2_worker auto is no longer a word of the protocol: a plugin the chosen LV2
   worker refuses is answered with its code and never handed to another host.

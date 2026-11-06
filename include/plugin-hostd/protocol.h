@@ -49,6 +49,12 @@
 /* a worker prints a line ending with this once its socket accepts */
 #define PHD_WORKER_READY_MARKER "ready!"
 
+/* A host that loads plugins with no display gives Qt one that needs none: a plugin that makes a QApplication as it is
+ * instantiated (synthv1 and the other Qt-linked LV2 plugins) aborts when the platform plugin Qt picks cannot open a
+ * display. With neither DISPLAY nor WAYLAND_DISPLAY set, QT_QPA_PLATFORM is set to this unless the user set it:
+ * phd_headless_qt() of the library (utils.h), called before the host loads a plugin or starts a process that does */
+#define PHD_HEADLESS_QT_PLATFORM "offscreen"
+
 /* ---------------------------------------------------------------- constants */
 
 /* X(name, value, unit, meaning) */
@@ -377,12 +383,127 @@ static inline int phd_pool_name_valid(const char *name)
  * plugin_hostd_host_verbs.h, and pin_expect is omx-clap-core's, OMX_VERB_PIN_EXPECT */
 #define PHD_VERB_ADD              "add"
 
+/* The uri of an add, words[1] on, whole. A clap: uri is clap:<path>#<id>, its path percent-encoded or in quotation
+ * marks when it holds a space; written bare, the line's words split it. So a clap: word with no '#' goes on over the
+ * words after it up to the one that holds the '#', joined with one space each (a run of spaces is not told from one:
+ * such a path is written encoded or quoted). Returns words[1], or joined (size bytes) for a uri so joined; *next is the
+ * index of the word after the uri. A clap: word whose '#' no later word holds, or that does not fit, is its one word. */
+#define PHD_CLAP_URI_PREFIX "clap:"
+static inline const char *phd_add_uri(char *const *words, unsigned count, char *joined, size_t size, unsigned *next)
+{
+    unsigned i;
+    size_t used = 0;
+
+    *next = 2;
+    if (count < 2 || strncmp(words[1], PHD_CLAP_URI_PREFIX, strlen(PHD_CLAP_URI_PREFIX)) || strchr(words[1], '#'))
+        return count < 2 ? NULL : words[1];
+    for (i = 1; i < count; i++)
+    {
+        size_t n = strlen(words[i]) + (i > 1);
+
+        if (used + n + 1 > size)
+            return words[1];
+        if (i > 1)
+            joined[used++] = ' ';
+        memcpy(joined + used, words[i], n - (i > 1));
+        used += n - (i > 1);
+        joined[used] = '\0';
+        if (strchr(words[i], '#'))
+        {
+            *next = i + 1;
+            return joined;
+        }
+    }
+    return words[1];
+}
+
 /* the words of a pin: <path>=<sha256>, joined by ',', and <scheme>:<sha256> */
 #define PHD_PIN_FILE_SEPARATOR   ","
 #define PHD_PIN_DIGEST_SEPARATOR "="
 #define PHD_PIN_SCHEME_SEPARATOR ":"
-/* what a path of a pin cannot hold: the separators of pin_set's words, and whitespace */
+/* what a path of a pin cannot hold as it is: the separators of pin_set's words, and whitespace */
 #define PHD_PIN_PATH_EXCLUDED    PHD_PIN_FILE_SEPARATOR PHD_PIN_DIGEST_SEPARATOR " \t\r\n"
+/* A path of a pin, and the path of a clap: uri, is written percent-encoded: every byte of PHD_PIN_PATH_EXCLUDED, the
+ * escape itself, a double quote, a backslash and every control byte is PHD_PIN_PATH_ESCAPE and two uppercase hex
+ * digits, every other byte as it is. So any file name is one bare word ("Surge XT.clap" is "Surge%20XT.clap"), and a
+ * reader decodes it before it opens or hashes the file. */
+#define PHD_PIN_PATH_ESCAPE      "%"
+
+/* whether a byte of a path is written escaped */
+static inline int phd_pin_path_escaped(unsigned char c)
+{
+    return c < 0x20 || c == 0x7f || c == PHD_PIN_PATH_ESCAPE[0] || c == '"' || c == '\\' ||
+           (c && strchr(PHD_PIN_PATH_EXCLUDED, c) != NULL);
+}
+
+/* a path as the word of a pin: 0, or -1 when out (size bytes) cannot hold it */
+static inline int phd_pin_path_encode(const char *path, char *out, size_t size)
+{
+    static const char hex[] = "0123456789ABCDEF";
+    size_t o = 0;
+
+    for (; *path; path++)
+    {
+        unsigned char c = (unsigned char)*path;
+
+        if (phd_pin_path_escaped(c))
+        {
+            if (o + 4 > size)
+                return -1;
+            out[o++] = PHD_PIN_PATH_ESCAPE[0];
+            out[o++] = hex[c >> 4];
+            out[o++] = hex[c & 15];
+        }
+        else
+        {
+            if (o + 2 > size)
+                return -1;
+            out[o++] = (char)c;
+        }
+    }
+    if (o + 1 > size)
+        return -1;
+    out[o] = '\0';
+    return 0;
+}
+
+/* the hex digit's value, or -1 */
+static inline int phd_hex_value(char c)
+{
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    if (c >= 'a' && c <= 'f')
+        return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F')
+        return c - 'A' + 10;
+    return -1;
+}
+
+/* the path a word of a pin names: 0, or -1 for an escape not followed by two hex digits, an escaped NUL, or an out that
+ * cannot hold it. Hex digits are read in either case; a byte written as it is stays as it is */
+static inline int phd_pin_path_decode(const char *word, char *out, size_t size)
+{
+    size_t o = 0;
+
+    for (; *word; word++)
+    {
+        if (o + 2 > size)
+            return -1;
+        if (*word == PHD_PIN_PATH_ESCAPE[0])
+        {
+            int hi = phd_hex_value(word[1]), lo = hi < 0 ? -1 : phd_hex_value(word[2]);
+
+            if (lo < 0 || (hi | lo) == 0)
+                return -1;
+            out[o++] = (char)(hi * 16 + lo);
+            word += 2;
+        }
+        else
+            out[o++] = *word;
+    }
+    out[o] = '\0';
+    return 0;
+}
 /* the layout word of a pin whose layout has not been learned yet: a pin of the store, of a pins file or learned by the
  * daemon may hold it, pin_set may not */
 #define PHD_PIN_LAYOUT_UNKNOWN   "-"
@@ -438,9 +559,10 @@ static inline int phd_pool_name_valid(const char *name)
 
 /* what cannot be pinned, each a refusal and never a partial pin: X(id, meaning) */
 #define PHD_PIN_LIMITS(X) \
-    X(PATH, "a path holding '" PHD_PIN_FILE_SEPARATOR "', '" PHD_PIN_DIGEST_SEPARATOR "' or whitespace cannot be pinned: " \
-            "they are the separators of " OMX_VERB_PIN_SET "'s words, and " OMX_VERB_PIN_SET " refuses it as a token " \
-            "outside its grammar") \
+    X(PATH, "a path is pinned percent-encoded (" PHD_PIN_PATH_ESCAPE "XX): '" PHD_PIN_FILE_SEPARATOR "', '" \
+            PHD_PIN_DIGEST_SEPARATOR "', whitespace, '" PHD_PIN_PATH_ESCAPE "', a quote, a backslash and a control byte " \
+            "are escaped, so any file name is one word; a path holding one of them as it is, or a stray " \
+            PHD_PIN_PATH_ESCAPE ", is refused by " OMX_VERB_PIN_SET " as a token outside its grammar") \
     X(LINE, "a " OMX_VERB_PIN_SET " line is at most line_max, " PHD_STR(PHD_LINE_MAX) " bytes, the protocol socket's " \
             "buffer; a longer one is refused as outside the grammar") \
     X(MANIFEST, "a manifest that uses @base makes add answer " \

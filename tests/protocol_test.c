@@ -35,6 +35,8 @@
 #include "../include/host-dispatch.h"
 #include "../include/host-errors.h"
 #include "../include/host-scenario.h"
+#include "../include/plugin-hostd/protocol.h"
+#include "../include/utils.h"
 
 #define TEST_PORT_DEFAULT   15556
 #define TEST_BUFFER_SIZE    1024
@@ -242,6 +244,8 @@ static const host_backend_t g_fake_backend = {
 static const exchange_t g_fake_exchanges[] = {
     { "add http://x/y 3 chan1",     "resp 3" },
     { "add http://x/y 4",           "resp 4" },
+    { "add clap:/usr/lib/clap/Surge XT.clap#org.surge 5 chan2", "resp 5" },
+    { "add \"clap:/a b/c  d.clap#x\" 6", "resp 6" },
     { "bypass 3 1",                 "resp 0" },
     { "param_set 3 gain 0.5",       "resp 0" },
     { "param_get 3 gain",           "resp 0 0.5000" },
@@ -282,7 +286,8 @@ static const exchange_t g_fake_exchanges[] = {
 };
 
 static const char g_fake_calls[] =
-    "add(http://x/y,3,chan1) add(http://x/y,4,-) bypass(3,1) param_set(3,gain,0.500000) "
+    "add(http://x/y,3,chan1) add(http://x/y,4,-) add(clap:/usr/lib/clap/Surge XT.clap#org.surge,5,chan2) "
+    "add(clap:/a b/c  d.clap#x,6,-) bypass(3,1) param_set(3,gain,0.500000) "
     "param_get(3,gain) preset_load(3,urn:p) connect(a:out,b:in) disconnect(a:out,b:in) "
     "state_save(/tmp/s) state_load(/tmp/s) monitor_output(3,level) monitor_output(9,level) "
     "track_info(3,Kick \"In\" \xc3\xb1,#FF8000,bus) track_info(3,,-,-) track_info(3,Kick,#ff8000,-) "
@@ -757,11 +762,77 @@ static int run_session(int port, const host_backend_t *backend, int (*monitor_ou
     return 0;
 }
 
+/* the pin path words (PHD_PIN_PATH_ESCAPE) and the uri of an add (phd_add_uri), as protocol.h declares them */
+static int check_words(void)
+{
+    static const char *const paths[][2] = {
+        { "Surge XT.clap", "Surge%20XT.clap" },
+        { "a,b=c\td\r\ne", "a%2Cb%3Dc%09d%0D%0Ae" },
+        { "100% \"q\" \\", "100%25%20%22q%22%20%5C" },
+        { "sub/dir/\xc3\xb1.so", "sub/dir/\xc3\xb1.so" },
+        { "plain.so", "plain.so" },
+    };
+    static const char *const bad[] = { "a%", "a%2", "a%zz", "a%00b" };
+    char word[256], back[256], joined[64];
+    char *add[] = { "add", "clap:/x/Surge", "XT.clap#id", "5", "chan" };
+    char *one[] = { "add", "clap:/x/plain.clap#id", "5" };
+    char *lone[] = { "add", "clap:/x/no", "id", "5" };
+    unsigned n, next;
+    int failures = 0;
+    const char *uri;
+
+    for (n = 0; n < sizeof(paths) / sizeof(paths[0]); n++)
+    {
+        if (phd_pin_path_encode(paths[n][0], word, sizeof(word)) != 0 || strcmp(word, paths[n][1]))
+            failures++, printf("FAIL encode %s: got %s, want %s\n", paths[n][0], word, paths[n][1]);
+        else if (strpbrk(word, PHD_PIN_PATH_EXCLUDED "\"\\"))
+            failures++, printf("FAIL encode %s: %s is not one bare word\n", paths[n][0], word);
+        if (phd_pin_path_decode(word, back, sizeof(back)) != 0 || strcmp(back, paths[n][0]))
+            failures++, printf("FAIL decode %s: got %s\n", word, back);
+    }
+    if (phd_pin_path_decode("Surge%20xt%2c.clap", back, sizeof(back)) != 0 || strcmp(back, "Surge xt,.clap"))
+        failures++, printf("FAIL decode lowercase hex: got %s\n", back);
+    for (n = 0; n < sizeof(bad) / sizeof(bad[0]); n++)
+        if (phd_pin_path_decode(bad[n], back, sizeof(back)) == 0)
+            failures++, printf("FAIL decode %s: a stray or NUL escape is taken\n", bad[n]);
+    if (phd_pin_path_encode("Surge XT.clap", word, 15) == 0)
+        failures++, printf("FAIL encode: a word longer than its buffer is written\n");
+    uri = phd_add_uri(add, 5, joined, sizeof(joined), &next);
+    if (!uri || strcmp(uri, "clap:/x/Surge XT.clap#id") || next != 3)
+        failures++, printf("FAIL add uri split at a space: %s, next %u\n", uri ? uri : "(null)", next);
+    uri = phd_add_uri(one, 3, joined, sizeof(joined), &next);
+    if (uri != one[1] || next != 2)
+        failures++, printf("FAIL add uri of one word: %s, next %u\n", uri ? uri : "(null)", next);
+    uri = phd_add_uri(lone, 4, joined, sizeof(joined), &next);
+    if (uri != lone[1] || next != 2)
+        failures++, printf("FAIL add uri with no '#': %s, next %u\n", uri ? uri : "(null)", next);
+    uri = phd_add_uri(add, 5, joined, 10, &next);
+    if (uri != add[1] || next != 2)
+        failures++, printf("FAIL add uri too long for its buffer: %s, next %u\n", uri ? uri : "(null)", next);
+    /* no display: Qt is given offscreen; a platform the user set, or a display, is left alone */
+    unsetenv("DISPLAY"), unsetenv("WAYLAND_DISPLAY"), unsetenv("QT_QPA_PLATFORM");
+    phd_headless_qt();
+    if (!getenv("QT_QPA_PLATFORM") || strcmp(getenv("QT_QPA_PLATFORM"), PHD_HEADLESS_QT_PLATFORM))
+        failures++, printf("FAIL no display: QT_QPA_PLATFORM is %s\n", getenv("QT_QPA_PLATFORM") ? getenv("QT_QPA_PLATFORM") : "unset");
+    setenv("QT_QPA_PLATFORM", "xcb", 1);
+    phd_headless_qt();
+    if (strcmp(getenv("QT_QPA_PLATFORM"), "xcb"))
+        failures++, printf("FAIL the user's QT_QPA_PLATFORM is overwritten\n");
+    unsetenv("QT_QPA_PLATFORM"), setenv("WAYLAND_DISPLAY", "wayland-0", 1);
+    phd_headless_qt();
+    if (getenv("QT_QPA_PLATFORM"))
+        failures++, printf("FAIL a display is there and QT_QPA_PLATFORM is set\n");
+    unsetenv("WAYLAND_DISPLAY");
+    printf("%s\n", failures ? "pin path words FAILED" : "pin path words ok");
+    return failures;
+}
+
 int main(void)
 {
     const char *env = getenv("PROTOCOL_TEST_PORT");
     int port = env ? atoi(env) : TEST_PORT_DEFAULT;
 
+    g_failures += check_words();
     if (run_session(port, &g_fake_backend, fake_monitor_output, &g_fake_info, g_fake_exchanges, g_fake_calls) != 0)
         return 1;
     if (run_session(port, &g_empty_backend, NULL, &g_empty_info, g_empty_exchanges, "") != 0)

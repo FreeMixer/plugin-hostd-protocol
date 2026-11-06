@@ -24,6 +24,8 @@
 */
 
 #include "utils.h"
+#include "plugin-hostd/protocol.h"
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
@@ -248,4 +250,12 @@ char *str_duplicate(const char *str)
     char *copy = MALLOC(strlen(str) + 1);
     strcpy(copy, str);
     return copy;
+}
+
+void phd_headless_qt(void)
+{
+    const char *x = getenv("DISPLAY"), *wayland = getenv("WAYLAND_DISPLAY");
+
+    if ((!x || !*x) && (!wayland || !*wayland))
+        setenv("QT_QPA_PLATFORM", PHD_HEADLESS_QT_PLATFORM, 0);
 }
