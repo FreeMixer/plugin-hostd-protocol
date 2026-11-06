@@ -95,8 +95,8 @@ struct omx_host_verb {
 #define OMX_VERB_PIN_CLEAR "pin_clear"
 #define OMX_VERB_PIN_CLEAR_FMT "pin_clear %s"
 #define OMX_VERB_PIN_CLEAR_REPLY "resp 0"
-#define OMX_VERB_PIN_CLEAR_CODES_COUNT 2u
-#define OMX_VERB_PIN_CLEAR_CODES_INIT { -901, -902 } /* reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_PIN_CLEAR_CODES_COUNT 4u
+#define OMX_VERB_PIN_CLEAR_CODES_INIT { -901, -902, -540, -541 } /* reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.pinReload (data/verbs.json): Read the pin_file and the pins_dir files again and put the pins in at once; running instances keep running. */
 #define OMX_VERB_PIN_RELOAD "pin_reload"
@@ -116,8 +116,8 @@ struct omx_host_verb {
 #define OMX_VERB_PIN_ACCEPT "pin_accept"
 #define OMX_VERB_PIN_ACCEPT_FMT "pin_accept %s"
 #define OMX_VERB_PIN_ACCEPT_REPLY "resp 0"
-#define OMX_VERB_PIN_ACCEPT_CODES_COUNT 5u
-#define OMX_VERB_PIN_ACCEPT_CODES_INIT { -508, -509, -516, -901, -902 } /* reply.host.pin-absent, reply.plugin-hostd.pin-binary-mismatch, reply.plugin-hostd.pin-refused, reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_PIN_ACCEPT_CODES_COUNT 7u
+#define OMX_VERB_PIN_ACCEPT_CODES_INIT { -508, -509, -516, -901, -902, -540, -541 } /* reply.host.pin-absent, reply.plugin-hostd.pin-binary-mismatch, reply.plugin-hostd.pin-refused, reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.pinLayout (data/verbs.json): Sent by the daemon to a worker that checks layouts, after it accepted an add whose layout pin is unknown: the layout the worker found after init. */
 #define OMX_VERB_PIN_LAYOUT "pin_layout"
@@ -198,8 +198,8 @@ struct omx_host_verb {
 #define OMX_VERB_HISTORY_CLEAR "history_clear"
 #define OMX_VERB_HISTORY_CLEAR_FMT "history_clear %s"
 #define OMX_VERB_HISTORY_CLEAR_REPLY "resp 0"
-#define OMX_VERB_HISTORY_CLEAR_CODES_COUNT 2u
-#define OMX_VERB_HISTORY_CLEAR_CODES_INIT { -901, -902 } /* reply.host.memory-allocation, reply.host.invalid-operation */
+#define OMX_VERB_HISTORY_CLEAR_CODES_COUNT 4u
+#define OMX_VERB_HISTORY_CLEAR_CODES_INIT { -901, -902, -540, -541 } /* reply.host.memory-allocation, reply.host.invalid-operation, reply.plugin-hostd.durable-write-failed, reply.plugin-hostd.writer-queue-full */
 
 /* PLUGIN_HOSTD_VERBS.plan (data/verbs.json): The instances, in signal order, are planned into the fewest workers their pins and costs allow: <chain> <instance> [<instance> ...]. Each run of consecutive members that may share a worker becomes a chain of place chain:<chain>.<k>, the others stay alone in a worker of their own; the reply names the segments in order, the members of a segment joined by commas and the segments by semicolons, then the same with each member replaced by -, the core field, which the setting placement leaves empty because it pins a worker to the whole set of audio cores and not to one core. With the setting grouping off the plan is answered and kept, and nothing moves. */
 #define OMX_VERB_PLAN "plan"
@@ -250,7 +250,21 @@ struct omx_host_verb {
 #define OMX_VERB_PARAM_SET_MANY_CODES_COUNT 4u
 #define OMX_VERB_PARAM_SET_MANY_CODES_INIT { -3, -103, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.host.memory-allocation, reply.host.invalid-operation */
 
-#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 31u
+/* PLUGIN_HOSTD_PROTOCOL_VERBS.curveBind (data/verbs.json): Bind a display of an instance's panel description to the instance's parameters, for curve_points: <instance> <display> clear, or <instance> <display> <kind> <family> <term> [<term> ...], the display's index in the description, its kind (eq_response or transfer_curve) and family, and each term <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...] as the description gives the role: the parameter that plays it, its unit, and for a band_type the band shape of each choice value from 0 (a band_freq takes one shape, the band's fixed shape). The terms are added to the display's binding, a term of a role and index already bound replacing it; a line of another kind or family starts the binding again, and clear drops it. Every term is checked before any is kept: an instance that does not exist (-3), a symbol it does not have (-103), a family with no closed form for the kind (-536), a unit the role does not take (-538), a term the grammar does not take (-902). The binding lives with the instance and goes with its remove; it is never saved. */
+#define OMX_VERB_CURVE_BIND "curve_bind"
+#define OMX_VERB_CURVE_BIND_FMT "curve_bind %i %i %s ..."
+#define OMX_VERB_CURVE_BIND_REPLY "resp 0"
+#define OMX_VERB_CURVE_BIND_CODES_COUNT 6u
+#define OMX_VERB_CURVE_BIND_CODES_INIT { -3, -103, -536, -538, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.plugin-hostd.curve-kind-unknown, reply.plugin-hostd.curve-unit-refused, reply.host.memory-allocation, reply.host.invalid-operation */
+
+/* PLUGIN_HOSTD_PROTOCOL_VERBS.curvePoints (data/verbs.json): The points of a bound display: <instance> <display> <points>, the grid points asked for. Each bound symbol's value is read from the instance as it is now and the instance's rate with it, and omx-dsp's omx_curve_points draws them: an eq_response x in Hz and y in dB, the bands' anchors added (three a drawn band), a transfer_curve input dB to output dB. The reply is the count and each point x,y, x to four significant digits and y to 0.01 dB, ascending in x; at most curve_points_max (omx-dsp's CURVE_POINTS_MAX, 256) points. A display with no binding, or a binding without a term the model needs (-537); a band shape or slope with no closed form (-536); points outside 2 to curve_points_max, the anchors counted (-539); a value that is not finite or an instance not running at a rate (-902). */
+#define OMX_VERB_CURVE_POINTS "curve_points"
+#define OMX_VERB_CURVE_POINTS_FMT "curve_points %i %i %i"
+#define OMX_VERB_CURVE_POINTS_REPLY "resp 0 <count> <x>,<y> ..."
+#define OMX_VERB_CURVE_POINTS_CODES_COUNT 7u
+#define OMX_VERB_CURVE_POINTS_CODES_INIT { -3, -103, -536, -537, -539, -901, -902 } /* reply.host.instance-non-exists, reply.host.param-symbol-invalid, reply.plugin-hostd.curve-kind-unknown, reply.plugin-hostd.curve-term-missing, reply.plugin-hostd.curve-points-range, reply.host.memory-allocation, reply.host.invalid-operation */
+
+#define PLUGIN_HOSTD_PROTOCOL_HOST_VERB_COUNT 33u
 
 /* Every verb, in the order of its items, with what each host owes it. */
 static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void) {
@@ -286,6 +300,8 @@ static inline const struct omx_host_verb *plugin_hostd_protocol_host_verbs(void)
     { OMX_VERB_HELLO, OMX_VERB_HELLO_FMT, OMX_VERB_HELLO_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_PARAM_GET_MANY, OMX_VERB_PARAM_GET_MANY_FMT, OMX_VERB_PARAM_GET_MANY_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
     { OMX_VERB_PARAM_SET_MANY, OMX_VERB_PARAM_SET_MANY_FMT, OMX_VERB_PARAM_SET_MANY_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
+    { OMX_VERB_CURVE_BIND, OMX_VERB_CURVE_BIND_FMT, OMX_VERB_CURVE_BIND_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
+    { OMX_VERB_CURVE_POINTS, OMX_VERB_CURVE_POINTS_FMT, OMX_VERB_CURVE_POINTS_REPLY, { OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_OPTIONAL, OMX_HOST_VERB_UNSUPPORTED } },
   };
   return table;
 }

@@ -5,6 +5,8 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Build-Depends: debhelper-compat (= 13),
                libomx-contract-dev (>= 3.9.0~),
                libomx-contract-dev (<< 4~),
+               libomxdsp-dev (>= 0.32.0~),
+               libomxdsp-dev (<< 0.33~),
                pkgconf,
                python3
 Standards-Version: 4.6.2

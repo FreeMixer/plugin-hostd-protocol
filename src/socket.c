@@ -243,6 +243,54 @@ int socket_start(int socket_port, int feedback_port, int buffer_size)
 }
 
 
+int socket_adopt(int socket_fd, int feedback_fd, int buffer_size)
+{
+    struct sockaddr_in addr;
+    socklen_t len;
+    int type, i;
+    const int fds[2] = { socket_fd, feedback_fd };
+
+    /* each fd a bound TCP socket: a stream socket whose address names a port */
+    for (i = 0; i < 2; i++)
+    {
+        if (i == 1 && fds[i] < 0)
+            continue;
+        len = sizeof(type);
+        if (fds[i] < 0 || getsockopt(fds[i], SOL_SOCKET, SO_TYPE, &type, &len) != 0 || type != SOCK_STREAM)
+            return -1;
+        len = sizeof(addr);
+        memset(&addr, 0, sizeof(addr));
+        if (getsockname(fds[i], (struct sockaddr *) &addr, &len) != 0 || addr.sin_family != AF_INET || addr.sin_port == 0)
+            return -1;
+    }
+
+    g_clientfd = g_fbclientfd = INVALID_SOCKET;
+    g_serverfd = socket_fd;
+    g_fbserverfd = feedback_fd >= 0 ? feedback_fd : INVALID_SOCKET;
+
+#ifndef _WIN32
+    /* the caller's options stand, SO_REUSEPORT among them; only the receive buffer is socket_start's */
+    int value = 131071;
+    setsockopt(g_serverfd, SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
+    if (g_fbserverfd != INVALID_SOCKET)
+        setsockopt(g_fbserverfd, SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
+#endif
+
+    /* listen again is no error on a socket already listening */
+    if (listen(g_serverfd, -1) < 0 || (g_fbserverfd != INVALID_SOCKET && listen(g_fbserverfd, -1) < 0))
+    {
+        perror("listen error");
+        g_serverfd = g_fbserverfd = INVALID_SOCKET;
+        return -1;
+    }
+
+    g_receive_cb = NULL;
+    g_buffer_size = buffer_size;
+
+    return 0;
+}
+
+
 void socket_finish(void)
 {
     if (g_serverfd == INVALID_SOCKET)

@@ -83,6 +83,14 @@
 // authenticated: widen this only on a network whose hosts are trusted. Answers -1, the setting unchanged, for anything else
 int socket_set_bind_address(const char *address);
 int socket_start(int socket_port, int feedback_port, int buffer_size);
+// serves sockets the caller already bound instead of binding its own, as socket_start serves the ports it binds: a
+// supervisor or a test harness binds the command port (and the feedback port, or -1 for none), keeps the address its
+// own while it starts the program, and hands it the fds, so no port is ever closed and bound again in between (the
+// bind 0, close, rebind a harness did let another process take the port). Each fd is a TCP socket bound to an IPv4
+// address and port; its options are the caller's (socket_start sets SO_REUSEPORT, this does not), and it is put to
+// listen. socket_finish closes them. Answers 0, or -1 for an fd that is no bound TCP socket, nothing served then
+#define SOCKET_HAS_ADOPT 1
+int socket_adopt(int socket_fd, int feedback_fd, int buffer_size);
 void socket_finish(void);
 void socket_set_receive_cb(void (*receive_cb)(msg_t *msg));
 void socket_set_idle_cb(void (*idle_cb)(void));

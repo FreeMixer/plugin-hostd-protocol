@@ -87,146 +87,194 @@
 < resp -3
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -3
+= sample_rate(3)
+# scenario-24 answer 0
+> curve_points 3 0 3
+< resp -3
+= sample_rate(3)
+# scenario-25 answer 0
+> curve_points 3 1 3
+< resp -3
+= sample_rate(3)
+# scenario-26 answer 0
+> curve_points 3 0 1
+< resp -3
+= sample_rate(3)
+# scenario-27 answer 0
+> curve_points 9 0 3
+< resp -537
+= sample_rate(9)
+# scenario-28 answer 0
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp 0
+= sample_rate(9) param_get(9,gain)
+# scenario-29 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -3
+= sample_rate(3)
+# scenario-30 answer 0
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -3
+= sample_rate(3)
+# scenario-31 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -3
+= sample_rate(3)
+# scenario-32 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -3
+= sample_rate(3)
+# scenario-33 answer 0
+> curve_bind 3 0 clear
+< resp -3
+= sample_rate(3)
+# scenario-34 answer 0
+> curve_points 3 0 3
+< resp -3
+= sample_rate(3)
+# scenario-35 answer 0
 > preset_load 3 urn:no:such:preset
 < resp -3
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 0
+# scenario-36 answer 0
 > state_save /tmp/golden
 < resp -2
 = state_save(/tmp/golden)
-# scenario-25 answer 0
+# scenario-37 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-26 answer 0
+# scenario-38 answer 0
 > add urn:golden:amp 3
 < resp -3
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 0
+# scenario-39 answer 0
 > state_load /tmp/golden
 < resp -2
 = state_load(/tmp/golden)
-# scenario-28 answer 0
+# scenario-40 answer 0
 > connect a:out b:in
 < resp 0
 = connect(a:out,b:in)
-# scenario-29 answer 0
+# scenario-41 answer 0
 > disconnect a:out b:in
 < resp 0
 = disconnect(a:out,b:in)
-# scenario-30 answer 0
+# scenario-42 answer 0
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 0
+# scenario-43 answer 0
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 0
+# scenario-44 answer 0
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 0
+# scenario-45 answer 0
 > remote_pages 9
 < resp 1
 = remote_pages(9)
-# scenario-34 answer 0
+# scenario-46 answer 0
 > remote_page_get 9 0
 < resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
 = remote_page_get(9,0)
-# scenario-35 answer 0
+# scenario-47 answer 0
 > param_info 9 gain
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(9,gain)
-# scenario-36 answer 0
+# scenario-48 answer 0
 > param_info 3 no_such_symbol
 < resp -3
 = param_info(3,no_such_symbol)
-# scenario-37 answer 0
+# scenario-49 answer 0
 > param_info 3 :bypass
 < resp -3
 = param_info(3,:bypass)
-# scenario-38 answer 0
+# scenario-50 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-39 answer 0
+# scenario-51 answer 0
 > remove 3
 < resp -3
 = remove(3)
-# scenario-40 answer 0
+# scenario-52 answer 0
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 0
+# scenario-53 answer 0
 > @t1 param_get 9 gain
 < @t1 resp 0 2.2500
 = param_get(9,gain)
-# scenario-42 answer 0
+# scenario-54 answer 0
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp 0
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 0
+# scenario-55 answer 0
 > @t-3 bypass 9 1
 < @t-3 resp 0
 = bypass(9,1)
-# scenario-44 answer 0
+# scenario-56 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-45 answer 0
+# scenario-57 answer 0
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 0
+# scenario-58 answer 0
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 0
+# scenario-59 answer 0
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 0
+# scenario-60 answer 0
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 0
+# scenario-61 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-50 answer 0
+# scenario-62 answer 0
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 0
+# scenario-63 answer 0
 > @e1 bypass 9 1
 < @e1 resp 0
 = bypass(9,1)
-# scenario-52 answer 0
+# scenario-64 answer 0
 > @e2 param_set 9 gain 0.5
 < @e2 resp 0
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 0
+# scenario-65 answer 0
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 0
+# scenario-66 answer 0
 > param_get 9 gain
 < resp 0 2.2500
 = param_get(9,gain)
-# scenario-55 answer 0
+# scenario-67 answer 0
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 0
+# scenario-68 answer 0
 > @s1 param_get 9 gain
 < @s1 resp 0 2.2500
 = param_get(9,gain)
-# scenario-57 answer 0
+# scenario-69 answer 0
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 0
+# scenario-70 answer 0
 > hello 0 tags
 < resp -902
 = 
@@ -298,10 +346,38 @@
 > add urn:x 5 ... c
 < resp -101
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 0
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -3
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 0
+> curve_points 3 0 128
+< resp -3
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 0
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -3
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 0
+> curve_points 3 0 300
+< resp -3
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 0
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -3
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 0
+> curve_bind 3 1 clear extra
+< resp -3
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -3
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 0
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -3
@@ -335,109 +411,153 @@
 < resp -3
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 0
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -3
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 0
-> param_get 9 gain
-< resp 0 2.2500
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -3
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 0
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 0
-> param_get_many 3 gain :bypass
-< resp -3
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp 0
+= sample_rate(9) param_get(9,gain)
 # fuzz/corpus/protocol/scenario-14 answer 0
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 0
-> param_get_many 9 gain
-< resp 0 2.2500
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -3
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 0
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -3
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 0
-> param_info 3 no_such_symbol
-< resp -3
-= param_info(3,no_such_symbol)
+> curve_points 9 0 3
+< resp -537
+= sample_rate(9) param_get(9,gain)
 # fuzz/corpus/protocol/scenario-18 answer 0
-> param_info 9 gain
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(9,gain)
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 0
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -3
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 0
 > add urn:no:such:plugin 4
 < resp -4
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 0
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -3
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 0
-> param_set 9 gain 0.5
-< resp 0
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 0
-> param_set_many 3 gain 0.5
-< resp -3 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 0
+> param_get 3 no_such_symbol
+< resp -3
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 0
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -3 1
+> param_get_many 3 gain
+< resp -3
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 0
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -3
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 0
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -3
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 0
-> remote_page_get 9 0
-< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
-= remote_page_get(9,0)
+> param_get_many 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 0
-> remote_pages 9
-< resp 1
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 0
-> remove 3
+> param_info 3 :bypass
 < resp -3
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 0
+> param_info 3 no_such_symbol
+< resp -3
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 0
-> state_load /tmp/state
-< resp -1
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 0
 > bypass 3 0
 < resp -3
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 0
-> state_save /tmp/state
-< resp -1
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -3
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 0
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -3
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 0
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 0
+> param_set_many 3 gain 0.5
+< resp -3 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 0
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -3 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 0
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 0
+> remote_page_get 9 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 0
+> remote_pages 9
+< resp 1
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 0
+> remove 3
+< resp -3
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 0
 > bypass 3 1
 < resp -3
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 0
+> state_load /tmp/state
+< resp -1
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 0
+> state_save /tmp/state
+< resp -1
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 0
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 0
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 0
 > bypass 9 1
 < resp 0
@@ -447,17 +567,17 @@
 < resp -902
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 0
-> disconnect system:capture_1 system:playback_1
-< resp -902
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -3
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 0
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -3
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 0
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 0
 > cpu_load
 < not found
@@ -526,10 +646,38 @@
 > add urn:x 5 ... c
 < resp -101
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 0
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -3
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 0
+> curve_points 3 0 128
+< resp -3
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 0
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -3
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 0
+> curve_points 3 0 300
+< resp -3
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 0
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -3
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 0
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 0
+> curve_bind 3 1 clear extra
+< resp -3
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 0
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -3
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 0
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -3
@@ -575,109 +723,153 @@
 < resp -3
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 0
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -3
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 0
-> param_get 9 gain
-< resp 0 2.2500
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -3
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 0
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 0
-> param_get_many 3 gain :bypass
-< resp -3
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp 0
+= sample_rate(9) param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 0
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 0
-> param_get_many 9 gain
-< resp 0 2.2500
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -3
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 0
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -3
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 0
-> param_info 3 no_such_symbol
-< resp -3
-= param_info(3,no_such_symbol)
+> curve_points 9 0 3
+< resp -537
+= sample_rate(9) param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-18 answer 0
-> param_info 9 gain
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(9,gain)
+> disconnect system:capture_1 system:playback_1
+< resp -902
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 0
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -3
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 0
 > add urn:no:such:plugin 4
 < resp -4
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 0
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -3
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 0
-> param_set 9 gain 0.5
-< resp 0
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 0
-> param_set_many 3 gain 0.5
-< resp -3 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 0
+> param_get 3 no_such_symbol
+< resp -3
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 0
+> param_get 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 0
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -3 1
+> param_get_many 3 gain
+< resp -3
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 0
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -3
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 0
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -3
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 0
-> remote_page_get 9 0
-< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
-= remote_page_get(9,0)
+> param_get_many 9 gain
+< resp 0 2.2500
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 0
-> remote_pages 9
-< resp 1
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 0
-> remove 3
+> param_info 3 :bypass
 < resp -3
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 0
+> param_info 3 no_such_symbol
+< resp -3
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 0
-> state_load /tmp/state
-< resp -1
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 0
 > bypass 3 0
 < resp -3
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 0
-> state_save /tmp/state
-< resp -1
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -3
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 0
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -3
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 0
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp 0
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 0
+> param_set_many 3 gain 0.5
+< resp -3 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 0
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -3 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 0
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 0
+> preset_load 3 urn:no:such:preset
+< resp -3
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 0
+> remote_page_get 9 0
+< resp 0 0 "Main \\"A\\"\\" "Page" gain - gain - gain - gain -
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 0
+> remote_pages 9
+< resp 1
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 0
+> remove 3
+< resp -3
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 0
 > bypass 3 1
 < resp -3
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 0
+> state_load /tmp/state
+< resp -1
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 0
+> state_save /tmp/state
+< resp -1
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 0
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 0
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 0
 > bypass 9 1
 < resp 0
@@ -687,17 +879,17 @@
 < resp -902
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 0
-> disconnect system:capture_1 system:playback_1
-< resp -902
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -3
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 0
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -3
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 0
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -3
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 0
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -823,146 +1015,194 @@
 < resp -4
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -4
+= sample_rate(3)
+# scenario-24 answer 1
+> curve_points 3 0 3
+< resp -4
+= sample_rate(3)
+# scenario-25 answer 1
+> curve_points 3 1 3
+< resp -4
+= sample_rate(3)
+# scenario-26 answer 1
+> curve_points 3 0 1
+< resp -4
+= sample_rate(3)
+# scenario-27 answer 1
+> curve_points 9 0 3
+< resp -1
+= sample_rate(9)
+# scenario-28 answer 1
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -1
+= sample_rate(9)
+# scenario-29 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -4
+= sample_rate(3)
+# scenario-30 answer 1
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -4
+= sample_rate(3)
+# scenario-31 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -4
+= sample_rate(3)
+# scenario-32 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -4
+= sample_rate(3)
+# scenario-33 answer 1
+> curve_bind 3 0 clear
+< resp -4
+= sample_rate(3)
+# scenario-34 answer 1
+> curve_points 3 0 3
+< resp -4
+= sample_rate(3)
+# scenario-35 answer 1
 > preset_load 3 urn:no:such:preset
 < resp -4
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 1
+# scenario-36 answer 1
 > state_save /tmp/golden
 < resp -3
 = state_save(/tmp/golden)
-# scenario-25 answer 1
+# scenario-37 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-26 answer 1
+# scenario-38 answer 1
 > add urn:golden:amp 3
 < resp -4
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 1
+# scenario-39 answer 1
 > state_load /tmp/golden
 < resp -3
 = state_load(/tmp/golden)
-# scenario-28 answer 1
+# scenario-40 answer 1
 > connect a:out b:in
 < resp -1
 = connect(a:out,b:in)
-# scenario-29 answer 1
+# scenario-41 answer 1
 > disconnect a:out b:in
 < resp -1
 = disconnect(a:out,b:in)
-# scenario-30 answer 1
+# scenario-42 answer 1
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 1
+# scenario-43 answer 1
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 1
+# scenario-44 answer 1
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 1
+# scenario-45 answer 1
 > remote_pages 9
 < resp -1
 = remote_pages(9)
-# scenario-34 answer 1
+# scenario-46 answer 1
 > remote_page_get 9 0
 < resp -1
 = remote_page_get(9,0)
-# scenario-35 answer 1
+# scenario-47 answer 1
 > param_info 9 gain
 < resp -1
 = param_info(9,gain)
-# scenario-36 answer 1
+# scenario-48 answer 1
 > param_info 3 no_such_symbol
 < resp -4
 = param_info(3,no_such_symbol)
-# scenario-37 answer 1
+# scenario-49 answer 1
 > param_info 3 :bypass
 < resp -4
 = param_info(3,:bypass)
-# scenario-38 answer 1
+# scenario-50 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-39 answer 1
+# scenario-51 answer 1
 > remove 3
 < resp -4
 = remove(3)
-# scenario-40 answer 1
+# scenario-52 answer 1
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 1
+# scenario-53 answer 1
 > @t1 param_get 9 gain
 < @t1 resp -1
 = param_get(9,gain)
-# scenario-42 answer 1
+# scenario-54 answer 1
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -1
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 1
+# scenario-55 answer 1
 > @t-3 bypass 9 1
 < @t-3 resp -1
 = bypass(9,1)
-# scenario-44 answer 1
+# scenario-56 answer 1
 > param_get 9 gain
 < resp -1
 = param_get(9,gain)
-# scenario-45 answer 1
+# scenario-57 answer 1
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 1
+# scenario-58 answer 1
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 1
+# scenario-59 answer 1
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 1
+# scenario-60 answer 1
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 1
+# scenario-61 answer 1
 > param_get 9 gain
 < resp -1 reply.host.instance-invalid
 = param_get(9,gain)
-# scenario-50 answer 1
+# scenario-62 answer 1
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 1
+# scenario-63 answer 1
 > @e1 bypass 9 1
 < @e1 resp -1 reply.host.instance-invalid
 = bypass(9,1)
-# scenario-52 answer 1
+# scenario-64 answer 1
 > @e2 param_set 9 gain 0.5
 < @e2 resp -1 reply.host.instance-invalid
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 1
+# scenario-65 answer 1
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 1
+# scenario-66 answer 1
 > param_get 9 gain
 < resp -1
 = param_get(9,gain)
-# scenario-55 answer 1
+# scenario-67 answer 1
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 1
+# scenario-68 answer 1
 > @s1 param_get 9 gain
 < @s1 resp -1
 = param_get(9,gain)
-# scenario-57 answer 1
+# scenario-69 answer 1
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 1
+# scenario-70 answer 1
 > hello 0 tags
 < resp -902
 = 
@@ -1034,10 +1274,38 @@
 > add urn:x 5 ... c
 < resp -902
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 1
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -4
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 1
+> curve_points 3 0 128
+< resp -4
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 1
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -4
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 1
+> curve_points 3 0 300
+< resp -4
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 1
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -4
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 1
+> curve_bind 3 1 clear extra
+< resp -4
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -4
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 1
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -4
@@ -1071,109 +1339,153 @@
 < resp -4
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 1
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -4
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 1
-> param_get 9 gain
-< resp -1
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -4
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 1
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 1
-> param_get_many 3 gain :bypass
-< resp -4
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -1
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 1
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 1
-> param_get_many 9 gain
-< resp -1
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -4
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 1
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -4
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 1
-> param_info 3 no_such_symbol
-< resp -4
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 1
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -1
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 1
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -4
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 1
 > add urn:no:such:plugin 4
 < resp -101
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 1
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -4
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 1
-> param_set 9 gain 0.5
-< resp -1
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 1
-> param_set_many 3 gain 0.5
-< resp -4 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 1
+> param_get 3 no_such_symbol
+< resp -4
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 1
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -4 1
+> param_get_many 3 gain
+< resp -4
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 1
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -4
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 1
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -4
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 1
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -1
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 1
-> remote_pages 9
-< resp -1
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 1
-> remove 3
+> param_info 3 :bypass
 < resp -4
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 1
+> param_info 3 no_such_symbol
+< resp -4
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 1
-> state_load /tmp/state
-< resp -2
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -1
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 1
 > bypass 3 0
 < resp -4
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 1
-> state_save /tmp/state
-< resp -2
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -4
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 1
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -4
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 1
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 1
+> param_set_many 3 gain 0.5
+< resp -4 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 1
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -4 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 1
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 1
+> remote_page_get 9 0
+< resp -1
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 1
+> remote_pages 9
+< resp -1
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 1
+> remove 3
+< resp -4
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 1
 > bypass 3 1
 < resp -4
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 1
+> state_load /tmp/state
+< resp -2
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 1
+> state_save /tmp/state
+< resp -2
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 1
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 1
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 1
 > bypass 9 1
 < resp -1
@@ -1183,17 +1495,17 @@
 < resp -205
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 1
-> disconnect system:capture_1 system:playback_1
-< resp -205
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -4
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 1
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -4
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 1
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 1
 > cpu_load
 < not found
@@ -1262,10 +1574,38 @@
 > add urn:x 5 ... c
 < resp -902
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 1
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -4
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 1
+> curve_points 3 0 128
+< resp -4
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 1
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -4
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 1
+> curve_points 3 0 300
+< resp -4
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 1
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -4
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 1
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 1
+> curve_bind 3 1 clear extra
+< resp -4
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 1
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -4
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 1
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -4
@@ -1311,109 +1651,153 @@
 < resp -4
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 1
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -4
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 1
-> param_get 9 gain
-< resp -1
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -4
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 1
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 1
-> param_get_many 3 gain :bypass
-< resp -4
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -1
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 1
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 1
-> param_get_many 9 gain
-< resp -1
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -4
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 1
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -4
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 1
-> param_info 3 no_such_symbol
-< resp -4
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 1
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -1
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 1
+> disconnect system:capture_1 system:playback_1
+< resp -205
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 1
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -4
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 1
 > add urn:no:such:plugin 4
 < resp -101
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 1
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -4
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 1
-> param_set 9 gain 0.5
-< resp -1
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 1
-> param_set_many 3 gain 0.5
-< resp -4 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 1
+> param_get 3 no_such_symbol
+< resp -4
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 1
+> param_get 9 gain
+< resp -1
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 1
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -4 1
+> param_get_many 3 gain
+< resp -4
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 1
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -4
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 1
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -4
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 1
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -1
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 1
-> remote_pages 9
-< resp -1
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 1
-> remove 3
+> param_info 3 :bypass
 < resp -4
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 1
+> param_info 3 no_such_symbol
+< resp -4
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 1
-> state_load /tmp/state
-< resp -2
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -1
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 1
 > bypass 3 0
 < resp -4
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 1
-> state_save /tmp/state
-< resp -2
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -4
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 1
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -4
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 1
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -1
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 1
+> param_set_many 3 gain 0.5
+< resp -4 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 1
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -4 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 1
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 1
+> preset_load 3 urn:no:such:preset
+< resp -4
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 1
+> remote_page_get 9 0
+< resp -1
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 1
+> remote_pages 9
+< resp -1
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 1
+> remove 3
+< resp -4
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 1
 > bypass 3 1
 < resp -4
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 1
+> state_load /tmp/state
+< resp -2
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 1
+> state_save /tmp/state
+< resp -2
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 1
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 1
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 1
 > bypass 9 1
 < resp -1
@@ -1423,17 +1807,17 @@
 < resp -205
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 1
-> disconnect system:capture_1 system:playback_1
-< resp -205
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -4
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 1
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -4
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 1
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -4
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 1
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -1559,146 +1943,194 @@
 < resp -101
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -101
+= sample_rate(3)
+# scenario-24 answer 2
+> curve_points 3 0 3
+< resp -101
+= sample_rate(3)
+# scenario-25 answer 2
+> curve_points 3 1 3
+< resp -101
+= sample_rate(3)
+# scenario-26 answer 2
+> curve_points 3 0 1
+< resp -101
+= sample_rate(3)
+# scenario-27 answer 2
+> curve_points 9 0 3
+< resp -2
+= sample_rate(9)
+# scenario-28 answer 2
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -2
+= sample_rate(9)
+# scenario-29 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -101
+= sample_rate(3)
+# scenario-30 answer 2
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -101
+= sample_rate(3)
+# scenario-31 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -101
+= sample_rate(3)
+# scenario-32 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -101
+= sample_rate(3)
+# scenario-33 answer 2
+> curve_bind 3 0 clear
+< resp -101
+= sample_rate(3)
+# scenario-34 answer 2
+> curve_points 3 0 3
+< resp -101
+= sample_rate(3)
+# scenario-35 answer 2
 > preset_load 3 urn:no:such:preset
 < resp -101
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 2
+# scenario-36 answer 2
 > state_save /tmp/golden
 < resp -4
 = state_save(/tmp/golden)
-# scenario-25 answer 2
+# scenario-37 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-26 answer 2
+# scenario-38 answer 2
 > add urn:golden:amp 3
 < resp -101
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 2
+# scenario-39 answer 2
 > state_load /tmp/golden
 < resp -4
 = state_load(/tmp/golden)
-# scenario-28 answer 2
+# scenario-40 answer 2
 > connect a:out b:in
 < resp -2
 = connect(a:out,b:in)
-# scenario-29 answer 2
+# scenario-41 answer 2
 > disconnect a:out b:in
 < resp -2
 = disconnect(a:out,b:in)
-# scenario-30 answer 2
+# scenario-42 answer 2
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 2
+# scenario-43 answer 2
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 2
+# scenario-44 answer 2
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 2
+# scenario-45 answer 2
 > remote_pages 9
 < resp -2
 = remote_pages(9)
-# scenario-34 answer 2
+# scenario-46 answer 2
 > remote_page_get 9 0
 < resp -2
 = remote_page_get(9,0)
-# scenario-35 answer 2
+# scenario-47 answer 2
 > param_info 9 gain
 < resp -2
 = param_info(9,gain)
-# scenario-36 answer 2
+# scenario-48 answer 2
 > param_info 3 no_such_symbol
 < resp -101
 = param_info(3,no_such_symbol)
-# scenario-37 answer 2
+# scenario-49 answer 2
 > param_info 3 :bypass
 < resp -101
 = param_info(3,:bypass)
-# scenario-38 answer 2
+# scenario-50 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-39 answer 2
+# scenario-51 answer 2
 > remove 3
 < resp -101
 = remove(3)
-# scenario-40 answer 2
+# scenario-52 answer 2
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 2
+# scenario-53 answer 2
 > @t1 param_get 9 gain
 < @t1 resp -2
 = param_get(9,gain)
-# scenario-42 answer 2
+# scenario-54 answer 2
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -2
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 2
+# scenario-55 answer 2
 > @t-3 bypass 9 1
 < @t-3 resp -2
 = bypass(9,1)
-# scenario-44 answer 2
+# scenario-56 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-45 answer 2
+# scenario-57 answer 2
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 2
+# scenario-58 answer 2
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 2
+# scenario-59 answer 2
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 2
+# scenario-60 answer 2
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 2
+# scenario-61 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-50 answer 2
+# scenario-62 answer 2
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 2
+# scenario-63 answer 2
 > @e1 bypass 9 1
 < @e1 resp -2
 = bypass(9,1)
-# scenario-52 answer 2
+# scenario-64 answer 2
 > @e2 param_set 9 gain 0.5
 < @e2 resp -2
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 2
+# scenario-65 answer 2
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 2
+# scenario-66 answer 2
 > param_get 9 gain
 < resp -2
 = param_get(9,gain)
-# scenario-55 answer 2
+# scenario-67 answer 2
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 2
+# scenario-68 answer 2
 > @s1 param_get 9 gain
 < @s1 resp -2
 = param_get(9,gain)
-# scenario-57 answer 2
+# scenario-69 answer 2
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 2
+# scenario-70 answer 2
 > hello 0 tags
 < resp -902
 = 
@@ -1770,10 +2202,38 @@
 > add urn:x 5 ... c
 < resp -205
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 2
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -101
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 2
+> curve_points 3 0 128
+< resp -101
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 2
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -101
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 2
+> curve_points 3 0 300
+< resp -101
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 2
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -101
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 2
+> curve_bind 3 1 clear extra
+< resp -101
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -101
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 2
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -101
@@ -1807,109 +2267,153 @@
 < resp -101
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 2
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -101
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 2
-> param_get 9 gain
-< resp -2
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -101
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 2
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 2
-> param_get_many 3 gain :bypass
-< resp -101
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -2
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 2
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 2
-> param_get_many 9 gain
-< resp -2
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -101
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 2
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -101
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 2
-> param_info 3 no_such_symbol
-< resp -101
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 2
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -2
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 2
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -101
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 2
 > add urn:no:such:plugin 4
 < resp -902
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 2
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -101
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 2
-> param_set 9 gain 0.5
-< resp -2
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 2
-> param_set_many 3 gain 0.5
-< resp -101 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 2
+> param_get 3 no_such_symbol
+< resp -101
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 2
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -101 1
+> param_get_many 3 gain
+< resp -101
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 2
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -101
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 2
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -101
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 2
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -2
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 2
-> remote_pages 9
-< resp -2
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 2
-> remove 3
+> param_info 3 :bypass
 < resp -101
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 2
+> param_info 3 no_such_symbol
+< resp -101
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 2
-> state_load /tmp/state
-< resp -3
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -2
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 2
 > bypass 3 0
 < resp -101
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 2
-> state_save /tmp/state
-< resp -3
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -101
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 2
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -101
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 2
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 2
+> param_set_many 3 gain 0.5
+< resp -101 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 2
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -101 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 2
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 2
+> remote_page_get 9 0
+< resp -2
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 2
+> remote_pages 9
+< resp -2
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 2
+> remove 3
+< resp -101
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 2
 > bypass 3 1
 < resp -101
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 2
+> state_load /tmp/state
+< resp -3
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 2
+> state_save /tmp/state
+< resp -3
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 2
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 2
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 2
 > bypass 9 1
 < resp -2
@@ -1919,17 +2423,17 @@
 < resp -105
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 2
-> disconnect system:capture_1 system:playback_1
-< resp -105
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -101
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 2
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -101
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 2
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 2
 > cpu_load
 < not found
@@ -1998,10 +2502,38 @@
 > add urn:x 5 ... c
 < resp -205
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 2
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -101
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 2
+> curve_points 3 0 128
+< resp -101
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 2
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -101
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 2
+> curve_points 3 0 300
+< resp -101
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 2
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -101
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 2
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 2
+> curve_bind 3 1 clear extra
+< resp -101
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 2
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -101
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 2
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -101
@@ -2047,109 +2579,153 @@
 < resp -101
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 2
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -101
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 2
-> param_get 9 gain
-< resp -2
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -101
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 2
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 2
-> param_get_many 3 gain :bypass
-< resp -101
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -2
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 2
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 2
-> param_get_many 9 gain
-< resp -2
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -101
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 2
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -101
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 2
-> param_info 3 no_such_symbol
-< resp -101
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 2
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -2
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 2
+> disconnect system:capture_1 system:playback_1
+< resp -105
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 2
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -101
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 2
 > add urn:no:such:plugin 4
 < resp -902
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 2
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -101
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 2
-> param_set 9 gain 0.5
-< resp -2
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 2
-> param_set_many 3 gain 0.5
-< resp -101 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 2
+> param_get 3 no_such_symbol
+< resp -101
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 2
+> param_get 9 gain
+< resp -2
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 2
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -101 1
+> param_get_many 3 gain
+< resp -101
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 2
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -101
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 2
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -101
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 2
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -2
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 2
-> remote_pages 9
-< resp -2
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 2
-> remove 3
+> param_info 3 :bypass
 < resp -101
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 2
+> param_info 3 no_such_symbol
+< resp -101
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 2
-> state_load /tmp/state
-< resp -3
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -2
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 2
 > bypass 3 0
 < resp -101
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 2
-> state_save /tmp/state
-< resp -3
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -101
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 2
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -101
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 2
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -2
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 2
+> param_set_many 3 gain 0.5
+< resp -101 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 2
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -101 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 2
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 2
+> preset_load 3 urn:no:such:preset
+< resp -101
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 2
+> remote_page_get 9 0
+< resp -2
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 2
+> remote_pages 9
+< resp -2
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 2
+> remove 3
+< resp -101
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 2
 > bypass 3 1
 < resp -101
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 2
+> state_load /tmp/state
+< resp -3
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 2
+> state_save /tmp/state
+< resp -3
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 2
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 2
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 2
 > bypass 9 1
 < resp -2
@@ -2159,17 +2735,17 @@
 < resp -105
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 2
-> disconnect system:capture_1 system:playback_1
-< resp -105
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -101
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 2
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -101
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 2
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -101
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 2
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -2295,146 +2871,194 @@
 < resp -902
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -902
+= sample_rate(3)
+# scenario-24 answer 3
+> curve_points 3 0 3
+< resp -902
+= sample_rate(3)
+# scenario-25 answer 3
+> curve_points 3 1 3
+< resp -902
+= sample_rate(3)
+# scenario-26 answer 3
+> curve_points 3 0 1
+< resp -902
+= sample_rate(3)
+# scenario-27 answer 3
+> curve_points 9 0 3
+< resp -3
+= sample_rate(9)
+# scenario-28 answer 3
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -3
+= sample_rate(9)
+# scenario-29 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -902
+= sample_rate(3)
+# scenario-30 answer 3
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -902
+= sample_rate(3)
+# scenario-31 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -902
+= sample_rate(3)
+# scenario-32 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -902
+= sample_rate(3)
+# scenario-33 answer 3
+> curve_bind 3 0 clear
+< resp -902
+= sample_rate(3)
+# scenario-34 answer 3
+> curve_points 3 0 3
+< resp -902
+= sample_rate(3)
+# scenario-35 answer 3
 > preset_load 3 urn:no:such:preset
 < resp -902
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 3
+# scenario-36 answer 3
 > state_save /tmp/golden
 < resp -101
 = state_save(/tmp/golden)
-# scenario-25 answer 3
+# scenario-37 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-26 answer 3
+# scenario-38 answer 3
 > add urn:golden:amp 3
 < resp -902
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 3
+# scenario-39 answer 3
 > state_load /tmp/golden
 < resp -101
 = state_load(/tmp/golden)
-# scenario-28 answer 3
+# scenario-40 answer 3
 > connect a:out b:in
 < resp -3
 = connect(a:out,b:in)
-# scenario-29 answer 3
+# scenario-41 answer 3
 > disconnect a:out b:in
 < resp -3
 = disconnect(a:out,b:in)
-# scenario-30 answer 3
+# scenario-42 answer 3
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 3
+# scenario-43 answer 3
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 3
+# scenario-44 answer 3
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 3
+# scenario-45 answer 3
 > remote_pages 9
 < resp -3
 = remote_pages(9)
-# scenario-34 answer 3
+# scenario-46 answer 3
 > remote_page_get 9 0
 < resp -3
 = remote_page_get(9,0)
-# scenario-35 answer 3
+# scenario-47 answer 3
 > param_info 9 gain
 < resp -3
 = param_info(9,gain)
-# scenario-36 answer 3
+# scenario-48 answer 3
 > param_info 3 no_such_symbol
 < resp -902
 = param_info(3,no_such_symbol)
-# scenario-37 answer 3
+# scenario-49 answer 3
 > param_info 3 :bypass
 < resp -902
 = param_info(3,:bypass)
-# scenario-38 answer 3
+# scenario-50 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-39 answer 3
+# scenario-51 answer 3
 > remove 3
 < resp -902
 = remove(3)
-# scenario-40 answer 3
+# scenario-52 answer 3
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 3
+# scenario-53 answer 3
 > @t1 param_get 9 gain
 < @t1 resp -3
 = param_get(9,gain)
-# scenario-42 answer 3
+# scenario-54 answer 3
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -3
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 3
+# scenario-55 answer 3
 > @t-3 bypass 9 1
 < @t-3 resp -3
 = bypass(9,1)
-# scenario-44 answer 3
+# scenario-56 answer 3
 > param_get 9 gain
 < resp -3
 = param_get(9,gain)
-# scenario-45 answer 3
+# scenario-57 answer 3
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 3
+# scenario-58 answer 3
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 3
+# scenario-59 answer 3
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 3
+# scenario-60 answer 3
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 3
+# scenario-61 answer 3
 > param_get 9 gain
 < resp -3 reply.host.instance-non-exists
 = param_get(9,gain)
-# scenario-50 answer 3
+# scenario-62 answer 3
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 3
+# scenario-63 answer 3
 > @e1 bypass 9 1
 < @e1 resp -3 reply.host.instance-non-exists
 = bypass(9,1)
-# scenario-52 answer 3
+# scenario-64 answer 3
 > @e2 param_set 9 gain 0.5
 < @e2 resp -3 reply.host.instance-non-exists
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 3
+# scenario-65 answer 3
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 3
+# scenario-66 answer 3
 > param_get 9 gain
 < resp -3
 = param_get(9,gain)
-# scenario-55 answer 3
+# scenario-67 answer 3
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 3
+# scenario-68 answer 3
 > @s1 param_get 9 gain
 < @s1 resp -3
 = param_get(9,gain)
-# scenario-57 answer 3
+# scenario-69 answer 3
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 3
+# scenario-70 answer 3
 > hello 0 tags
 < resp -902
 = 
@@ -2506,10 +3130,38 @@
 > add urn:x 5 ... c
 < resp -105
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 3
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 3
+> curve_points 3 0 128
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 3
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 3
+> curve_points 3 0 300
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 3
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 3
+> curve_bind 3 1 clear extra
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 3
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -902
@@ -2543,109 +3195,153 @@
 < resp -902
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 3
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -902
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 3
-> param_get 9 gain
-< resp -3
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 3
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 3
-> param_get_many 3 gain :bypass
-< resp -902
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -3
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 3
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 3
-> param_get_many 9 gain
-< resp -3
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 3
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -902
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 3
-> param_info 3 no_such_symbol
-< resp -902
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 3
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -3
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 3
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -902
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 3
 > add urn:no:such:plugin 4
 < resp -205
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 3
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -902
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 3
-> param_set 9 gain 0.5
-< resp -3
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 3
-> param_set_many 3 gain 0.5
-< resp -902 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 3
+> param_get 3 no_such_symbol
+< resp -902
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 3
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -902 1
+> param_get_many 3 gain
+< resp -902
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 3
-> patch_set 3 urn:no:such:property 1
+> param_get_many 3 gain :bypass
 < resp -902
-= 
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 3
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -902
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 3
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -3
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 3
-> remote_pages 9
-< resp -3
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 3
-> remove 3
+> param_info 3 :bypass
 < resp -902
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 3
+> param_info 3 no_such_symbol
+< resp -902
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 3
-> state_load /tmp/state
-< resp -4
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -3
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 3
 > bypass 3 0
 < resp -902
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 3
-> state_save /tmp/state
-< resp -4
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -902
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 3
-> track_info 3 Kick #FF800
+> param_set 3 no_such_symbol 0.5
 < resp -902
-= 
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 3
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 3
+> param_set_many 3 gain 0.5
+< resp -902 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 3
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -902 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 3
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 3
+> remote_page_get 9 0
+< resp -3
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 3
+> remote_pages 9
+< resp -3
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 3
+> remove 3
+< resp -902
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 3
 > bypass 3 1
 < resp -902
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 3
+> state_load /tmp/state
+< resp -4
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 3
+> state_save /tmp/state
+< resp -4
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 3
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 3
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 3
 > bypass 9 1
 < resp -3
@@ -2655,17 +3351,17 @@
 < resp 0
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 3
-> disconnect system:capture_1 system:playback_1
-< resp 0
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 3
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -902
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 3
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 3
 > cpu_load
 < not found
@@ -2734,10 +3430,38 @@
 > add urn:x 5 ... c
 < resp -105
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 3
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 3
+> curve_points 3 0 128
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 3
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 3
+> curve_points 3 0 300
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 3
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 3
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 3
+> curve_bind 3 1 clear extra
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 3
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 3
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -902
@@ -2783,109 +3507,153 @@
 < resp -902
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 3
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -902
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 3
-> param_get 9 gain
-< resp -3
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 3
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 3
-> param_get_many 3 gain :bypass
-< resp -902
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -3
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 3
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 3
-> param_get_many 9 gain
-< resp -3
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 3
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -902
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 3
-> param_info 3 no_such_symbol
-< resp -902
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 3
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -3
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 3
+> disconnect system:capture_1 system:playback_1
+< resp 0
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 3
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -902
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 3
 > add urn:no:such:plugin 4
 < resp -205
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 3
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -902
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 3
-> param_set 9 gain 0.5
-< resp -3
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 3
-> param_set_many 3 gain 0.5
-< resp -902 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 3
+> param_get 3 no_such_symbol
+< resp -902
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 3
+> param_get 9 gain
+< resp -3
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 3
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -902 1
+> param_get_many 3 gain
+< resp -902
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 3
-> patch_set 3 urn:no:such:property 1
+> param_get_many 3 gain :bypass
 < resp -902
-= 
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 3
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -902
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 3
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -3
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 3
-> remote_pages 9
-< resp -3
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 3
-> remove 3
+> param_info 3 :bypass
 < resp -902
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 3
+> param_info 3 no_such_symbol
+< resp -902
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 3
-> state_load /tmp/state
-< resp -4
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -3
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 3
 > bypass 3 0
 < resp -902
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 3
-> state_save /tmp/state
-< resp -4
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -902
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 3
-> track_info 3 Kick #FF800
+> param_set 3 no_such_symbol 0.5
 < resp -902
-= 
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 3
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -3
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 3
+> param_set_many 3 gain 0.5
+< resp -902 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 3
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -902 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 3
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 3
+> preset_load 3 urn:no:such:preset
+< resp -902
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 3
+> remote_page_get 9 0
+< resp -3
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 3
+> remote_pages 9
+< resp -3
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 3
+> remove 3
+< resp -902
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 3
 > bypass 3 1
 < resp -902
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 3
+> state_load /tmp/state
+< resp -4
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 3
+> state_save /tmp/state
+< resp -4
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 3
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 3
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 3
 > bypass 9 1
 < resp -3
@@ -2895,17 +3663,17 @@
 < resp 0
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 3
-> disconnect system:capture_1 system:playback_1
-< resp 0
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 3
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -902
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 3
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -902
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 3
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -3031,146 +3799,194 @@
 < resp -205
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -205
+= sample_rate(3)
+# scenario-24 answer 4
+> curve_points 3 0 3
+< resp -205
+= sample_rate(3)
+# scenario-25 answer 4
+> curve_points 3 1 3
+< resp -205
+= sample_rate(3)
+# scenario-26 answer 4
+> curve_points 3 0 1
+< resp -205
+= sample_rate(3)
+# scenario-27 answer 4
+> curve_points 9 0 3
+< resp -4
+= sample_rate(9)
+# scenario-28 answer 4
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -4
+= sample_rate(9)
+# scenario-29 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -205
+= sample_rate(3)
+# scenario-30 answer 4
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -205
+= sample_rate(3)
+# scenario-31 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -205
+= sample_rate(3)
+# scenario-32 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -205
+= sample_rate(3)
+# scenario-33 answer 4
+> curve_bind 3 0 clear
+< resp -205
+= sample_rate(3)
+# scenario-34 answer 4
+> curve_points 3 0 3
+< resp -205
+= sample_rate(3)
+# scenario-35 answer 4
 > preset_load 3 urn:no:such:preset
 < resp -205
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 4
+# scenario-36 answer 4
 > state_save /tmp/golden
 < resp -902
 = state_save(/tmp/golden)
-# scenario-25 answer 4
+# scenario-37 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-26 answer 4
+# scenario-38 answer 4
 > add urn:golden:amp 3
 < resp -205
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 4
+# scenario-39 answer 4
 > state_load /tmp/golden
 < resp -902
 = state_load(/tmp/golden)
-# scenario-28 answer 4
+# scenario-40 answer 4
 > connect a:out b:in
 < resp -4
 = connect(a:out,b:in)
-# scenario-29 answer 4
+# scenario-41 answer 4
 > disconnect a:out b:in
 < resp -4
 = disconnect(a:out,b:in)
-# scenario-30 answer 4
+# scenario-42 answer 4
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 4
+# scenario-43 answer 4
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 4
+# scenario-44 answer 4
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 4
+# scenario-45 answer 4
 > remote_pages 9
 < resp -4
 = remote_pages(9)
-# scenario-34 answer 4
+# scenario-46 answer 4
 > remote_page_get 9 0
 < resp -4
 = remote_page_get(9,0)
-# scenario-35 answer 4
+# scenario-47 answer 4
 > param_info 9 gain
 < resp -4
 = param_info(9,gain)
-# scenario-36 answer 4
+# scenario-48 answer 4
 > param_info 3 no_such_symbol
 < resp -205
 = param_info(3,no_such_symbol)
-# scenario-37 answer 4
+# scenario-49 answer 4
 > param_info 3 :bypass
 < resp -205
 = param_info(3,:bypass)
-# scenario-38 answer 4
+# scenario-50 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-39 answer 4
+# scenario-51 answer 4
 > remove 3
 < resp -205
 = remove(3)
-# scenario-40 answer 4
+# scenario-52 answer 4
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 4
+# scenario-53 answer 4
 > @t1 param_get 9 gain
 < @t1 resp -4
 = param_get(9,gain)
-# scenario-42 answer 4
+# scenario-54 answer 4
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -4
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 4
+# scenario-55 answer 4
 > @t-3 bypass 9 1
 < @t-3 resp -4
 = bypass(9,1)
-# scenario-44 answer 4
+# scenario-56 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-45 answer 4
+# scenario-57 answer 4
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 4
+# scenario-58 answer 4
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 4
+# scenario-59 answer 4
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 4
+# scenario-60 answer 4
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 4
+# scenario-61 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-50 answer 4
+# scenario-62 answer 4
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 4
+# scenario-63 answer 4
 > @e1 bypass 9 1
 < @e1 resp -4
 = bypass(9,1)
-# scenario-52 answer 4
+# scenario-64 answer 4
 > @e2 param_set 9 gain 0.5
 < @e2 resp -4
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 4
+# scenario-65 answer 4
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 4
+# scenario-66 answer 4
 > param_get 9 gain
 < resp -4
 = param_get(9,gain)
-# scenario-55 answer 4
+# scenario-67 answer 4
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 4
+# scenario-68 answer 4
 > @s1 param_get 9 gain
 < @s1 resp -4
 = param_get(9,gain)
-# scenario-57 answer 4
+# scenario-69 answer 4
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 4
+# scenario-70 answer 4
 > hello 0 tags
 < resp -902
 = 
@@ -3242,10 +4058,38 @@
 > add urn:x 5 ... c
 < resp 5
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 4
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -205
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 4
+> curve_points 3 0 128
+< resp -205
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 4
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -205
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 4
+> curve_points 3 0 300
+< resp -205
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 4
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -205
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 4
+> curve_bind 3 1 clear extra
+< resp -205
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -205
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 4
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -205
@@ -3279,109 +4123,153 @@
 < resp -205
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 4
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -205
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 4
-> param_get 9 gain
-< resp -4
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -205
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 4
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 4
-> param_get_many 3 gain :bypass
-< resp -205
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -4
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 4
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 4
-> param_get_many 9 gain
-< resp -4
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -205
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 4
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -205
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 4
-> param_info 3 no_such_symbol
-< resp -205
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 4
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -4
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 4
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -205
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 4
 > add urn:no:such:plugin 4
 < resp -105
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 4
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -205
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 4
-> param_set 9 gain 0.5
-< resp -4
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 4
-> param_set_many 3 gain 0.5
-< resp -205 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 4
+> param_get 3 no_such_symbol
+< resp -205
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 4
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -205 1
+> param_get_many 3 gain
+< resp -205
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 4
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -205
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 4
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -205
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 4
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -4
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 4
-> remote_pages 9
-< resp -4
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 4
-> remove 3
+> param_info 3 :bypass
 < resp -205
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 4
+> param_info 3 no_such_symbol
+< resp -205
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 4
-> state_load /tmp/state
-< resp -101
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -4
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 4
 > bypass 3 0
 < resp -205
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 4
-> state_save /tmp/state
-< resp -101
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -205
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 4
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -205
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 4
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 4
+> param_set_many 3 gain 0.5
+< resp -205 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 4
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -205 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 4
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 4
+> remote_page_get 9 0
+< resp -4
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 4
+> remote_pages 9
+< resp -4
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 4
+> remove 3
+< resp -205
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 4
 > bypass 3 1
 < resp -205
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 4
+> state_load /tmp/state
+< resp -101
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 4
+> state_save /tmp/state
+< resp -101
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 4
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 4
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 4
 > bypass 9 1
 < resp -4
@@ -3391,17 +4279,17 @@
 < resp -1
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 4
-> disconnect system:capture_1 system:playback_1
-< resp -1
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -205
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 4
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -205
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 4
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 4
 > cpu_load
 < not found
@@ -3470,10 +4358,38 @@
 > add urn:x 5 ... c
 < resp 5
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 4
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -205
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 4
+> curve_points 3 0 128
+< resp -205
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 4
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -205
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 4
+> curve_points 3 0 300
+< resp -205
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 4
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -205
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 4
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 4
+> curve_bind 3 1 clear extra
+< resp -205
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 4
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -205
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 4
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -205
@@ -3519,109 +4435,153 @@
 < resp -205
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 4
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -205
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 4
-> param_get 9 gain
-< resp -4
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -205
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 4
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 4
-> param_get_many 3 gain :bypass
-< resp -205
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -4
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 4
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 4
-> param_get_many 9 gain
-< resp -4
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -205
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 4
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -205
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 4
-> param_info 3 no_such_symbol
-< resp -205
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 4
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -4
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 4
+> disconnect system:capture_1 system:playback_1
+< resp -1
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 4
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -205
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 4
 > add urn:no:such:plugin 4
 < resp -105
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 4
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -205
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 4
-> param_set 9 gain 0.5
-< resp -4
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 4
-> param_set_many 3 gain 0.5
-< resp -205 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 4
+> param_get 3 no_such_symbol
+< resp -205
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 4
+> param_get 9 gain
+< resp -4
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 4
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -205 1
+> param_get_many 3 gain
+< resp -205
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 4
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -205
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 4
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -205
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 4
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -4
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 4
-> remote_pages 9
-< resp -4
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 4
-> remove 3
+> param_info 3 :bypass
 < resp -205
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 4
+> param_info 3 no_such_symbol
+< resp -205
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 4
-> state_load /tmp/state
-< resp -101
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -4
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 4
 > bypass 3 0
 < resp -205
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 4
-> state_save /tmp/state
-< resp -101
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -205
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 4
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -205
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 4
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -4
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 4
+> param_set_many 3 gain 0.5
+< resp -205 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 4
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -205 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 4
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 4
+> preset_load 3 urn:no:such:preset
+< resp -205
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 4
+> remote_page_get 9 0
+< resp -4
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 4
+> remote_pages 9
+< resp -4
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 4
+> remove 3
+< resp -205
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 4
 > bypass 3 1
 < resp -205
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 4
+> state_load /tmp/state
+< resp -101
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 4
+> state_save /tmp/state
+< resp -101
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 4
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 4
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 4
 > bypass 9 1
 < resp -4
@@ -3631,17 +4591,17 @@
 < resp -1
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 4
-> disconnect system:capture_1 system:playback_1
-< resp -1
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -205
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 4
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -205
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 4
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -205
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 4
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -3767,146 +4727,194 @@
 < resp -105
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -105
+= sample_rate(3)
+# scenario-24 answer 5
+> curve_points 3 0 3
+< resp -105
+= sample_rate(3)
+# scenario-25 answer 5
+> curve_points 3 1 3
+< resp -105
+= sample_rate(3)
+# scenario-26 answer 5
+> curve_points 3 0 1
+< resp -105
+= sample_rate(3)
+# scenario-27 answer 5
+> curve_points 9 0 3
+< resp -101
+= sample_rate(9)
+# scenario-28 answer 5
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -101
+= sample_rate(9)
+# scenario-29 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -105
+= sample_rate(3)
+# scenario-30 answer 5
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -105
+= sample_rate(3)
+# scenario-31 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -105
+= sample_rate(3)
+# scenario-32 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -105
+= sample_rate(3)
+# scenario-33 answer 5
+> curve_bind 3 0 clear
+< resp -105
+= sample_rate(3)
+# scenario-34 answer 5
+> curve_points 3 0 3
+< resp -105
+= sample_rate(3)
+# scenario-35 answer 5
 > preset_load 3 urn:no:such:preset
 < resp -105
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 5
+# scenario-36 answer 5
 > state_save /tmp/golden
 < resp -205
 = state_save(/tmp/golden)
-# scenario-25 answer 5
+# scenario-37 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-26 answer 5
+# scenario-38 answer 5
 > add urn:golden:amp 3
 < resp -105
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 5
+# scenario-39 answer 5
 > state_load /tmp/golden
 < resp -205
 = state_load(/tmp/golden)
-# scenario-28 answer 5
+# scenario-40 answer 5
 > connect a:out b:in
 < resp -101
 = connect(a:out,b:in)
-# scenario-29 answer 5
+# scenario-41 answer 5
 > disconnect a:out b:in
 < resp -101
 = disconnect(a:out,b:in)
-# scenario-30 answer 5
+# scenario-42 answer 5
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 5
+# scenario-43 answer 5
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 5
+# scenario-44 answer 5
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 5
+# scenario-45 answer 5
 > remote_pages 9
 < resp -101
 = remote_pages(9)
-# scenario-34 answer 5
+# scenario-46 answer 5
 > remote_page_get 9 0
 < resp -101
 = remote_page_get(9,0)
-# scenario-35 answer 5
+# scenario-47 answer 5
 > param_info 9 gain
 < resp -101
 = param_info(9,gain)
-# scenario-36 answer 5
+# scenario-48 answer 5
 > param_info 3 no_such_symbol
 < resp -105
 = param_info(3,no_such_symbol)
-# scenario-37 answer 5
+# scenario-49 answer 5
 > param_info 3 :bypass
 < resp -105
 = param_info(3,:bypass)
-# scenario-38 answer 5
+# scenario-50 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-39 answer 5
+# scenario-51 answer 5
 > remove 3
 < resp -105
 = remove(3)
-# scenario-40 answer 5
+# scenario-52 answer 5
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 5
+# scenario-53 answer 5
 > @t1 param_get 9 gain
 < @t1 resp -101
 = param_get(9,gain)
-# scenario-42 answer 5
+# scenario-54 answer 5
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -101
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 5
+# scenario-55 answer 5
 > @t-3 bypass 9 1
 < @t-3 resp -101
 = bypass(9,1)
-# scenario-44 answer 5
+# scenario-56 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-45 answer 5
+# scenario-57 answer 5
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 5
+# scenario-58 answer 5
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 5
+# scenario-59 answer 5
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 5
+# scenario-60 answer 5
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 5
+# scenario-61 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-50 answer 5
+# scenario-62 answer 5
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 5
+# scenario-63 answer 5
 > @e1 bypass 9 1
 < @e1 resp -101
 = bypass(9,1)
-# scenario-52 answer 5
+# scenario-64 answer 5
 > @e2 param_set 9 gain 0.5
 < @e2 resp -101
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 5
+# scenario-65 answer 5
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 5
+# scenario-66 answer 5
 > param_get 9 gain
 < resp -101
 = param_get(9,gain)
-# scenario-55 answer 5
+# scenario-67 answer 5
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 5
+# scenario-68 answer 5
 > @s1 param_get 9 gain
 < @s1 resp -101
 = param_get(9,gain)
-# scenario-57 answer 5
+# scenario-69 answer 5
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 5
+# scenario-70 answer 5
 > hello 0 tags
 < resp -902
 = 
@@ -3978,10 +4986,38 @@
 > add urn:x 5 ... c
 < resp -1
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 5
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -105
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 5
+> curve_points 3 0 128
+< resp -105
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 5
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -105
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 5
+> curve_points 3 0 300
+< resp -105
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 5
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -105
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 5
+> curve_bind 3 1 clear extra
+< resp -105
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -105
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 5
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -105
@@ -4015,109 +5051,153 @@
 < resp -105
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 5
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -105
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 5
-> param_get 9 gain
-< resp -101
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -105
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 5
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 5
-> param_get_many 3 gain :bypass
-< resp -105
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -101
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 5
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 5
-> param_get_many 9 gain
-< resp -101
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -105
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 5
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -105
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 5
-> param_info 3 no_such_symbol
-< resp -105
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 5
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -101
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 5
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -105
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 5
 > add urn:no:such:plugin 4
 < resp 4
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 5
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -105
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 5
-> param_set 9 gain 0.5
-< resp -101
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 5
-> param_set_many 3 gain 0.5
-< resp -105 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 5
+> param_get 3 no_such_symbol
+< resp -105
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 5
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -105 1
+> param_get_many 3 gain
+< resp -105
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 5
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -105
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 5
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -105
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 5
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -101
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 5
-> remote_pages 9
-< resp -101
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 5
-> remove 3
+> param_info 3 :bypass
 < resp -105
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 5
+> param_info 3 no_such_symbol
+< resp -105
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 5
-> state_load /tmp/state
-< resp -902
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -101
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 5
 > bypass 3 0
 < resp -105
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 5
-> state_save /tmp/state
-< resp -902
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -105
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 5
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -105
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 5
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 5
+> param_set_many 3 gain 0.5
+< resp -105 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 5
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -105 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 5
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 5
+> remote_page_get 9 0
+< resp -101
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 5
+> remote_pages 9
+< resp -101
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 5
+> remove 3
+< resp -105
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 5
 > bypass 3 1
 < resp -105
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 5
+> state_load /tmp/state
+< resp -902
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 5
+> state_save /tmp/state
+< resp -902
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 5
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 5
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 5
 > bypass 9 1
 < resp -101
@@ -4127,17 +5207,17 @@
 < resp -2
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 5
-> disconnect system:capture_1 system:playback_1
-< resp -2
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -105
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 5
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -105
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 5
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 5
 > cpu_load
 < not found
@@ -4206,10 +5286,38 @@
 > add urn:x 5 ... c
 < resp -1
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 5
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -105
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 5
+> curve_points 3 0 128
+< resp -105
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 5
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -105
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 5
+> curve_points 3 0 300
+< resp -105
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 5
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -105
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 5
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 5
+> curve_bind 3 1 clear extra
+< resp -105
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 5
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -105
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 5
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -105
@@ -4255,109 +5363,153 @@
 < resp -105
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 5
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -105
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 5
-> param_get 9 gain
-< resp -101
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -105
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 5
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 5
-> param_get_many 3 gain :bypass
-< resp -105
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -101
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 5
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 5
-> param_get_many 9 gain
-< resp -101
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -105
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 5
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -105
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 5
-> param_info 3 no_such_symbol
-< resp -105
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 5
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -101
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 5
+> disconnect system:capture_1 system:playback_1
+< resp -2
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 5
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -105
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 5
 > add urn:no:such:plugin 4
 < resp 4
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 5
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -105
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 5
-> param_set 9 gain 0.5
-< resp -101
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 5
-> param_set_many 3 gain 0.5
-< resp -105 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 5
+> param_get 3 no_such_symbol
+< resp -105
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 5
+> param_get 9 gain
+< resp -101
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 5
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -105 1
+> param_get_many 3 gain
+< resp -105
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 5
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -105
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 5
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -105
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 5
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -101
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 5
-> remote_pages 9
-< resp -101
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 5
-> remove 3
+> param_info 3 :bypass
 < resp -105
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 5
+> param_info 3 no_such_symbol
+< resp -105
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 5
-> state_load /tmp/state
-< resp -902
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -101
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 5
 > bypass 3 0
 < resp -105
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 5
-> state_save /tmp/state
-< resp -902
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -105
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 5
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -105
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 5
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -101
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 5
+> param_set_many 3 gain 0.5
+< resp -105 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 5
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -105 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 5
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 5
+> preset_load 3 urn:no:such:preset
+< resp -105
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 5
+> remote_page_get 9 0
+< resp -101
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 5
+> remote_pages 9
+< resp -101
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 5
+> remove 3
+< resp -105
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 5
 > bypass 3 1
 < resp -105
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 5
+> state_load /tmp/state
+< resp -902
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 5
+> state_save /tmp/state
+< resp -902
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 5
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 5
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 5
 > bypass 9 1
 < resp -101
@@ -4367,17 +5519,17 @@
 < resp -2
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 5
-> disconnect system:capture_1 system:playback_1
-< resp -2
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -105
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 5
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -105
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 5
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -105
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 5
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -4503,146 +5655,194 @@
 < resp 0
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain)
+# scenario-24 answer 6
+> curve_points 3 0 3
+< resp 0 3 -80.00,-80.00 -40.00,-40.00 0,0.00
+= sample_rate(3) param_get(3,gain) param_get(3,gain)
+# scenario-25 answer 6
+> curve_points 3 1 3
+< resp -537
+= sample_rate(3)
+# scenario-26 answer 6
+> curve_points 3 0 1
+< resp -539
+= sample_rate(3)
+# scenario-27 answer 6
+> curve_points 9 0 3
+< resp -902
+= sample_rate(9)
+# scenario-28 answer 6
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -902
+= sample_rate(9)
+# scenario-29 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp 0
+= sample_rate(3) param_get(3,no_such_symbol)
+# scenario-30 answer 6
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -536
+= sample_rate(3)
+# scenario-31 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -538
+= sample_rate(3)
+# scenario-32 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -902
+= sample_rate(3)
+# scenario-33 answer 6
+> curve_bind 3 0 clear
+< resp 0
+= sample_rate(3)
+# scenario-34 answer 6
+> curve_points 3 0 3
+< resp -537
+= sample_rate(3)
+# scenario-35 answer 6
 > preset_load 3 urn:no:such:preset
 < resp 0
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 6
+# scenario-36 answer 6
 > state_save /tmp/golden
 < resp -105
 = state_save(/tmp/golden)
-# scenario-25 answer 6
+# scenario-37 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-26 answer 6
+# scenario-38 answer 6
 > add urn:golden:amp 3
 < resp 3
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 6
+# scenario-39 answer 6
 > state_load /tmp/golden
 < resp -105
 = state_load(/tmp/golden)
-# scenario-28 answer 6
+# scenario-40 answer 6
 > connect a:out b:in
 < resp -902
 = connect(a:out,b:in)
-# scenario-29 answer 6
+# scenario-41 answer 6
 > disconnect a:out b:in
 < resp -902
 = disconnect(a:out,b:in)
-# scenario-30 answer 6
+# scenario-42 answer 6
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 6
+# scenario-43 answer 6
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 6
+# scenario-44 answer 6
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 6
+# scenario-45 answer 6
 > remote_pages 9
 < resp -902
 = remote_pages(9)
-# scenario-34 answer 6
+# scenario-46 answer 6
 > remote_page_get 9 0
 < resp -902
 = remote_page_get(9,0)
-# scenario-35 answer 6
+# scenario-47 answer 6
 > param_info 9 gain
 < resp -902
 = param_info(9,gain)
-# scenario-36 answer 6
+# scenario-48 answer 6
 > param_info 3 no_such_symbol
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,no_such_symbol)
-# scenario-37 answer 6
+# scenario-49 answer 6
 > param_info 3 :bypass
 < resp 0 hz log 20 20000 440.125 0 stable
 = param_info(3,:bypass)
-# scenario-38 answer 6
+# scenario-50 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-39 answer 6
+# scenario-51 answer 6
 > remove 3
 < resp 0
 = remove(3)
-# scenario-40 answer 6
+# scenario-52 answer 6
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 6
+# scenario-53 answer 6
 > @t1 param_get 9 gain
 < @t1 resp -902
 = param_get(9,gain)
-# scenario-42 answer 6
+# scenario-54 answer 6
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -902
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 6
+# scenario-55 answer 6
 > @t-3 bypass 9 1
 < @t-3 resp -902
 = bypass(9,1)
-# scenario-44 answer 6
+# scenario-56 answer 6
 > param_get 9 gain
 < resp -902
 = param_get(9,gain)
-# scenario-45 answer 6
+# scenario-57 answer 6
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 6
+# scenario-58 answer 6
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 6
+# scenario-59 answer 6
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 6
+# scenario-60 answer 6
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 6
+# scenario-61 answer 6
 > param_get 9 gain
 < resp -902 reply.host.invalid-operation
 = param_get(9,gain)
-# scenario-50 answer 6
+# scenario-62 answer 6
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 6
+# scenario-63 answer 6
 > @e1 bypass 9 1
 < @e1 resp -902 reply.host.invalid-operation
 = bypass(9,1)
-# scenario-52 answer 6
+# scenario-64 answer 6
 > @e2 param_set 9 gain 0.5
 < @e2 resp -902 reply.host.invalid-operation
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 6
+# scenario-65 answer 6
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 6
+# scenario-66 answer 6
 > param_get 9 gain
 < resp -902
 = param_get(9,gain)
-# scenario-55 answer 6
+# scenario-67 answer 6
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 6
+# scenario-68 answer 6
 > @s1 param_get 9 gain
 < @s1 resp -902
 = param_get(9,gain)
-# scenario-57 answer 6
+# scenario-69 answer 6
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 6
+# scenario-70 answer 6
 > hello 0 tags
 < resp -902
 = 
@@ -4714,10 +5914,38 @@
 > add urn:x 5 ... c
 < resp -2
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 6
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# fuzz/corpus/protocol/extra-26 answer 6
+> curve_points 3 0 128
+< resp 0 128 20.00,0.00 21.12,0.00 22.30,0.00 23.54,0.00 24.86,0.00 26.25,0.00 27.72,0.00 29.27,0.00 30.90,0.00 32.63,0.00 34.45,0.00 36.38,0.00 38.41,0.00 40.56,0.00 42.83,0.00 45.22,0.00 47.75,0.00 50.42,0.00 53.24,0.00 56.21,0.00 59.36,0.00 62.67,0.00 66.18,0.00 69.88,0.00 73.78,0.00 77.91,0.00 82.26,0.00 86.86,0.00 91.72,0.00 96.84,0.00 102.3,0.00 108.0,0.00 114.0,0.00 120.4,0.00 127.1,0.00 134.2,0.00 141.7,0.00 149.6,0.00 158.0,0.00 166.8,0.00 176.2,0.00 186.0,0.00 196.4,0.00 207.4,0.00 219.0,0.00 231.2,0.00 244.1,0.00 257.8,0.00 272.2,0.00 287.4,0.00 303.5,0.00 320.4,0.00 338.4,0.00 357.3,0.00 377.2,0.00 398.3,0.00 420.6,0.00 444.1,0.00 468.9,0.00 495.1,0.00 522.8,0.00 552.0,0.00 582.9,0.00 615.5,0.00 649.9,0.00 686.2,0.00 724.6,0.00 765.1,0.00 807.8,0.00 853.0,0.00 900.7,0.00 951.0,0.00 1004,0.00 1060,0.00 1120,0.00 1182,0.00 1248,0.00 1318,0.00 1392,0.00 1470,0.00 1552,0.00 1638,0.00 1730,0.00 1827,0.00 1929,0.00 2037,0.00 2150,0.00 2271,0.00 2398,0.00 2532,0.00 2673,0.00 2823,0.00 2980,0.00 3147,0.00 3323,0.00 3509,0.00 3705,0.00 3912,0.00 4130,0.00 4361,0.00 4605,0.00 4862,0.00 5134,0.00 5421,0.00 5724,0.00 6044,0.00 6382,0.00 6739,0.00 7116,0.00 7513,0.00 7933,0.00 8377,0.00 8845,0.00 9339,0.00 9862,0.00 10410,0.00 10990,0.00 11610,0.00 12260,0.00 12940,0.00 13670,0.00 14430,0.00 15240,0.00 16090,0.00 16990,0.00 17940,0.00 18940,0.00 20000,0.00
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# fuzz/corpus/protocol/extra-27 answer 6
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# fuzz/corpus/protocol/extra-28 answer 6
+> curve_points 3 0 300
+< resp -539
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 6
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -902
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 6
+> curve_bind 3 1 clear extra
+< resp -902
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -538
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 6
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp 0
@@ -4751,109 +5979,153 @@
 < resp 3
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 6
-> param_get 3 no_such_symbol
-< resp 0 0.7500
-= param_get(3,no_such_symbol)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -538
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 6
-> param_get 9 gain
-< resp -902
-= param_get(9,gain)
-# fuzz/corpus/protocol/scenario-12 answer 6
-> param_get_many 3 gain
-< resp 0 0.7500
-= param_get(3,gain)
-# fuzz/corpus/protocol/scenario-13 answer 6
-> param_get_many 3 gain :bypass
-< resp 0 0.7500 0.7500
-= param_get(3,gain) param_get(3,:bypass)
-# fuzz/corpus/protocol/scenario-14 answer 6
-> param_get_many 3 gain no_such_symbol
-< resp 0 0.7500 0.7500
-= param_get(3,gain) param_get(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-15 answer 6
-> param_get_many 9 gain
-< resp -902
-= param_get(9,gain)
-# fuzz/corpus/protocol/scenario-16 answer 6
-> param_info 3 :bypass
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(3,:bypass)
-# fuzz/corpus/protocol/scenario-17 answer 6
-> param_info 3 no_such_symbol
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 6
-> param_info 9 gain
-< resp -902
-= param_info(9,gain)
-# fuzz/corpus/protocol/scenario-19 answer 6
-> param_set 3 gain 0.25
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
 < resp 0
-= param_set(3,gain,0x1p-2)
+= sample_rate(3) param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-12 answer 6
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -536
+= sample_rate(3)
+# fuzz/corpus/protocol/scenario-13 answer 6
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -902
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-14 answer 6
+> curve_points 3 0 1
+< resp -539
+= sample_rate(3)
+# fuzz/corpus/protocol/scenario-15 answer 6
+> curve_points 3 0 3
+< resp -537
+= sample_rate(3) param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-16 answer 6
+> curve_points 3 1 3
+< resp -537
+= sample_rate(3)
+# fuzz/corpus/protocol/scenario-17 answer 6
+> curve_points 9 0 3
+< resp -902
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# fuzz/corpus/protocol/scenario-19 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 6
 > add urn:no:such:plugin 4
 < resp -1
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 6
-> param_set 3 no_such_symbol 0.5
-< resp 0
-= param_set(3,no_such_symbol,0x1p-1)
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-21 answer 6
-> param_set 9 gain 0.5
-< resp -902
-= param_set(9,gain,0x1p-1)
+> param_get 3 no_such_symbol
+< resp 0 0.7500
+= param_get(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-22 answer 6
-> param_set_many 3 gain 0.5
-< resp 0
-= param_get(3,gain) param_set(3,gain,0x1p-1)
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 6
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp 0
-= param_get(3,gain) param_get(3,no_such_symbol) param_get(3,gain) param_set(3,gain,0x1p-1) param_set(3,no_such_symbol,0x1.8p-1) param_set(3,gain,0x1.333334p-1)
+> param_get_many 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 6
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-25 answer 6
-> preset_load 3 urn:no:such:preset
-< resp 0
-= preset_load(3,urn:no:such:preset)
+> param_get_many 3 gain no_such_symbol
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-26 answer 6
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -902
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 6
-> remote_pages 9
-< resp -902
-= remote_pages(9)
+> param_info 3 :bypass
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,:bypass)
 # fuzz/corpus/protocol/scenario-28 answer 6
-> remove 3
-< resp 0
-= remove(3)
+> param_info 3 no_such_symbol
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 6
-> state_load /tmp/state
-< resp -205
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -902
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 6
 > bypass 3 0
 < resp 0
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 6
-> state_save /tmp/state
-< resp -205
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp 0
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 6
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp 0
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 6
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 6
+> param_set_many 3 gain 0.5
+< resp 0
+= param_get(3,gain) param_set(3,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-34 answer 6
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp 0
+= param_get(3,gain) param_get(3,no_such_symbol) param_get(3,gain) param_set(3,gain,0x1p-1) param_set(3,no_such_symbol,0x1.8p-1) param_set(3,gain,0x1.333334p-1)
+# fuzz/corpus/protocol/scenario-35 answer 6
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 6
+> remote_page_get 9 0
+< resp -902
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 6
+> remote_pages 9
+< resp -902
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 6
+> remove 3
+< resp 0
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 6
 > bypass 3 1
 < resp 0
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 6
+> state_load /tmp/state
+< resp -205
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 6
+> state_save /tmp/state
+< resp -205
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 6
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 6
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 6
 > bypass 9 1
 < resp -902
@@ -4863,17 +6135,17 @@
 < resp -3
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 6
-> disconnect system:capture_1 system:playback_1
-< resp -3
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp 0
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 6
-> param_get 3 :bypass
-< resp 0 0.7500
-= param_get(3,:bypass)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain)
 # fuzz/corpus/protocol/scenario-9 answer 6
-> param_get 3 gain
-< resp 0 0.7500
-= param_get(3,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 6
 > cpu_load
 < not found
@@ -4942,10 +6214,38 @@
 > add urn:x 5 ... c
 < resp -2
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 6
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 6
+> curve_points 3 0 128
+< resp 0 128 20.00,0.00 21.12,0.00 22.30,0.00 23.54,0.00 24.86,0.00 26.25,0.00 27.72,0.00 29.27,0.00 30.90,0.00 32.63,0.00 34.45,0.00 36.38,0.00 38.41,0.00 40.56,0.00 42.83,0.00 45.22,0.00 47.75,0.00 50.42,0.00 53.24,0.00 56.21,0.00 59.36,0.00 62.67,0.00 66.18,0.00 69.88,0.00 73.78,0.00 77.91,0.00 82.26,0.00 86.86,0.00 91.72,0.00 96.84,0.00 102.3,0.00 108.0,0.00 114.0,0.00 120.4,0.00 127.1,0.00 134.2,0.00 141.7,0.00 149.6,0.00 158.0,0.00 166.8,0.00 176.2,0.00 186.0,0.00 196.4,0.00 207.4,0.00 219.0,0.00 231.2,0.00 244.1,0.00 257.8,0.00 272.2,0.00 287.4,0.00 303.5,0.00 320.4,0.00 338.4,0.00 357.3,0.00 377.2,0.00 398.3,0.00 420.6,0.00 444.1,0.00 468.9,0.00 495.1,0.00 522.8,0.00 552.0,0.00 582.9,0.00 615.5,0.00 649.9,0.00 686.2,0.00 724.6,0.00 765.1,0.00 807.8,0.00 853.0,0.00 900.7,0.00 951.0,0.00 1004,0.00 1060,0.00 1120,0.00 1182,0.00 1248,0.00 1318,0.00 1392,0.00 1470,0.00 1552,0.00 1638,0.00 1730,0.00 1827,0.00 1929,0.00 2037,0.00 2150,0.00 2271,0.00 2398,0.00 2532,0.00 2673,0.00 2823,0.00 2980,0.00 3147,0.00 3323,0.00 3509,0.00 3705,0.00 3912,0.00 4130,0.00 4361,0.00 4605,0.00 4862,0.00 5134,0.00 5421,0.00 5724,0.00 6044,0.00 6382,0.00 6739,0.00 7116,0.00 7513,0.00 7933,0.00 8377,0.00 8845,0.00 9339,0.00 9862,0.00 10410,0.00 10990,0.00 11610,0.00 12260,0.00 12940,0.00 13670,0.00 14430,0.00 15240,0.00 16090,0.00 16990,0.00 17940,0.00 18940,0.00 20000,0.00
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 6
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain) param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 6
+> curve_points 3 0 300
+< resp -539
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 6
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 6
 > monitor_output 3 gain
 < resp 1
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 6
+> curve_bind 3 1 clear extra
+< resp -902
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 6
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -538
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 6
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp 0
@@ -4991,109 +6291,153 @@
 < resp 3
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 6
-> param_get 3 no_such_symbol
-< resp 0 0.7500
-= param_get(3,no_such_symbol)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -538
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 6
-> param_get 9 gain
-< resp -902
-= param_get(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-12 answer 6
-> param_get_many 3 gain
-< resp 0 0.7500
-= param_get(3,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-13 answer 6
-> param_get_many 3 gain :bypass
-< resp 0 0.7500 0.7500
-= param_get(3,gain) param_get(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-14 answer 6
-> param_get_many 3 gain no_such_symbol
-< resp 0 0.7500 0.7500
-= param_get(3,gain) param_get(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-15 answer 6
-> param_get_many 9 gain
-< resp -902
-= param_get(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-16 answer 6
-> param_info 3 :bypass
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(3,:bypass)
-# dispatch:fuzz/corpus/dispatch/scenario-17 answer 6
-> param_info 3 no_such_symbol
-< resp 0 hz log 20 20000 440.125 0 stable
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 6
-> param_info 9 gain
-< resp -902
-= param_info(9,gain)
-# dispatch:fuzz/corpus/dispatch/scenario-19 answer 6
-> param_set 3 gain 0.25
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
 < resp 0
-= param_set(3,gain,0x1p-2)
+= sample_rate(3) param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-12 answer 6
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -536
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/scenario-13 answer 6
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -902
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-14 answer 6
+> curve_points 3 0 1
+< resp -539
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/scenario-15 answer 6
+> curve_points 3 0 3
+< resp -537
+= sample_rate(3) param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-16 answer 6
+> curve_points 3 1 3
+< resp -537
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/scenario-17 answer 6
+> curve_points 9 0 3
+< resp -902
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 6
+> disconnect system:capture_1 system:playback_1
+< resp -3
+= disconnect(system:capture_1,system:playback_1)
+# dispatch:fuzz/corpus/dispatch/scenario-19 answer 6
+> param_get 3 :bypass
+< resp 0 0.7500
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 6
 > add urn:no:such:plugin 4
 < resp -1
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 6
-> param_set 3 no_such_symbol 0.5
-< resp 0
-= param_set(3,no_such_symbol,0x1p-1)
+> param_get 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-21 answer 6
-> param_set 9 gain 0.5
-< resp -902
-= param_set(9,gain,0x1p-1)
+> param_get 3 no_such_symbol
+< resp 0 0.7500
+= param_get(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-22 answer 6
-> param_set_many 3 gain 0.5
-< resp 0
-= param_get(3,gain) param_set(3,gain,0x1p-1)
+> param_get 9 gain
+< resp -902
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 6
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp 0
-= param_get(3,gain) param_get(3,no_such_symbol) param_get(3,gain) param_set(3,gain,0x1p-1) param_set(3,no_such_symbol,0x1.8p-1) param_set(3,gain,0x1.333334p-1)
+> param_get_many 3 gain
+< resp 0 0.7500
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 6
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 6
-> preset_load 3 urn:no:such:preset
-< resp 0
-= preset_load(3,urn:no:such:preset)
+> param_get_many 3 gain no_such_symbol
+< resp 0 0.7500 0.7500
+= param_get(3,gain) param_get(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 6
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -902
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 6
-> remote_pages 9
-< resp -902
-= remote_pages(9)
+> param_info 3 :bypass
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-28 answer 6
-> remove 3
-< resp 0
-= remove(3)
+> param_info 3 no_such_symbol
+< resp 0 hz log 20 20000 440.125 0 stable
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 6
-> state_load /tmp/state
-< resp -205
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -902
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 6
 > bypass 3 0
 < resp 0
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 6
-> state_save /tmp/state
-< resp -205
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp 0
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 6
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp 0
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 6
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -902
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 6
+> param_set_many 3 gain 0.5
+< resp 0
+= param_get(3,gain) param_set(3,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 6
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp 0
+= param_get(3,gain) param_get(3,no_such_symbol) param_get(3,gain) param_set(3,gain,0x1p-1) param_set(3,no_such_symbol,0x1.8p-1) param_set(3,gain,0x1.333334p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 6
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 6
+> preset_load 3 urn:no:such:preset
+< resp 0
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 6
+> remote_page_get 9 0
+< resp -902
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 6
+> remote_pages 9
+< resp -902
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 6
+> remove 3
+< resp 0
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 6
 > bypass 3 1
 < resp 0
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 6
+> state_load /tmp/state
+< resp -205
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 6
+> state_save /tmp/state
+< resp -205
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 6
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 6
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 6
 > bypass 9 1
 < resp -902
@@ -5103,17 +6447,17 @@
 < resp -3
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 6
-> disconnect system:capture_1 system:playback_1
-< resp -3
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp 0
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 6
-> param_get 3 :bypass
-< resp 0 0.7500
-= param_get(3,:bypass)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp 0
+= sample_rate(3) param_get(3,gain) param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 6
-> param_get 3 gain
-< resp 0 0.7500
-= param_get(3,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -902
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 6
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -5239,146 +6583,194 @@
 < resp -1
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -1
+= sample_rate(3)
+# scenario-24 answer 7
+> curve_points 3 0 3
+< resp -1
+= sample_rate(3)
+# scenario-25 answer 7
+> curve_points 3 1 3
+< resp -1
+= sample_rate(3)
+# scenario-26 answer 7
+> curve_points 3 0 1
+< resp -1
+= sample_rate(3)
+# scenario-27 answer 7
+> curve_points 9 0 3
+< resp -205
+= sample_rate(9)
+# scenario-28 answer 7
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -205
+= sample_rate(9)
+# scenario-29 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -1
+= sample_rate(3)
+# scenario-30 answer 7
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -1
+= sample_rate(3)
+# scenario-31 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -1
+= sample_rate(3)
+# scenario-32 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -1
+= sample_rate(3)
+# scenario-33 answer 7
+> curve_bind 3 0 clear
+< resp -1
+= sample_rate(3)
+# scenario-34 answer 7
+> curve_points 3 0 3
+< resp -1
+= sample_rate(3)
+# scenario-35 answer 7
 > preset_load 3 urn:no:such:preset
 < resp -1
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 7
+# scenario-36 answer 7
 > state_save /tmp/golden
 < resp 0
 = state_save(/tmp/golden)
-# scenario-25 answer 7
+# scenario-37 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-26 answer 7
+# scenario-38 answer 7
 > add urn:golden:amp 3
 < resp -1
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 7
+# scenario-39 answer 7
 > state_load /tmp/golden
 < resp 0
 = state_load(/tmp/golden)
-# scenario-28 answer 7
+# scenario-40 answer 7
 > connect a:out b:in
 < resp -205
 = connect(a:out,b:in)
-# scenario-29 answer 7
+# scenario-41 answer 7
 > disconnect a:out b:in
 < resp -205
 = disconnect(a:out,b:in)
-# scenario-30 answer 7
+# scenario-42 answer 7
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 7
+# scenario-43 answer 7
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 7
+# scenario-44 answer 7
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 7
+# scenario-45 answer 7
 > remote_pages 9
 < resp -205
 = remote_pages(9)
-# scenario-34 answer 7
+# scenario-46 answer 7
 > remote_page_get 9 0
 < resp -205
 = remote_page_get(9,0)
-# scenario-35 answer 7
+# scenario-47 answer 7
 > param_info 9 gain
 < resp -205
 = param_info(9,gain)
-# scenario-36 answer 7
+# scenario-48 answer 7
 > param_info 3 no_such_symbol
 < resp -1
 = param_info(3,no_such_symbol)
-# scenario-37 answer 7
+# scenario-49 answer 7
 > param_info 3 :bypass
 < resp -1
 = param_info(3,:bypass)
-# scenario-38 answer 7
+# scenario-50 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-39 answer 7
+# scenario-51 answer 7
 > remove 3
 < resp -1
 = remove(3)
-# scenario-40 answer 7
+# scenario-52 answer 7
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 7
+# scenario-53 answer 7
 > @t1 param_get 9 gain
 < @t1 resp -205
 = param_get(9,gain)
-# scenario-42 answer 7
+# scenario-54 answer 7
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -205
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 7
+# scenario-55 answer 7
 > @t-3 bypass 9 1
 < @t-3 resp -205
 = bypass(9,1)
-# scenario-44 answer 7
+# scenario-56 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-45 answer 7
+# scenario-57 answer 7
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 7
+# scenario-58 answer 7
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 7
+# scenario-59 answer 7
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 7
+# scenario-60 answer 7
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 7
+# scenario-61 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-50 answer 7
+# scenario-62 answer 7
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 7
+# scenario-63 answer 7
 > @e1 bypass 9 1
 < @e1 resp -205
 = bypass(9,1)
-# scenario-52 answer 7
+# scenario-64 answer 7
 > @e2 param_set 9 gain 0.5
 < @e2 resp -205
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 7
+# scenario-65 answer 7
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 7
+# scenario-66 answer 7
 > param_get 9 gain
 < resp -205
 = param_get(9,gain)
-# scenario-55 answer 7
+# scenario-67 answer 7
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 7
+# scenario-68 answer 7
 > @s1 param_get 9 gain
 < @s1 resp -205
 = param_get(9,gain)
-# scenario-57 answer 7
+# scenario-69 answer 7
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 7
+# scenario-70 answer 7
 > hello 0 tags
 < resp -902
 = 
@@ -5450,10 +6842,38 @@
 > add urn:x 5 ... c
 < resp -3
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 7
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -1
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 7
+> curve_points 3 0 128
+< resp -1
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 7
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -1
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 7
+> curve_points 3 0 300
+< resp -1
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 7
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -1
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 7
+> curve_bind 3 1 clear extra
+< resp -1
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -1
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 7
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -1
@@ -5487,109 +6907,153 @@
 < resp -1
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 7
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -1
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 7
-> param_get 9 gain
-< resp -205
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -1
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 7
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 7
-> param_get_many 3 gain :bypass
-< resp -1
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -205
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 7
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 7
-> param_get_many 9 gain
-< resp -205
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -1
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 7
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -1
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 7
-> param_info 3 no_such_symbol
-< resp -1
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 7
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -205
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 7
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -1
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 7
 > add urn:no:such:plugin 4
 < resp -2
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 7
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -1
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 7
-> param_set 9 gain 0.5
-< resp -205
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 7
-> param_set_many 3 gain 0.5
-< resp -1 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 7
+> param_get 3 no_such_symbol
+< resp -1
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 7
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -1 1
+> param_get_many 3 gain
+< resp -1
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 7
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -1
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 7
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -1
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 7
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -205
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 7
-> remote_pages 9
-< resp -205
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 7
-> remove 3
+> param_info 3 :bypass
 < resp -1
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 7
+> param_info 3 no_such_symbol
+< resp -1
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 7
-> state_load /tmp/state
-< resp -105
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -205
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 7
 > bypass 3 0
 < resp -1
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 7
-> state_save /tmp/state
-< resp -105
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -1
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 7
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -1
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 7
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 7
+> param_set_many 3 gain 0.5
+< resp -1 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 7
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -1 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 7
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 7
+> remote_page_get 9 0
+< resp -205
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 7
+> remote_pages 9
+< resp -205
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 7
+> remove 3
+< resp -1
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 7
 > bypass 3 1
 < resp -1
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 7
+> state_load /tmp/state
+< resp -105
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 7
+> state_save /tmp/state
+< resp -105
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 7
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 7
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 7
 > bypass 9 1
 < resp -205
@@ -5599,17 +7063,17 @@
 < resp -4
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 7
-> disconnect system:capture_1 system:playback_1
-< resp -4
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -1
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 7
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -1
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 7
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 7
 > cpu_load
 < not found
@@ -5678,10 +7142,38 @@
 > add urn:x 5 ... c
 < resp -3
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 7
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -1
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 7
+> curve_points 3 0 128
+< resp -1
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 7
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -1
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 7
+> curve_points 3 0 300
+< resp -1
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 7
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -1
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 7
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 7
+> curve_bind 3 1 clear extra
+< resp -1
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 7
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -1
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 7
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -1
@@ -5727,109 +7219,153 @@
 < resp -1
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 7
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -1
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 7
-> param_get 9 gain
-< resp -205
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -1
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 7
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 7
-> param_get_many 3 gain :bypass
-< resp -1
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -205
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 7
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 7
-> param_get_many 9 gain
-< resp -205
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -1
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 7
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -1
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 7
-> param_info 3 no_such_symbol
-< resp -1
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 7
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -205
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 7
+> disconnect system:capture_1 system:playback_1
+< resp -4
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 7
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -1
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 7
 > add urn:no:such:plugin 4
 < resp -2
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 7
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -1
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 7
-> param_set 9 gain 0.5
-< resp -205
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 7
-> param_set_many 3 gain 0.5
-< resp -1 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 7
+> param_get 3 no_such_symbol
+< resp -1
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 7
+> param_get 9 gain
+< resp -205
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 7
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -1 1
+> param_get_many 3 gain
+< resp -1
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 7
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -1
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 7
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -1
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 7
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -205
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 7
-> remote_pages 9
-< resp -205
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 7
-> remove 3
+> param_info 3 :bypass
 < resp -1
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 7
+> param_info 3 no_such_symbol
+< resp -1
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 7
-> state_load /tmp/state
-< resp -105
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -205
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 7
 > bypass 3 0
 < resp -1
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 7
-> state_save /tmp/state
-< resp -105
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -1
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 7
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -1
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 7
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -205
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 7
+> param_set_many 3 gain 0.5
+< resp -1 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 7
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -1 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 7
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 7
+> preset_load 3 urn:no:such:preset
+< resp -1
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 7
+> remote_page_get 9 0
+< resp -205
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 7
+> remote_pages 9
+< resp -205
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 7
+> remove 3
+< resp -1
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 7
 > bypass 3 1
 < resp -1
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 7
+> state_load /tmp/state
+< resp -105
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 7
+> state_save /tmp/state
+< resp -105
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 7
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 7
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 7
 > bypass 9 1
 < resp -205
@@ -5839,17 +7375,17 @@
 < resp -4
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 7
-> disconnect system:capture_1 system:playback_1
-< resp -4
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -1
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 7
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -1
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 7
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -1
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 7
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902
@@ -5975,146 +7511,194 @@
 < resp -2
 = param_set(3,gain,0x1p-2)
 # scenario-23 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
+< resp -2
+= sample_rate(3)
+# scenario-24 answer 8
+> curve_points 3 0 3
+< resp -2
+= sample_rate(3)
+# scenario-25 answer 8
+> curve_points 3 1 3
+< resp -2
+= sample_rate(3)
+# scenario-26 answer 8
+> curve_points 3 0 1
+< resp -2
+= sample_rate(3)
+# scenario-27 answer 8
+> curve_points 9 0 3
+< resp -105
+= sample_rate(9)
+# scenario-28 answer 8
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -105
+= sample_rate(9)
+# scenario-29 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -2
+= sample_rate(3)
+# scenario-30 answer 8
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
+< resp -2
+= sample_rate(3)
+# scenario-31 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
+< resp -2
+= sample_rate(3)
+# scenario-32 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
+< resp -2
+= sample_rate(3)
+# scenario-33 answer 8
+> curve_bind 3 0 clear
+< resp -2
+= sample_rate(3)
+# scenario-34 answer 8
+> curve_points 3 0 3
+< resp -2
+= sample_rate(3)
+# scenario-35 answer 8
 > preset_load 3 urn:no:such:preset
 < resp -2
 = preset_load(3,urn:no:such:preset)
-# scenario-24 answer 8
+# scenario-36 answer 8
 > state_save /tmp/golden
 < resp -1
 = state_save(/tmp/golden)
-# scenario-25 answer 8
+# scenario-37 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-26 answer 8
+# scenario-38 answer 8
 > add urn:golden:amp 3
 < resp -2
 = add(urn:golden:amp,3,NULL)
-# scenario-27 answer 8
+# scenario-39 answer 8
 > state_load /tmp/golden
 < resp -1
 = state_load(/tmp/golden)
-# scenario-28 answer 8
+# scenario-40 answer 8
 > connect a:out b:in
 < resp -105
 = connect(a:out,b:in)
-# scenario-29 answer 8
+# scenario-41 answer 8
 > disconnect a:out b:in
 < resp -105
 = disconnect(a:out,b:in)
-# scenario-30 answer 8
+# scenario-42 answer 8
 > patch_set 3 urn:no:such:property 1
 < resp -902
 = 
-# scenario-31 answer 8
+# scenario-43 answer 8
 > track_info 3 Kick #FF800
 < resp -902
 = 
-# scenario-32 answer 8
+# scenario-44 answer 8
 > track_info 3 Kick - aux
 < resp -902
 = 
-# scenario-33 answer 8
+# scenario-45 answer 8
 > remote_pages 9
 < resp -105
 = remote_pages(9)
-# scenario-34 answer 8
+# scenario-46 answer 8
 > remote_page_get 9 0
 < resp -105
 = remote_page_get(9,0)
-# scenario-35 answer 8
+# scenario-47 answer 8
 > param_info 9 gain
 < resp -105
 = param_info(9,gain)
-# scenario-36 answer 8
+# scenario-48 answer 8
 > param_info 3 no_such_symbol
 < resp -2
 = param_info(3,no_such_symbol)
-# scenario-37 answer 8
+# scenario-49 answer 8
 > param_info 3 :bypass
 < resp -2
 = param_info(3,:bypass)
-# scenario-38 answer 8
+# scenario-50 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-39 answer 8
+# scenario-51 answer 8
 > remove 3
 < resp -2
 = remove(3)
-# scenario-40 answer 8
+# scenario-52 answer 8
 > hello 1 tags no_such_extension
 < resp 0 1 tags
 = 
-# scenario-41 answer 8
+# scenario-53 answer 8
 > @t1 param_get 9 gain
 < @t1 resp -105
 = param_get(9,gain)
-# scenario-42 answer 8
+# scenario-54 answer 8
 > @t.2 param_set 9 gain 0.5
 < @t.2 resp -105
 = param_set(9,gain,0x1p-1)
-# scenario-43 answer 8
+# scenario-55 answer 8
 > @t-3 bypass 9 1
 < @t-3 resp -105
 = bypass(9,1)
-# scenario-44 answer 8
+# scenario-56 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-45 answer 8
+# scenario-57 answer 8
 > @ param_get 9 gain
 < not found
 = 
-# scenario-46 answer 8
+# scenario-58 answer 8
 > @t1 hello 1
 < @t1 resp 0 1
 = 
-# scenario-47 answer 8
+# scenario-59 answer 8
 > @t1 param_get 9 gain
 < not found
 = 
-# scenario-48 answer 8
+# scenario-60 answer 8
 > hello 1 errors
 < resp 0 1 errors
 = 
-# scenario-49 answer 8
+# scenario-61 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-50 answer 8
+# scenario-62 answer 8
 > hello 1 errors tags
 < resp 0 1 tags errors
 = 
-# scenario-51 answer 8
+# scenario-63 answer 8
 > @e1 bypass 9 1
 < @e1 resp -105
 = bypass(9,1)
-# scenario-52 answer 8
+# scenario-64 answer 8
 > @e2 param_set 9 gain 0.5
 < @e2 resp -105
 = param_set(9,gain,0x1p-1)
-# scenario-53 answer 8
+# scenario-65 answer 8
 > hello 1
 < resp 0 1
 = 
-# scenario-54 answer 8
+# scenario-66 answer 8
 > param_get 9 gain
 < resp -105
 = param_get(9,gain)
-# scenario-55 answer 8
+# scenario-67 answer 8
 > hello 1 seq tags
 < resp 0 1 tags seq
 = 
-# scenario-56 answer 8
+# scenario-68 answer 8
 > @s1 param_get 9 gain
 < @s1 resp -105
 = param_get(9,gain)
-# scenario-57 answer 8
+# scenario-69 answer 8
 > hello 1
 < resp 0 1
 = 
-# scenario-58 answer 8
+# scenario-70 answer 8
 > hello 0 tags
 < resp -902
 = 
@@ -6186,10 +7770,38 @@
 > add urn:x 5 ... c
 < resp -4
 = add(urn:x,5,...)
+# fuzz/corpus/protocol/extra-25 answer 8
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -2
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-26 answer 8
+> curve_points 3 0 128
+< resp -2
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-27 answer 8
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -2
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-28 answer 8
+> curve_points 3 0 300
+< resp -2
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-29 answer 8
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -2
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# fuzz/corpus/protocol/extra-30 answer 8
+> curve_bind 3 1 clear extra
+< resp -2
+= sample_rate(3)
+# fuzz/corpus/protocol/extra-31 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -2
+= sample_rate(3)
 # fuzz/corpus/protocol/extra-4 answer 8
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -2
@@ -6223,109 +7835,153 @@
 < resp -2
 = add(http://example.org/plugin,3,NULL)
 # fuzz/corpus/protocol/scenario-10 answer 8
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -2
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-11 answer 8
-> param_get 9 gain
-< resp -105
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -2
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-12 answer 8
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-13 answer 8
-> param_get_many 3 gain :bypass
-< resp -2
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -105
+= sample_rate(9)
 # fuzz/corpus/protocol/scenario-14 answer 8
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-15 answer 8
-> param_get_many 9 gain
-< resp -105
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -2
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-16 answer 8
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -2
-= param_info(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-17 answer 8
-> param_info 3 no_such_symbol
-< resp -2
-= param_info(3,no_such_symbol)
-# fuzz/corpus/protocol/scenario-18 answer 8
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -105
-= param_info(9,gain)
+= sample_rate(9)
+# fuzz/corpus/protocol/scenario-18 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-19 answer 8
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -2
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # fuzz/corpus/protocol/scenario-2 answer 8
 > add urn:no:such:plugin 4
 < resp -3
 = add(urn:no:such:plugin,4,NULL)
 # fuzz/corpus/protocol/scenario-20 answer 8
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -2
-= param_set(3,no_such_symbol,0x1p-1)
-# fuzz/corpus/protocol/scenario-21 answer 8
-> param_set 9 gain 0.5
-< resp -105
-= param_set(9,gain,0x1p-1)
-# fuzz/corpus/protocol/scenario-22 answer 8
-> param_set_many 3 gain 0.5
-< resp -2 1
 = param_get(3,gain)
+# fuzz/corpus/protocol/scenario-21 answer 8
+> param_get 3 no_such_symbol
+< resp -2
+= param_get(3,no_such_symbol)
+# fuzz/corpus/protocol/scenario-22 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-23 answer 8
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -2 1
+> param_get_many 3 gain
+< resp -2
 = param_get(3,gain)
 # fuzz/corpus/protocol/scenario-24 answer 8
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -2
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-25 answer 8
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -2
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # fuzz/corpus/protocol/scenario-26 answer 8
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -105
-= remote_page_get(9,0)
+= param_get(9,gain)
 # fuzz/corpus/protocol/scenario-27 answer 8
-> remote_pages 9
-< resp -105
-= remote_pages(9)
-# fuzz/corpus/protocol/scenario-28 answer 8
-> remove 3
+> param_info 3 :bypass
 < resp -2
-= remove(3)
+= param_info(3,:bypass)
+# fuzz/corpus/protocol/scenario-28 answer 8
+> param_info 3 no_such_symbol
+< resp -2
+= param_info(3,no_such_symbol)
 # fuzz/corpus/protocol/scenario-29 answer 8
-> state_load /tmp/state
-< resp 0
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -105
+= param_info(9,gain)
 # fuzz/corpus/protocol/scenario-3 answer 8
 > bypass 3 0
 < resp -2
 = bypass(3,0)
 # fuzz/corpus/protocol/scenario-30 answer 8
-> state_save /tmp/state
-< resp 0
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -2
+= param_set(3,gain,0x1p-2)
 # fuzz/corpus/protocol/scenario-31 answer 8
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -2
+= param_set(3,no_such_symbol,0x1p-1)
 # fuzz/corpus/protocol/scenario-32 answer 8
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# fuzz/corpus/protocol/scenario-33 answer 8
+> param_set_many 3 gain 0.5
+< resp -2 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-34 answer 8
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -2 1
+= param_get(3,gain)
+# fuzz/corpus/protocol/scenario-35 answer 8
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# fuzz/corpus/protocol/scenario-36 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# fuzz/corpus/protocol/scenario-37 answer 8
+> remote_page_get 9 0
+< resp -105
+= remote_page_get(9,0)
+# fuzz/corpus/protocol/scenario-38 answer 8
+> remote_pages 9
+< resp -105
+= remote_pages(9)
+# fuzz/corpus/protocol/scenario-39 answer 8
+> remove 3
+< resp -2
+= remove(3)
 # fuzz/corpus/protocol/scenario-4 answer 8
 > bypass 3 1
 < resp -2
 = bypass(3,1)
+# fuzz/corpus/protocol/scenario-40 answer 8
+> state_load /tmp/state
+< resp 0
+= state_load(/tmp/state)
+# fuzz/corpus/protocol/scenario-41 answer 8
+> state_save /tmp/state
+< resp 0
+= state_save(/tmp/state)
+# fuzz/corpus/protocol/scenario-42 answer 8
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# fuzz/corpus/protocol/scenario-43 answer 8
+> track_info 3 Kick - aux
+< resp -902
+= 
 # fuzz/corpus/protocol/scenario-5 answer 8
 > bypass 9 1
 < resp -105
@@ -6335,17 +7991,17 @@
 < resp -101
 = connect(system:capture_1,system:playback_1)
 # fuzz/corpus/protocol/scenario-7 answer 8
-> disconnect system:capture_1 system:playback_1
-< resp -101
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -2
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-8 answer 8
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -2
-= param_get(3,:bypass)
+= sample_rate(3)
 # fuzz/corpus/protocol/scenario-9 answer 8
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-1 answer 8
 > cpu_load
 < not found
@@ -6414,10 +8070,38 @@
 > add urn:x 5 ... c
 < resp -4
 = add(urn:x,5,...)
+# dispatch:fuzz/corpus/dispatch/extra-25 answer 8
+> curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+< resp -2
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-26 answer 8
+> curve_points 3 0 128
+< resp -2
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-27 answer 8
+> curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+< resp -2
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-28 answer 8
+> curve_points 3 0 300
+< resp -2
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-29 answer 8
+> curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+< resp -2
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-3 answer 8
 > monitor_output 3 gain
 < resp 0
 = monitor_output(3,gain)
+# dispatch:fuzz/corpus/dispatch/extra-30 answer 8
+> curve_bind 3 1 clear extra
+< resp -2
+= sample_rate(3)
+# dispatch:fuzz/corpus/dispatch/extra-31 answer 8
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
+< resp -2
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/extra-4 answer 8
 > track_info 3 "Lead Vocal" #FF8800 bus
 < resp -2
@@ -6463,109 +8147,153 @@
 < resp -2
 = add(http://example.org/plugin,3,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-10 answer 8
-> param_get 3 no_such_symbol
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:hz
 < resp -2
-= param_get(3,no_such_symbol)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-11 answer 8
-> param_get 9 gain
-< resp -105
-= param_get(9,gain)
+> curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db
+< resp -2
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-12 answer 8
-> param_get_many 3 gain
+> curve_bind 3 0 transfer_curve reverb threshold=gain:db
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-13 answer 8
-> param_get_many 3 gain :bypass
-< resp -2
-= param_get(3,gain)
+> curve_bind 9 0 transfer_curve dynamics threshold=gain:db
+< resp -105
+= sample_rate(9)
 # dispatch:fuzz/corpus/dispatch/scenario-14 answer 8
-> param_get_many 3 gain no_such_symbol
+> curve_points 3 0 1
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-15 answer 8
-> param_get_many 9 gain
-< resp -105
-= param_get(9,gain)
+> curve_points 3 0 3
+< resp -2
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-16 answer 8
-> param_info 3 :bypass
+> curve_points 3 1 3
 < resp -2
-= param_info(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-17 answer 8
-> param_info 3 no_such_symbol
-< resp -2
-= param_info(3,no_such_symbol)
-# dispatch:fuzz/corpus/dispatch/scenario-18 answer 8
-> param_info 9 gain
+> curve_points 9 0 3
 < resp -105
-= param_info(9,gain)
+= sample_rate(9)
+# dispatch:fuzz/corpus/dispatch/scenario-18 answer 8
+> disconnect system:capture_1 system:playback_1
+< resp -101
+= disconnect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-19 answer 8
-> param_set 3 gain 0.25
+> param_get 3 :bypass
 < resp -2
-= param_set(3,gain,0x1p-2)
+= param_get(3,:bypass)
 # dispatch:fuzz/corpus/dispatch/scenario-2 answer 8
 > add urn:no:such:plugin 4
 < resp -3
 = add(urn:no:such:plugin,4,NULL)
 # dispatch:fuzz/corpus/dispatch/scenario-20 answer 8
-> param_set 3 no_such_symbol 0.5
+> param_get 3 gain
 < resp -2
-= param_set(3,no_such_symbol,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-21 answer 8
-> param_set 9 gain 0.5
-< resp -105
-= param_set(9,gain,0x1p-1)
-# dispatch:fuzz/corpus/dispatch/scenario-22 answer 8
-> param_set_many 3 gain 0.5
-< resp -2 1
 = param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-21 answer 8
+> param_get 3 no_such_symbol
+< resp -2
+= param_get(3,no_such_symbol)
+# dispatch:fuzz/corpus/dispatch/scenario-22 answer 8
+> param_get 9 gain
+< resp -105
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-23 answer 8
-> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
-< resp -2 1
+> param_get_many 3 gain
+< resp -2
 = param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-24 answer 8
-> patch_set 3 urn:no:such:property 1
-< resp -902
-= 
+> param_get_many 3 gain :bypass
+< resp -2
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-25 answer 8
-> preset_load 3 urn:no:such:preset
+> param_get_many 3 gain no_such_symbol
 < resp -2
-= preset_load(3,urn:no:such:preset)
+= param_get(3,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-26 answer 8
-> remote_page_get 9 0
+> param_get_many 9 gain
 < resp -105
-= remote_page_get(9,0)
+= param_get(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-27 answer 8
-> remote_pages 9
-< resp -105
-= remote_pages(9)
-# dispatch:fuzz/corpus/dispatch/scenario-28 answer 8
-> remove 3
+> param_info 3 :bypass
 < resp -2
-= remove(3)
+= param_info(3,:bypass)
+# dispatch:fuzz/corpus/dispatch/scenario-28 answer 8
+> param_info 3 no_such_symbol
+< resp -2
+= param_info(3,no_such_symbol)
 # dispatch:fuzz/corpus/dispatch/scenario-29 answer 8
-> state_load /tmp/state
-< resp 0
-= state_load(/tmp/state)
+> param_info 9 gain
+< resp -105
+= param_info(9,gain)
 # dispatch:fuzz/corpus/dispatch/scenario-3 answer 8
 > bypass 3 0
 < resp -2
 = bypass(3,0)
 # dispatch:fuzz/corpus/dispatch/scenario-30 answer 8
-> state_save /tmp/state
-< resp 0
-= state_save(/tmp/state)
+> param_set 3 gain 0.25
+< resp -2
+= param_set(3,gain,0x1p-2)
 # dispatch:fuzz/corpus/dispatch/scenario-31 answer 8
-> track_info 3 Kick #FF800
-< resp -902
-= 
+> param_set 3 no_such_symbol 0.5
+< resp -2
+= param_set(3,no_such_symbol,0x1p-1)
 # dispatch:fuzz/corpus/dispatch/scenario-32 answer 8
-> track_info 3 Kick - aux
+> param_set 9 gain 0.5
+< resp -105
+= param_set(9,gain,0x1p-1)
+# dispatch:fuzz/corpus/dispatch/scenario-33 answer 8
+> param_set_many 3 gain 0.5
+< resp -2 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-34 answer 8
+> param_set_many 3 gain 0.5 no_such_symbol 0.75 gain 0.6
+< resp -2 1
+= param_get(3,gain)
+# dispatch:fuzz/corpus/dispatch/scenario-35 answer 8
+> patch_set 3 urn:no:such:property 1
 < resp -902
 = 
+# dispatch:fuzz/corpus/dispatch/scenario-36 answer 8
+> preset_load 3 urn:no:such:preset
+< resp -2
+= preset_load(3,urn:no:such:preset)
+# dispatch:fuzz/corpus/dispatch/scenario-37 answer 8
+> remote_page_get 9 0
+< resp -105
+= remote_page_get(9,0)
+# dispatch:fuzz/corpus/dispatch/scenario-38 answer 8
+> remote_pages 9
+< resp -105
+= remote_pages(9)
+# dispatch:fuzz/corpus/dispatch/scenario-39 answer 8
+> remove 3
+< resp -2
+= remove(3)
 # dispatch:fuzz/corpus/dispatch/scenario-4 answer 8
 > bypass 3 1
 < resp -2
 = bypass(3,1)
+# dispatch:fuzz/corpus/dispatch/scenario-40 answer 8
+> state_load /tmp/state
+< resp 0
+= state_load(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-41 answer 8
+> state_save /tmp/state
+< resp 0
+= state_save(/tmp/state)
+# dispatch:fuzz/corpus/dispatch/scenario-42 answer 8
+> track_info 3 Kick #FF800
+< resp -902
+= 
+# dispatch:fuzz/corpus/dispatch/scenario-43 answer 8
+> track_info 3 Kick - aux
+< resp -902
+= 
 # dispatch:fuzz/corpus/dispatch/scenario-5 answer 8
 > bypass 9 1
 < resp -105
@@ -6575,17 +8303,17 @@
 < resp -101
 = connect(system:capture_1,system:playback_1)
 # dispatch:fuzz/corpus/dispatch/scenario-7 answer 8
-> disconnect system:capture_1 system:playback_1
-< resp -101
-= disconnect(system:capture_1,system:playback_1)
+> curve_bind 3 0 clear
+< resp -2
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-8 answer 8
-> param_get 3 :bypass
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio
 < resp -2
-= param_get(3,:bypass)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/scenario-9 answer 8
-> param_get 3 gain
+> curve_bind 3 0 transfer_curve dynamics threshold=gain:db@bell
 < resp -2
-= param_get(3,gain)
+= sample_rate(3)
 # dispatch:fuzz/corpus/dispatch/track-info-beyond answer 8
 > track_info 0 \xf4\x90\x80\x80 #FF8000
 < resp -902

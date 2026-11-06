@@ -174,6 +174,15 @@ static const host_backend_t g_backend = {
     b_connect, b_disconnect,
 };
 static const host_plugin_info_t g_info = { b_track_info, b_remote_pages, b_remote_page_get, b_param_info };
+#ifdef HOST_DISPATCH_HAS_CURVE
+static int b_sample_rate(int instance, double *rate)
+{
+    record("sample_rate(%d)", instance);
+    *rate = 48000.0;
+    return answer(instance);
+}
+static const host_curve_t g_curve = { b_sample_rate };
+#endif
 
 static void escaped(const char *s)
 {
@@ -330,6 +339,10 @@ int main(int argc, char **argv)
     host_dispatch_register(&g_backend);
     host_dispatch_register_monitor_output(b_monitor_output);
     host_dispatch_register_plugin_info(&g_info);
+#ifdef HOST_DISPATCH_HAS_CURVE
+    /* this library's curve verbs: mod-host answers them not found (deviations.txt) */
+    host_dispatch_register_curve(&g_curve);
+#endif
     host_dispatch_register_unsupported();
 #ifdef PROTOCOL_HELLO
     /* this library's hello: a line that does not follow a hello is answered as before (deviations.txt) */

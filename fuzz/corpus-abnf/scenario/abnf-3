@@ -1,10 +1,10 @@
-cv_unmap -6 "" => not found
-@.. worker_list => resp -9
-cv_unmap -276 "\"" => @_._ resp 286 "\" "
-pin_layout -11 => invalid argument
 estimate -524 8 "" "" "\" " => @- resp 398 !ME "\""
 set_bpb +.7 => @_ resp -630 2!
 @_- pin_expect 6 ȟɢK => @8. resp 1 ""
 @. pin_reload => resp -65 "" n!*
 @6- instance_info -7 => @. resp -25 "ƶ"
 all_notes_off 0 => @hk few arguments
+help => @1-A resp 0 ""
+remote_page_get 023 -956 => invalid argument
+param_set_many -52 ǡ .657E572 ! => @.-- resp 330
+chain_get 0 => few arguments

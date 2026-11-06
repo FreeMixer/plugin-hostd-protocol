@@ -43,6 +43,12 @@ static const struct reply_word { int resp; const char *code; } g_reply_words[] =
     { -533, "reply.plugin-hostd.no-record" },
     { -534, "reply.plugin-hostd.no-cell" },
     { -535, "reply.plugin-hostd.unknown-plugin" },
+    { -536, "reply.plugin-hostd.curve-kind-unknown" },
+    { -537, "reply.plugin-hostd.curve-term-missing" },
+    { -538, "reply.plugin-hostd.curve-unit-refused" },
+    { -539, "reply.plugin-hostd.curve-points-range" },
+    { -540, "reply.plugin-hostd.durable-write-failed" },
+    { -541, "reply.plugin-hostd.writer-queue-full" },
     { -901, "reply.host.memory-allocation" },
     { -902, "reply.host.invalid-operation" },
 };

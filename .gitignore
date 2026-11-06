@@ -8,7 +8,9 @@
 /tests/fixes_test
 /tests/socket-test
 /tests/bind-test
+/tests/adopt-test
 /tests/utils-test
 /tests/forms_test
 /tests/hello_test
+/tests/curve_test
 /tests/runner_test

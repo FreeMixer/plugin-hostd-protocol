@@ -35,5 +35,8 @@ arm "a tag takes an @" 'tag-char         = ALPHA' 'tag-char         = "@" / ALPH
 arm "hello grants one twice" 'hello-reply      = %s"resp" SP %s"0" SP int' 'hello-reply      = %s"resp" SP %s"0" SP int *(SP extension)'
 arm "an error word of another number" 'error-reply      = %s"resp -1 ' 'error-reply      = %s"resp -3 '
 arm "a feedback line numbered 0" '%x31-39 \*DIGIT' '%x30-39 *DIGIT'
+arm "a curve role omx-dsp does not have" '%s"knee_end"' '%s"knee_end" / %s"attack"'
+arm "a curve binding of no term" 'curve-family 1\*(SP curve-term)' 'curve-family *(SP curve-term)'
+arm "a curve y to 0.1 dB" 'curve-y          = \["-"\] 1\*DIGIT "." 2DIGIT' 'curve-y          = ["-"] 1*DIGIT "." 1*DIGIT'
 
 [ "$failed" = 0 ] && echo "grammar sabotage ok" || { echo "grammar sabotage FAILED"; exit 1; }

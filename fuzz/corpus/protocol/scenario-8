@@ -1,1 +1,1 @@
-param_get 3 :bypass
+curve_bind 3 0 transfer_curve dynamics threshold=gain:db ratio=gain:ratio

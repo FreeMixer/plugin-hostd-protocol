@@ -22,6 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Add the OpenMixer channel
+        uses: FreeMixer/.github/.github/actions/add-openmixer@v1
+      - name: omx-dsp's curve function, which the dispatcher draws with
+        run: dnf -y install 'omx-dsp-devel >= 0.32.0' 'omx-dsp-devel < 0.33'
       - name: Build the harnesses
         run: make fuzz
       - name: Every check's mutant record is met on its own seed

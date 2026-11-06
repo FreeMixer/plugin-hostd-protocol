@@ -375,7 +375,23 @@ static inline int phd_pool_name_valid(const char *name)
                "member in the reply's list") \
     X(UNKNOWN_PLUGIN, OMX_REPLY_PLUGIN_HOSTD_UNKNOWN_PLUGIN_RESP, "a member of " OMX_VERB_ESTIMATE " whose uri names no " \
                       "plugin installed here (its format cannot tell the plugin's binary, or the binary is not there): " \
-                      "never a reply, the code of the member in the reply's list")
+                      "never a reply, the code of the member in the reply's list") \
+    X(CURVE_KIND_UNKNOWN, OMX_REPLY_PLUGIN_HOSTD_CURVE_KIND_UNKNOWN_RESP, OMX_VERB_CURVE_BIND " of a family with no closed " \
+                          "form for the display's kind, or " OMX_VERB_CURVE_POINTS " of a binding whose values pick a band " \
+                          "shape or a head filter slope with no closed form: no curve is drawn") \
+    X(CURVE_TERM_MISSING, OMX_REPLY_PLUGIN_HOSTD_CURVE_TERM_MISSING_RESP, OMX_VERB_CURVE_POINTS " of a display with no " \
+                          "binding, or of a binding that lacks a term the model needs (a band's frequency, shape or Q, " \
+                          "a threshold, a ratio, a gate's range): no curve is drawn from a guess") \
+    X(CURVE_UNIT_REFUSED, OMX_REPLY_PLUGIN_HOSTD_CURVE_UNIT_REFUSED_RESP, OMX_VERB_CURVE_BIND " of a term in a unit its role " \
+                          "does not take: nothing of the line is kept") \
+    X(CURVE_POINTS_RANGE, OMX_REPLY_PLUGIN_HOSTD_CURVE_POINTS_RANGE_RESP, OMX_VERB_CURVE_POINTS " of fewer than 2 points or " \
+                          "more than a curve carries, three anchors a drawn band counted, or of a band index past what fits") \
+    X(DURABLE_WRITE_FAILED, OMX_REPLY_PLUGIN_HOSTD_DURABLE_WRITE_FAILED_RESP, "the daemon's writer thread could not " \
+                            "write the file the verb changes (" OMX_VERB_HISTORY_CLEAR ", " OMX_VERB_PIN_CLEAR ", " \
+                            OMX_VERB_PIN_ACCEPT "): the change is not on disk, and stderr names the path and the error") \
+    X(WRITER_QUEUE_FULL, OMX_REPLY_PLUGIN_HOSTD_WRITER_QUEUE_FULL_RESP, "the daemon's writer queue holds its most writes " \
+                         "or bytes: the write the verb needs is refused and nothing of the verb changed; the controller " \
+                         "may send it again")
 
 /* ---------------------------------------------------------------- verbs */
 

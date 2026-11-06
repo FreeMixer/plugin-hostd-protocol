@@ -1,1 +1,1 @@
-preset_load 3 urn:no:such:preset
+param_get_many 3 gain no_such_symbol

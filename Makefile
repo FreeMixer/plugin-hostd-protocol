@@ -28,10 +28,20 @@ CFLAGS += -Werror=implicit-function-declaration -Werror=return-type
 ifeq ($(DEBUG), 1)
    CFLAGS += -O0 -g -DDEBUG
 endif
-INCS = -Iinclude
+# omx-dsp's curve function (omx_curve.h, header only), which the curve verbs draw with: at or above the minor that
+# declares it and below the next, as packaging/plugin-hostd-protocol.spec and debian/control require it
+OMXDSP_FLOOR = 0.32.0
+OMXDSP_CEILING = 0.33
+OMXDSP_CFLAGS := $(shell $(PKG_CONFIG) --cflags 'omxdsp >= $(OMXDSP_FLOOR)' 'omxdsp < $(OMXDSP_CEILING)' 2>/dev/null)
+ifeq ($(filter clean version-check,$(MAKECMDGOALS)),)
+ifeq ($(OMXDSP_CFLAGS),)
+$(error no omx-dsp >= $(OMXDSP_FLOOR) and < $(OMXDSP_CEILING) for pkg-config (omx-dsp-devel / libomx-dsp-dev): the curve verbs draw with its omx_curve.h)
+endif
+endif
+INCS = -Iinclude $(OMXDSP_CFLAGS)
 LDFLAGS += -Wl,--no-undefined
 
-SRC = src/socket.c src/protocol.c src/utils.c src/host-dispatch.c src/host-scenario.c
+SRC = src/socket.c src/protocol.c src/utils.c src/host-dispatch.c src/host-curve.c src/host-scenario.c
 OBJ = $(SRC:.c=.o)
 # the public headers, installed under <includedir>/plugin-hostd-protocol: the names libmod-host-protocol installs
 # under <includedir>/mod-host, so a consumer changes only the package it asks pkg-config for
@@ -53,7 +63,7 @@ PC_DATADIR = $(patsubst $(PREFIX)/%,$${prefix}/%,$(DATADIR))
 
 all: $(LIB_SO)
 
-$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h src/reply-words.h
+$(OBJ): $(HEADERS) $(PROTOCOL_HEADERS) src/session.h src/reply-words.h src/host-curve.h
 
 src/%.o: src/%.c
 	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
@@ -94,11 +104,11 @@ TEST_CFLAGS = $(filter-out -O3,$(CFLAGS)) -O1 -g -Werror
 # write() calls, which mod-host leaves unchecked too
 SAN = -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Wno-error=unused-result
 TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenarios tests/golden-run tests/fixes_test tests/forms_test \
-             tests/hello_test tests/runner_test \
-             tests/socket-test tests/bind-test tests/utils-test
+             tests/hello_test tests/curve_test tests/runner_test \
+             tests/socket-test tests/bind-test tests/adopt-test tests/utils-test
 
-test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi version-check \
+test: test-protocol test-protocol-commands test-utils test-socket test-bind test-adopt test-golden test-golden-modhost \
+      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-curve test-runner test-hello-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
@@ -119,7 +129,11 @@ test-socket: tests/socket-test
 test-bind: tests/bind-test
 	./tests/bind-test
 
-tests/socket-test tests/bind-test: tests/%: tests/%.c src/socket.c include/socket.h
+# socket_adopt: the caller's bound socket served, a second bind on its port refused
+test-adopt: tests/adopt-test
+	./tests/adopt-test
+
+tests/socket-test tests/bind-test tests/adopt-test: tests/%: tests/%.c src/socket.c include/socket.h
 	$(CC) $< -std=gnu99 -D_GNU_SOURCE -O1 -g -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -Iinclude -lpthread -o $@
 tests/utils-test: tests/utils-test.c src/utils.c include/utils.h
 	$(CC) $< -std=gnu99 -D_GNU_SOURCE -O1 -g -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -Iinclude -lm -o $@
@@ -198,7 +212,16 @@ tests/runner_test: tests/runner_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src
 test-hello-sabotage:
 	HELLO_PORT=$(HELLO_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
 
-tests/hello_test: tests/hello_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+tests/hello_test: tests/hello_test.c tests/test-client.h $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
+	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
+
+# the curve verbs (tests/curve_test.c): curve_points is omx_curve_points over the values the instance holds, a binding
+# kept, replaced, started again and dropped with its instance, each refusal by its code
+CURVE_PORT ?= 15596
+test-curve: tests/curve_test
+	CURVE_PORT=$(CURVE_PORT) ./tests/curve_test
+
+tests/curve_test: tests/curve_test.c tests/test-client.h $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/host-curve.h
 	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
 
 # each fix taken out again in a scratch copy of the sources: fixes_test must fail on each
@@ -384,11 +407,11 @@ FUZZ_HARNESSES := protocol dispatch scenario session
 FUZZ_BINS      := $(FUZZ_HARNESSES:%=$(FUZZ_BUILD)/fuzz_%)
 FUZZ_CFLAGS    := -O1 -g -std=gnu99 -D_GNU_SOURCE -fno-omit-frame-pointer -fsanitize=fuzzer,address,undefined \
                   -fno-sanitize-recover=undefined
-FUZZ_SRCS      := src/protocol.c src/utils.c fuzz/socket_fuzz.c src/host-dispatch.c src/host-scenario.c
+FUZZ_SRCS      := src/protocol.c src/utils.c fuzz/socket_fuzz.c src/host-dispatch.c src/host-curve.c src/host-scenario.c
 
 $(FUZZ_BUILD)/fuzz_%: fuzz/fuzz_%.c fuzz/fuzz.h $(FUZZ_SRCS)
 	@mkdir -p $(FUZZ_BUILD)
-	$(FUZZ_CC) $(FUZZ_CFLAGS) -Iinclude -o $@ $< $(FUZZ_SRCS) -lpthread -lm
+	$(FUZZ_CC) $(FUZZ_CFLAGS) $(INCS) -o $@ $< $(FUZZ_SRCS) -lpthread -lm
 
 fuzz: $(FUZZ_BINS)
 
@@ -415,7 +438,7 @@ fuzz-sabotage:
 # every check's comment names a one-line change and the seed on which that check aborts, or why it is not a property;
 # each change is applied alone to the plain harness (fuzz/records.sh)
 fuzz-records:
-	FUZZ_BUILD=$(FUZZ_BUILD) FUZZ_CC=$(FUZZ_CC) sh fuzz/records.sh
+	FUZZ_BUILD=$(FUZZ_BUILD) FUZZ_CC=$(FUZZ_CC) FUZZ_SRCS="$(FUZZ_SRCS)" FUZZ_INCS="$(INCS)" sh fuzz/records.sh
 
 # the coverage witness: the same harnesses without sanitizers, instrumented for llvm-cov, each run once over its seed
 # corpus (-runs=0 executes the corpus and nothing else), held to fuzz/coverage-floor.txt (fuzz/coverage.sh)
@@ -426,7 +449,7 @@ LLVM_PROFDATA  ?= llvm-profdata
 
 $(FUZZ_COV_BUILD)/fuzz_%: fuzz/fuzz_%.c fuzz/fuzz.h $(FUZZ_SRCS)
 	@mkdir -p $(FUZZ_COV_BUILD)
-	$(FUZZ_CC) $(FUZZ_COV_FLAGS) -fsanitize=fuzzer -Iinclude -o $@ $< $(FUZZ_SRCS) -lpthread -lm
+	$(FUZZ_CC) $(FUZZ_COV_FLAGS) -fsanitize=fuzzer $(INCS) -o $@ $< $(FUZZ_SRCS) -lpthread -lm
 
 fuzz-coverage: $(FUZZ_HARNESSES:%=$(FUZZ_COV_BUILD)/fuzz_%)
 	@set -e; for h in $(FUZZ_HARNESSES); do \

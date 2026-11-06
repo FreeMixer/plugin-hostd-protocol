@@ -50,3 +50,27 @@ quoted-char      = %x20-21 / %x23-7E / %x80-10FFFF
 
 ; the tail of a format line that ends in ...: any further words
 tail             = *(SP word)
+
+; the words of a curve_bind after its instance and its display (doc/protocol.md, Curves), and curve_points' reply. The
+; library reads the line by count as it reads any verb (cmd-curve-bind); these are the words a sender writes: clear, or
+; the display's kind, its family and its terms, each <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...]. The role
+; and shape words are omx-dsp's CURVE_ROLES and CURVE_SHAPES (omx_curve.h), held equal by tests/grammar_test.py; a
+; family or a unit is a word, refused by its code when it has no closed form or its role does not take it
+curve-binding    = %s"clear" / (curve-kind SP curve-family 1*(SP curve-term))
+curve-kind       = %s"eq_response" / %s"transfer_curve"
+curve-family     = 1*(%x61-7A / "_")
+curve-term       = curve-role ["." curve-index] "=" curve-symbol [":" curve-unit] ["@" curve-shapes]
+curve-index      = 1*9DIGIT
+curve-role       = %s"band_type" / %s"band_freq" / %s"band_gain" / %s"band_q" / %s"band_on" / %s"hpf_freq" /
+                   %s"hpf_slope" / %s"hpf_on" / %s"lpf_freq" / %s"lpf_slope" / %s"lpf_on" / %s"threshold" /
+                   %s"ratio" / %s"knee" / %s"makeup" / %s"range" / %s"knee_start" / %s"knee_end"
+; a parameter's symbol; a host's own control starts with ":" (:bypass)
+curve-symbol     = [":"] 1*(ALPHA / DIGIT / "_" / "-" / ".")
+curve-unit       = 1*(%x61-7A)
+curve-shapes     = curve-shape *("|" curve-shape)
+curve-shape      = %s"off" / %s"bell" / %s"lowshelf" / %s"highshelf" / %s"highpass" / %s"lowpass" / %s"notch" / "-"
+; curve_points' reply: the count and each point, x to four significant digits and y to 0.01 dB
+curve-points-reply = %s"resp" SP %s"0" SP 1*DIGIT 1*(SP curve-point)
+curve-point      = curve-x "," curve-y
+curve-x          = ["-"] 1*DIGIT ["." 1*DIGIT]
+curve-y          = ["-"] 1*DIGIT "." 2DIGIT
