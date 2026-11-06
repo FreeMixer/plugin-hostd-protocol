@@ -73,7 +73,7 @@ __attribute__((noinline)) static void check_called(int exact, int expect_called)
 {
     /* mutant: src/protocol.c:406 `match == proto.list_count || variable_arguments` -> `0`
        input: extra-1
-       mutant: src/utils.c:204 `quote = 0;` -> ``
+       mutant: src/utils.c:206 `quote = 0;` -> ``
        input: quoted-words */
     if (exact && g_called != expect_called)
         abort();

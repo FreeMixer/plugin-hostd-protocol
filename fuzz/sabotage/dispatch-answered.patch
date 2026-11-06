@@ -2,11 +2,11 @@ Breaks check_answered of fuzz/fuzz_dispatch.c:188 (each command gets a reply).
 Caught by the seed input "scenario-1" of fuzz_dispatch.
 
 diff --git a/src/host-dispatch.c b/src/host-dispatch.c
-index 6f24aae..0599264 100644
+index 1afe89b..60990c7 100644
 --- a/src/host-dispatch.c
 +++ b/src/host-dispatch.c
-@@ -67,7 +67,7 @@ static void add_cb(proto_t *proto)
-         resp = g_backend->add(proto->list[1], atoi(proto->list[2]), client_name);
+@@ -75,7 +75,7 @@ static void add_cb(proto_t *proto)
+         resp = g_backend->add(uri, atoi(proto->list[next]), client_name);
      else
          resp = ERR_INVALID_OPERATION;
 -    protocol_response_int(resp, proto);
