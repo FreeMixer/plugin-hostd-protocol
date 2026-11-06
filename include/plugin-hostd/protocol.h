@@ -442,7 +442,9 @@ static inline const char *phd_add_uri(char *const *words, unsigned count, char *
 /* A path of a pin, and the path of a clap: uri, is written percent-encoded: every byte of PHD_PIN_PATH_EXCLUDED, the
  * escape itself, a double quote, a backslash and every control byte is PHD_PIN_PATH_ESCAPE and two uppercase hex
  * digits, every other byte as it is. So any file name is one bare word ("Surge XT.clap" is "Surge%20XT.clap"), and a
- * reader decodes it before it opens or hashes the file. */
+ * reader decodes it before it opens or hashes the file. The escape is always one: a name holding '%' itself writes it
+ * %25. A pin is keyed by its clap: uri's path decoded, so the uri written with the space as it is (quoted) and written
+ * encoded name one pin (doc/protocol.md, Pins and qualification). */
 #define PHD_PIN_PATH_ESCAPE      "%"
 
 /* whether a byte of a path is written escaped */

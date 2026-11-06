@@ -381,6 +381,8 @@ Each is declared in `protocol/plugin-hostd.json`; the formats, codes and hosts c
 
 ### Pins and qualification
 
+A path of a pin, and the path of a `clap:` uri, is written percent-encoded (`PHD_PIN_PATH_ESCAPE`): a separator of `pin_set`'s words, whitespace, `%`, a quote, a backslash and a control byte are `%XX`, so any file name is one word (`Surge XT.clap` is `Surge%20XT.clap`). `%` is always an escape: a file name that holds a `%` itself writes it `%25`, and a `%` not followed by two hex digits is refused. A pin is keyed by its `clap:` uri's path decoded: `"clap:/c/Surge XT.clap#id"`, quoted, and `clap:/c/Surge%20XT.clap#id` are one pin, whichever spelling `pin_set`, `pin_clear` or `add` uses, and the pin store writes the decoded path as one quoted word.
+
 | verb | arguments | types | reply | codes | since (the group's) | hosts | meaning |
 |---|---|---|---|---|---|---|---|
 | `pin_set` | `<uri> <path>=<sha256>[,<path>=<sha256>...] <scheme>:<sha256> [verdict=<verdict>] [pool=<pool>]` | word word word ... | `resp 0` | -516 PIN_REFUSED; -901 reply.host.memory-allocation; -902 reply.host.invalid-operation | 0.12.0 | plugin-hostd required | the pin of one plugin: the SHA-256 of every file the host loads for it, a path relative to the bundle (the directory of a single-file format's file), its layout fingerprint and, when they are known, the verdict of its qualification and whether its worker gets the CLAP thread pool; it replaces an earlier pin of the uri; -516 for a plugin whose pins_dir pin carries verdict=refused, which only the user's pin_accept overrides. The pin store, a pin_file and a pins_dir file hold the same line, with or without the verb |

@@ -288,6 +288,17 @@ OURS_GROUPS = [
     ("Presets and notes, by instance", r"^(preset_|note_|all_notes_off$)"),
 ]
 
+# the prose a group opens with, before its table
+GROUP_NOTES = {
+    "Pins and qualification": (
+        "A path of a pin, and the path of a `clap:` uri, is written percent-encoded (`PHD_PIN_PATH_ESCAPE`): a separator "
+        "of `pin_set`'s words, whitespace, `%`, a quote, a backslash and a control byte are `%XX`, so any file name is "
+        "one word (`Surge XT.clap` is `Surge%20XT.clap`). `%` is always an escape: a file name that holds a `%` itself "
+        "writes it `%25`, and a `%` not followed by two hex digits is refused. A pin is keyed by its `clap:` uri's path "
+        "decoded: `\"clap:/c/Surge XT.clap#id\"`, quoted, and `clap:/c/Surge%20XT.clap#id` are one pin, whichever "
+        "spelling `pin_set`, `pin_clear` or `add` uses, and the pin store writes the decoded path as one quoted word."),
+}
+
 # the values the example sessions put in place of a word of the grammar; a word not here stays as the grammar says it
 SAMPLE = {
     "<instance>": ["0", "1", "2"],
@@ -760,6 +771,9 @@ def page():
             continue
         w(f"### {title}")
         w("")
+        if title in GROUP_NOTES:
+            w(GROUP_NOTES[title])
+            w("")
         rows = []
         for v in groups[title]:
             hosts = ", ".join(f"{h} {l}" for h, l in hosts_of(v["name"]).items()) or "-"

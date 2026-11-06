@@ -116,6 +116,10 @@ make test
   bind on the port is refused
 - builds with omx-dsp-devel >= 0.32.0 and < 0.33
 
+* Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.2-1
+- The protocol page and protocol.h say how a pin is keyed: by its clap: uri's
+  path decoded, so the uri written with the space as it is and written encoded
+  name one pin; '%' is always an escape, and a name holding one writes it %25
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.1-1
 - A path of a pin, and the path of a clap: uri, is written percent-encoded:
   a separator of pin_set, whitespace, '%', a quote, a backslash and a control
