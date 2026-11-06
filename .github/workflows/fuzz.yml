@@ -25,7 +25,7 @@ jobs:
       - name: Add the OpenMixer channel
         uses: FreeMixer/.github/.github/actions/add-openmixer@v1
       - name: omx-dsp's curve function, which the dispatcher draws with
-        run: dnf -y install 'omx-dsp-devel >= 0.31.0' 'omx-dsp-devel < 0.32'
+        run: dnf -y install 'omx-dsp-devel >= 0.32.0' 'omx-dsp-devel < 0.33'
       - name: Build the harnesses
         run: make fuzz
       - name: Every check's mutant record is met on its own seed

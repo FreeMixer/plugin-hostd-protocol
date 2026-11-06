@@ -394,6 +394,8 @@ static void curve_points_cb(proto_t *proto)
         rqt[i].value = value;
         rqt[i].unit = t->unit;
         rqt[i].shape = OMX_CURVE_NO_SHAPE;
+        /* a host binds a plugin's controls, which carry no origin (spec §7.6: the strip's EQ is the console's) */
+        rqt[i].origin = OMX_CURVE_ORIGINS_USER;
         if (t->role == OMX_CURVE_ROLES_BAND_TYPE && t->nshapes)
         {
             /* the shape the choice value selects; a value past the list is a choice with no shape */

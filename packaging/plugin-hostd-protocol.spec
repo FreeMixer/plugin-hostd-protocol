@@ -20,7 +20,7 @@ BuildRequires: python3
 # install-contract writes the contract directory's package with omx-contract's script
 BuildRequires: (omx-contract-devel >= 3.9.0 with omx-contract-devel < 4)
 # omx_curve.h, the curve function the curve verbs draw with (header only)
-BuildRequires: (omx-dsp-devel >= 0.31.0 with omx-dsp-devel < 0.32)
+BuildRequires: (omx-dsp-devel >= 0.32.0 with omx-dsp-devel < 0.33)
 
 %description
 libplugin-hostd-protocol is the socket server, line protocol and command
@@ -112,7 +112,7 @@ make test
   rate it gives; one that does not answers -902
 - codes -540 (durable-write-failed) and -541 (writer-queue-full) for the
   daemon's writer thread; history_clear, pin_clear and pin_accept declare them
-- builds with omx-dsp-devel >= 0.31.0 and < 0.32
+- builds with omx-dsp-devel >= 0.32.0 and < 0.33
 
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.1-1
 - A path of a pin, and the path of a clap: uri, is written percent-encoded:

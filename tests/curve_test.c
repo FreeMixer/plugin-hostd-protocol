@@ -198,12 +198,12 @@ int main(void)
     expect(&c, "bind a compressor", "curve_bind 3 0 transfer_curve dynamics threshold=p0:dbfs ratio=p1:ratio knee=p2:db makeup=p3:db", "resp 0");
     {
         struct omx_curve_term t[] = {
-            {OMX_CURVE_ROLES_THRESHOLD, 0, -18.5f, OMX_CURVE_UNITS_DBFS, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_RATIO, 0, 4.0f, OMX_CURVE_UNITS_RATIO, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_KNEE, 0, 6.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_MAKEUP, 0, 2.5f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE},
+            {OMX_CURVE_ROLES_THRESHOLD, 0, -18.5f, OMX_CURVE_UNITS_DBFS, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_RATIO, 0, 4.0f, OMX_CURVE_UNITS_RATIO, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_KNEE, 0, 6.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_MAKEUP, 0, 2.5f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
         };
-        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_TRANSFER_CURVE, OMX_CURVE_FAMILIES_DYNAMICS, CURVE_RATE, 41u, 0, 0, 0, t, 4u};
+        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_TRANSFER_CURVE, OMX_CURVE_FAMILIES_DYNAMICS, CURVE_RATE, 41u, 0, 0, 0, t, 4u, 0};
         expect_curve(&c, "compressor points", "curve_points 3 0 41", &rq);
         /* a value changed on the instance is the one the next curve_points reads */
         set(3, 1, 2.0f);
@@ -228,15 +228,15 @@ int main(void)
            "band_q.0=p3:oct band_on.0=p4 hpf_freq=p5:khz hpf_slope=p6:db", "resp 0");
     {
         struct omx_curve_term t[] = {
-            {OMX_CURVE_ROLES_BAND_TYPE, 0, 2.0f, OMX_CURVE_UNITS_NONE, OMX_CURVE_SHAPES_LOWSHELF},
-            {OMX_CURVE_ROLES_BAND_FREQ, 0, 1000.0f, OMX_CURVE_UNITS_HZ, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_BAND_GAIN, 0, 2.0f, OMX_CURVE_UNITS_COEF, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_BAND_Q, 0, 1.0f, OMX_CURVE_UNITS_OCT, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_BAND_ON, 0, 1.0f, OMX_CURVE_UNITS_NONE, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_HPF_FREQ, 0, 0.12f, OMX_CURVE_UNITS_KHZ, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_HPF_SLOPE, 0, 24.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE},
+            {OMX_CURVE_ROLES_BAND_TYPE, 0, 2.0f, OMX_CURVE_UNITS_NONE, OMX_CURVE_SHAPES_LOWSHELF, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_FREQ, 0, 1000.0f, OMX_CURVE_UNITS_HZ, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_GAIN, 0, 2.0f, OMX_CURVE_UNITS_COEF, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_Q, 0, 1.0f, OMX_CURVE_UNITS_OCT, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_BAND_ON, 0, 1.0f, OMX_CURVE_UNITS_NONE, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_HPF_FREQ, 0, 0.12f, OMX_CURVE_UNITS_KHZ, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_HPF_SLOPE, 0, 24.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
         };
-        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_EQ_RESPONSE, OMX_CURVE_FAMILIES_EQ, 48000.0, 64u, 0, 0, 0, t, 7u};
+        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_EQ_RESPONSE, OMX_CURVE_FAMILIES_EQ, 48000.0, 64u, 0, 0, 0, t, 7u, 0};
         expect_curve(&c, "EQ points", "curve_points 4 1 64", &rq);
         set(4, 0, 1.0f);
         t[0].value = 1.0f;
@@ -265,7 +265,7 @@ int main(void)
     /* -- a 32-band binding in three lines answers as the one request it makes */
     {
         static struct omx_curve_term t[160];
-        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_EQ_RESPONSE, OMX_CURVE_FAMILIES_EQ, CURVE_RATE, 32u, 0, 0, 0, t, 0u};
+        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_EQ_RESPONSE, OMX_CURVE_FAMILIES_EQ, CURVE_RATE, 32u, 0, 0, 0, t, 0u, 0};
         for (b = 0; b < 32; b++)
         {
             set(3, 10 + 4 * b, 25.0f * powf(2.0f, (float)b / 3.2f));
@@ -285,10 +285,10 @@ int main(void)
         for (b = 0; b < 32; b++)
         {
             const int sh[3] = {OMX_CURVE_SHAPES_BELL, OMX_CURVE_SHAPES_LOWSHELF, OMX_CURVE_SHAPES_HIGHSHELF};
-            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_FREQ, (uint32_t)b, g_params[0][10 + 4 * b], OMX_CURVE_UNITS_HZ, OMX_CURVE_NO_SHAPE};
-            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_GAIN, (uint32_t)b, g_params[0][11 + 4 * b], OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE};
-            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_Q, (uint32_t)b, g_params[0][12 + 4 * b], OMX_CURVE_UNITS_NONE, OMX_CURVE_NO_SHAPE};
-            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_TYPE, (uint32_t)b, g_params[0][13 + 4 * b], OMX_CURVE_UNITS_NONE, sh[b % 3]};
+            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_FREQ, (uint32_t)b, g_params[0][10 + 4 * b], OMX_CURVE_UNITS_HZ, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER};
+            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_GAIN, (uint32_t)b, g_params[0][11 + 4 * b], OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER};
+            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_Q, (uint32_t)b, g_params[0][12 + 4 * b], OMX_CURVE_UNITS_NONE, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER};
+            t[rq.nterms++] = (struct omx_curve_term){OMX_CURVE_ROLES_BAND_TYPE, (uint32_t)b, g_params[0][13 + 4 * b], OMX_CURVE_UNITS_NONE, sh[b % 3], OMX_CURVE_ORIGINS_USER};
         }
         expect_curve(&c, "a 32-band EQ, bound in three lines", "curve_points 3 2 32", &rq);
         expect(&c, "32 bands: 256 - 96 grid points fit, one more does not", "curve_points 3 2 161", "resp -539");
@@ -320,10 +320,10 @@ int main(void)
     set(3, 0, -10.0f), set(3, 1, 4.0f);
     {
         struct omx_curve_term t[] = {
-            {OMX_CURVE_ROLES_THRESHOLD, 0, -10.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE},
-            {OMX_CURVE_ROLES_RATIO, 0, 4.0f, OMX_CURVE_UNITS_RATIO, OMX_CURVE_NO_SHAPE},
+            {OMX_CURVE_ROLES_THRESHOLD, 0, -10.0f, OMX_CURVE_UNITS_DB, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
+            {OMX_CURVE_ROLES_RATIO, 0, 4.0f, OMX_CURVE_UNITS_RATIO, OMX_CURVE_NO_SHAPE, OMX_CURVE_ORIGINS_USER},
         };
-        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_TRANSFER_CURVE, OMX_CURVE_FAMILIES_DYNAMICS, CURVE_RATE, 5u, 0, 0, 0, t, 2u};
+        struct omx_curve_request rq = {OMX_CURVE_DISPLAYS_TRANSFER_CURVE, OMX_CURVE_FAMILIES_DYNAMICS, CURVE_RATE, 5u, 0, 0, 0, t, 2u, 0};
         expect_curve(&c, "the refused line kept nothing: p0 is still the threshold", "curve_points 3 0 5", &rq);
     }
 

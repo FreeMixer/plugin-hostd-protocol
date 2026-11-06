@@ -30,8 +30,8 @@ ifeq ($(DEBUG), 1)
 endif
 # omx-dsp's curve function (omx_curve.h, header only), which the curve verbs draw with: at or above the minor that
 # declares it and below the next, as packaging/plugin-hostd-protocol.spec and debian/control require it
-OMXDSP_FLOOR = 0.31.0
-OMXDSP_CEILING = 0.32
+OMXDSP_FLOOR = 0.32.0
+OMXDSP_CEILING = 0.33
 OMXDSP_CFLAGS := $(shell $(PKG_CONFIG) --cflags 'omxdsp >= $(OMXDSP_FLOOR)' 'omxdsp < $(OMXDSP_CEILING)' 2>/dev/null)
 ifeq ($(filter clean version-check,$(MAKECMDGOALS)),)
 ifeq ($(OMXDSP_CFLAGS),)
