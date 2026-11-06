@@ -41,7 +41,7 @@ Discovery: the daemon declares itself in files, not on the socket. The verb tabl
 The verb table and the grammar
 ------------------------------
 
-`protocol/plugin-hostd-protocol.json` is the one table of the protocol: every command, each once, with its origin, its argument types, its reply and its refusals, and every feedback line. It is merged from `protocol/mod-host.json`, `protocol/plugin-hostd.json`, `data/verbs.json`, `include/plugin-hostd/omx_clap_core_host_verbs.h` by `tools/protocol-table.py`; 48 commands of origin mod-host, 27 commands of origin plugin-hostd, 11 commands of origin omx-clap-core, 3 commands of origin plugin-hostd-protocol, 21 feedback lines.
+`protocol/plugin-hostd-protocol.json` is the one table of the protocol: every command, each once, with its origin, its argument types, its reply and its refusals, and every feedback line. It is merged from `protocol/mod-host.json`, `protocol/plugin-hostd.json`, `data/verbs.json`, `include/plugin-hostd/omx_clap_core_host_verbs.h` by `tools/protocol-table.py`; 48 commands of origin mod-host, 27 commands of origin plugin-hostd, 11 commands of origin omx-clap-core, 5 commands of origin plugin-hostd-protocol, 21 feedback lines.
 
 `grammar/plugin-hostd-protocol.abnf` is the grammar of a line, in ABNF (RFC 5234, with RFC 7405's case-sensitive strings): the lexical core, written once by hand (`grammar/core.abnf`), and a rule per command, per feedback line and per parse refusal generated from the table by `tools/abnf-gen.py`. Every line of the scenario corpus and every reply the library writes in the golden transcript is held to it (`make test-grammar`).
 
@@ -111,7 +111,7 @@ In a session granted `errors`, a refusal `resp <n>` is followed by one more word
 < resp -3 reply.host.instance-non-exists
 ```
 
-- The words are those of the [reply codes](#reply-codes), 40 numbers in all; a number the protocol declares no code for goes out bare.
+- The words are those of the [reply codes](#reply-codes), 44 numbers in all; a number the protocol declares no code for goes out bare.
 - Only a refusal alone gets its word: a reply that carries values after its number, a success and a parse refusal (`not found`, `few arguments`, which are words already) go out as they are.
 - With `tags` as well, the tag comes first: `@a9 resp -3 reply.host.instance-non-exists`.
 
@@ -155,6 +155,33 @@ A bulk verb does in one line what a client would send once an instance or a para
 < resp 0
 > param_set_many 3 gain 0.75 nope 1 cutoff 440
 < resp -103 2     (nothing is set: gain stays 0.5)
+```
+
+Curves
+------
+
+A panel description's display (an EQ's response, a dynamics stage's transfer curve) is drawn from the instance itself. The controller binds the display once, when the panel opens: `curve_bind` names, for each role the description gives the display, the parameter that plays it, its unit and, for a band's type, the band shape of each choice value. A binding may take more than one line, as a line is at most 64 words and a 32-band EQ's binding is 160 terms: each line adds its terms, and a line of another kind or family starts the binding again. Then each `curve_points` reads every bound parameter from the instance as it is at that moment, with the rate the instance runs at, and answers the points omx-dsp's `omx_curve_points` draws, the one curve function every surface calls. The host keeps the binding with the instance, drops it with the instance's remove and never saves it; it judges nothing of it. A host built on this library answers both verbs once it calls `host_dispatch_register_curve()` with the rate of its instances; one that does not answers -902, and mod-host answers `not found`: a surface then draws the display's frame alone.
+
+| verb | form | reply | codes | meaning |
+|---|---|---|---|---|
+| `curve_bind` | `curve_bind int int word ...` | `resp 0` | -3 reply.host.instance-non-exists; -103 reply.host.param-symbol-invalid; -536 CURVE_KIND_UNKNOWN; -538 CURVE_UNIT_REFUSED; -901 reply.host.memory-allocation; -902 reply.host.invalid-operation | Bind a display of an instance's panel description to the instance's parameters, for curve_points: <instance> <display> clear, or <instance> <display> <kind> <family> <term> [<term> ...], the display's index in the description, its kind (eq_response or transfer_curve) and family, and each term <role>[.<index>]=<symbol>[:<unit>][@<shape>\|<shape>...] as the description gives the role: the parameter that plays it, its unit, and for a band_type the band shape of each choice value from 0 (a band_freq takes one shape, the band's fixed shape). The terms are added to the display's binding, a term of a role and index already bound replacing it; a line of another kind or family starts the binding again, and clear drops it. Every term is checked before any is kept: an instance that does not exist (-3), a symbol it does not have (-103), a family with no closed form for the kind (-536), a unit the role does not take (-538), a term the grammar does not take (-902). The binding lives with the instance and goes with its remove; it is never saved. |
+| `curve_points` | `curve_points int int int` | `resp 0 <count> <x>,<y> ...` | -3 reply.host.instance-non-exists; -103 reply.host.param-symbol-invalid; -536 CURVE_KIND_UNKNOWN; -537 CURVE_TERM_MISSING; -539 CURVE_POINTS_RANGE; -901 reply.host.memory-allocation; -902 reply.host.invalid-operation | The points of a bound display: <instance> <display> <points>, the grid points asked for. Each bound symbol's value is read from the instance as it is now and the instance's rate with it, and omx-dsp's omx_curve_points draws them: an eq_response x in Hz and y in dB, the bands' anchors added (three a drawn band), a transfer_curve input dB to output dB. The reply is the count and each point x,y, x to four significant digits and y to 0.01 dB, ascending in x; at most curve_points_max (omx-dsp's CURVE_POINTS_MAX, 256) points. A display with no binding, or a binding without a term the model needs (-537); a band shape or slope with no closed form (-536); points outside 2 to curve_points_max, the anchors counted (-539); a value that is not finite or an instance not running at a rate (-902). |
+
+A term is `<role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...]`: the role word and the band's index as the description gives them, the parameter's symbol (a host's own control starts with `:`), the unit token, and the shapes (`off`, `bell`, `lowshelf`, `highshelf`, `highpass`, `lowpass`, `notch`, or `-` for a choice value with no closed form). The words are omx-dsp's `CURVE_ROLES`, `CURVE_UNITS` and `CURVE_SHAPES`; the grammar spells them as `curve-term`. A reply carries at most omx-dsp's `CURVE_POINTS_MAX` points, 256, an EQ's three anchors a drawn band among them, so a caller asks for 256 less three times the drawn bands at most.
+
+```
+> curve_bind 3 0 eq_response eq band_freq.0=f_0:hz band_gain.0=g_0:coef band_q.0=w_0:oct band_type.0=ft_0@off|bell|lowshelf|highshelf
+< resp 0
+> curve_bind 3 0 eq_response eq band_freq.1=f_1:hz band_gain.1=g_1:coef band_q.1=w_1:oct band_type.1=ft_1@off|bell|lowshelf|highshelf
+< resp 0
+> curve_points 3 0 128
+< resp 0 134 20.00,0.00 20.54,0.00 ...
+> curve_bind 4 0 transfer_curve dynamics threshold=thr:dbfs ratio=ratio:ratio knee=knee:db makeup=gain:db
+< resp 0
+> curve_points 4 0 1
+< resp -539
+> curve_points 4 1 64
+< resp -537     (display 1 has no binding)
 ```
 
 2. mod-host's verbs on plugin-hostd
@@ -677,6 +704,10 @@ The codes the daemon adds:
 | -533 | `NO_RECORD` | a member of estimate that no qualification record in qualification_dir names: never a reply, the code of the member in the reply's list |
 | -534 | `NO_CELL` | a member of estimate whose qualification records hold no point of the grid at that rate and quantum with a cost and a latency: never a reply, the code of the member in the reply's list |
 | -535 | `UNKNOWN_PLUGIN` | a member of estimate whose uri names no plugin installed here (its format cannot tell the plugin's binary, or the binary is not there): never a reply, the code of the member in the reply's list |
+| -536 | `CURVE_KIND_UNKNOWN` | curve_bind of a family with no closed form for the display's kind, or curve_points of a binding whose values pick a band shape or a head filter slope with no closed form: no curve is drawn |
+| -537 | `CURVE_TERM_MISSING` | curve_points of a display with no binding, or of a binding that lacks a term the model needs (a band's frequency, shape or Q, a threshold, a ratio, a gate's range): no curve is drawn from a guess |
+| -538 | `CURVE_UNIT_REFUSED` | curve_bind of a term in a unit its role does not take: nothing of the line is kept |
+| -539 | `CURVE_POINTS_RANGE` | curve_points of fewer than 2 points or more than a curve carries, three anchors a drawn band counted, or of a band index past what fits |
 
 5. JSON documents
 -----------------

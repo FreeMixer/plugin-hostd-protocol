@@ -504,7 +504,8 @@ def sessions(w):
 def bulk(w):
     """the protocol's own verbs other than hello, from the table and their declaration"""
     own = VERBS["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"]
-    rows = [c for c in TABLE["commands"] if c["origin"] == "plugin-hostd-protocol" and c["verb"] != "hello"]
+    rows = [c for c in TABLE["commands"] if c["origin"] == "plugin-hostd-protocol" and c["verb"] != "hello"
+            and c["verb"] not in CURVE_VERBS]
     if not rows:
         return
     docs = {v["verb"]: v["doc"] for v in own.values()}
@@ -538,6 +539,59 @@ def bulk(w):
             w(f"< {reply}")
         w("```")
         w("")
+
+
+CURVE_VERBS = ("curve_bind", "curve_points")
+
+
+def curves(w):
+    """the curve verbs, from the table and their declaration"""
+    own = VERBS["PLUGIN_HOSTD_PROTOCOL_VERBS"]["verbs"]
+    rows = [c for c in TABLE["commands"] if c["verb"] in CURVE_VERBS]
+    if len(rows) != len(CURVE_VERBS):
+        fail("the curve verbs are not both in the table")
+    docs = {v["verb"]: v["doc"] for v in own.values()}
+    w("Curves")
+    w("------")
+    w("")
+    w("A panel description's display (an EQ's response, a dynamics stage's transfer curve) is drawn from the instance "
+      "itself. The controller binds the display once, when the panel opens: `curve_bind` names, for each role the "
+      "description gives the display, the parameter that plays it, its unit and, for a band's type, the band shape of "
+      "each choice value. A binding may take more than one line, as a line is at most 64 words and a 32-band EQ's "
+      "binding is 160 terms: each line adds its terms, and a line of another kind or family starts the binding again. "
+      "Then each `curve_points` reads every bound parameter from the instance as it is at that moment, with the rate "
+      "the instance runs at, and answers the points omx-dsp's `omx_curve_points` draws, the one curve function every "
+      "surface calls. The host keeps the binding with the instance, drops it with the instance's remove and never "
+      "saves it; it judges nothing of it. A host built on this library answers both verbs once it calls "
+      "`host_dispatch_register_curve()` with the rate of its instances; one that does not answers -902, and mod-host "
+      "answers `not found`: a surface then draws the display's frame alone.")
+    w("")
+    w("\n".join(table(["verb", "form", "reply", "codes", "meaning"],
+                      [[code(c["verb"]), code(" ".join([c["verb"]] + c["forms"][0]["args"] + (["..."] if c["forms"][0]["tail"] else []))),
+                        code(c["reply"]), cell(codes_cell(c["codes"])), cell(docs.get(c["verb"], "-"))] for c in rows])))
+    w("")
+    w("A term is `<role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...]`: the role word and the band's index as the "
+      "description gives them, the parameter's symbol (a host's own control starts with `:`), the unit token, and the "
+      "shapes (`off`, `bell`, `lowshelf`, `highshelf`, `highpass`, `lowpass`, `notch`, or `-` for a choice value with "
+      "no closed form). The words are omx-dsp's `CURVE_ROLES`, `CURVE_UNITS` and `CURVE_SHAPES`; the grammar spells "
+      "them as `curve-term`. A reply carries at most omx-dsp's `CURVE_POINTS_MAX` points, 256, an EQ's three anchors "
+      "a drawn band among them, so a caller asks for 256 less three times the drawn bands at most.")
+    w("")
+    w("```")
+    w("> curve_bind 3 0 eq_response eq band_freq.0=f_0:hz band_gain.0=g_0:coef band_q.0=w_0:oct band_type.0=ft_0@off|bell|lowshelf|highshelf")
+    w("< resp 0")
+    w("> curve_bind 3 0 eq_response eq band_freq.1=f_1:hz band_gain.1=g_1:coef band_q.1=w_1:oct band_type.1=ft_1@off|bell|lowshelf|highshelf")
+    w("< resp 0")
+    w("> curve_points 3 0 128")
+    w("< resp 0 134 20.00,0.00 20.54,0.00 ...")
+    w("> curve_bind 4 0 transfer_curve dynamics threshold=thr:dbfs ratio=ratio:ratio knee=knee:db makeup=gain:db")
+    w("< resp 0")
+    w("> curve_points 4 0 1")
+    w("< resp -539")
+    w("> curve_points 4 1 64")
+    w("< resp -537     (display 1 has no binding)")
+    w("```")
+    w("")
 
 
 def page():
@@ -631,6 +685,7 @@ def page():
 
     sessions(w)
     bulk(w)
+    curves(w)
 
     # 2. mod-host's verbs
     w("2. mod-host's verbs on plugin-hostd")
