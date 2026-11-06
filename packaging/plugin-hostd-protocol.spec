@@ -1,5 +1,5 @@
 Name: plugin-hostd-protocol
-Version: 0.3.0
+Version: 0.4.0
 Release: 1%{?dist}
 License: GPL-3.0-or-later
 Summary: The plugin-hostd protocol library, a superset of mod-host's text protocol
@@ -102,6 +102,14 @@ make test
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog
+* Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.0-1
+- lv2_worker auto is no longer a word of the protocol: a plugin the chosen LV2
+  worker refuses is answered with its code and never handed to another host.
+  lv2_worker and lv2_worker_set take mod-host or omx-clap-host, and
+  lv2_adapter_refused names omx-clap-host only
+- pin_accept of a plugin whose pin carries verdict=refused (pins_dir or
+  pin_file) is the user's choice to load it anyway, alone in a worker of its
+  own; pin_clear takes it back; -516 is no longer its answer
 * Wed Nov 04 2026 Pau Aliagas <linuxnow@gmail.com> - 0.3.0-1
 - hello: the protocol version and the extensions a host grants; a client that
   sends no hello, or whose hello is refused, is answered as mod-host answers it

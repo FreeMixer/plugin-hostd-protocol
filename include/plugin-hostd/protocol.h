@@ -114,18 +114,15 @@
  * verbs) is a field of its row there, and a format joins with a row */
 #define PHD_FORMATS(X) X(LV2, PHD_FORMAT_LV2) X(CLAP, PHD_FORMAT_CLAP) X(LV2_CLAP, PHD_FORMAT_LV2_CLAP)
 
-/* the programs that can run an LV2 plugin, the values of the lv2_worker setting and of lv2_worker_set: X(id, name, meaning) */
+/* the programs that can run an LV2 plugin, the values of the lv2_worker setting and of lv2_worker_set: X(id, name, meaning).
+ * The user chooses one; a plugin it refuses is answered with its code and never handed to the other. */
 #define PHD_LV2_WORKER_MOD_HOST  "mod-host"
 #define PHD_LV2_WORKER_CLAP_HOST "omx-clap-host"
-#define PHD_LV2_WORKER_AUTO      "auto"
 #define PHD_LV2_WORKERS(X) \
     X(MOD_HOST, PHD_LV2_WORKER_MOD_HOST, "the " PHD_FORMAT_LV2 " row: mod_host runs the plugin") \
     X(CLAP_HOST, PHD_LV2_WORKER_CLAP_HOST, "the " PHD_FORMAT_LV2_CLAP " row: clap_host runs the plugin through its LV2 adapter, " \
                                            "a plugin the adapter refuses is refused with a named code, and one it does not " \
-                                           "find answers the worker's -101") \
-    X(AUTO, PHD_LV2_WORKER_AUTO, "the " PHD_FORMAT_LV2_CLAP " row first; a plugin its adapter refuses is run by the " \
-                                 PHD_FORMAT_LV2 " row from then on, and an event says why; one it does not find is looked " \
-                                 "for by the " PHD_FORMAT_LV2 " row, for that add only and with no event")
+                                           "find answers the worker's -101")
 
 /* X(id, name, meaning) in the order of the daemon's enum */
 #define PHD_WORKER_STATES(X) \
@@ -315,9 +312,8 @@ static inline int phd_pool_name_valid(const char *name)
     X(NO_PARAM_CONTRACT, OMX_REPLY_HOST_NO_PARAM_CONTRACT_RESP, "the host holds no checked unit and scale for this parameter: fall back to qualification") \
     X(LV2_ADAPTER_REFUSED, OMX_REPLY_PLUGIN_HOSTD_LV2_ADAPTER_REFUSED_RESP, "the " PHD_FORMAT_LV2_CLAP " worker's LV2 adapter cannot run this plugin (MIDI it does not feed, a " \
                            "required feature it lacks, a layout it does not take): the worker answered the add -102, the " \
-                           PHD_EVENT_LV2_ADAPTER_REFUSED " event carries the hosting.* code of that reply, and under lv2_worker " \
-                           PHD_LV2_WORKER_AUTO " the plugin is run by the " PHD_FORMAT_LV2 " row instead and this code is never " \
-                           "answered; a plugin no bundle of the worker's world holds is no refusal: the worker's -101 is answered") \
+                           PHD_EVENT_LV2_ADAPTER_REFUSED " event carries the hosting.* code of that reply; the plugin is never handed to " \
+                           "another host; a plugin no bundle of the worker's world holds is no refusal: the worker's -101 is answered") \
     X(NO_NOTE_INPUT, OMX_REPLY_HOST_NO_NOTE_INPUT_RESP, "the instance's plugin takes no notes (an effect): its worker answers " OMX_VERB_NOTE_ON ", " \
                      OMX_VERB_NOTE_OFF " and " OMX_VERB_ALL_NOTES_OFF " with this code") \
     X(NOTES_BY_JACK, OMX_REPLY_HOST_NOTES_BY_JACK_RESP, "the instance's worker takes no notes on its socket (mod-host): the daemon answers the note verbs " \
@@ -329,8 +325,8 @@ static inline int phd_pool_name_valid(const char *name)
     X(PIN_REFUSED, OMX_REPLY_PLUGIN_HOSTD_PIN_REFUSED_RESP, "the plugin's pin carries " PHD_PIN_VERDICT_KEY PHD_PIN_VERDICT_REFUSED ": its files are the ones that " \
                    "failed qualification, so add is refused and no worker sees it, and a replayed add is refused the " \
                    "same way; files that differ from the pin answer " PHD_STR(OMX_REPLY_PLUGIN_HOSTD_PIN_BINARY_MISMATCH_RESP) " first. A pins_dir " \
-                   "pin of that verdict is never overridden: " OMX_VERB_PIN_SET " and " OMX_VERB_PIN_ACCEPT " of its plugin " \
-                   "answer this code") \
+                   "pin of that verdict is not overridden by the host's pins: " OMX_VERB_PIN_SET " of its plugin answers this " \
+                   "code. Only the user's " OMX_VERB_PIN_ACCEPT " under pin_mode " PHD_PIN_MODE_FIRST_USE " loads it, alone") \
     X(NOTE_QUEUE_FULL, OMX_REPLY_HOST_NOTE_QUEUE_FULL_RESP, "the instance's worker has no room for this " OMX_VERB_NOTE_ON ", " OMX_VERB_NOTE_OFF " or " \
                        OMX_VERB_ALL_NOTES_OFF " before its next block: the line was not taken and nothing of it is kept; the " \
                        "controller may send it again") \
@@ -477,7 +473,7 @@ static inline int phd_pool_name_valid(const char *name)
       "directory of a single-file format's file), its layout fingerprint and, when they are known, the verdict of its qualification and whether its worker gets the " \
       "CLAP thread pool; " \
       "it replaces an earlier pin of the uri; -516 for a plugin whose pins_dir pin carries " PHD_PIN_VERDICT_KEY \
-      PHD_PIN_VERDICT_REFUSED ", which nothing overrides. The pin store, a pin_file and a pins_dir file hold the same " \
+      PHD_PIN_VERDICT_REFUSED ", which only the user's " OMX_VERB_PIN_ACCEPT " overrides. The pin store, a pin_file and a pins_dir file hold the same " \
       "line, with or without the verb") \
     X(PIN_CLEAR, OMX_VERB_PIN_CLEAR, "<uri> | " PHD_WORD_ALL, OMX_VERB_PIN_CLEAR_REPLY, "forget the pin of one plugin, or of every one; a pins_dir " \
       "pin is read-only and holds again") \
@@ -491,14 +487,15 @@ static inline int phd_pool_name_valid(const char *name)
       "the notice the package sync sends to every daemon it knows after it rewrote the pin file: the same as " \
       OMX_VERB_PIN_RELOAD ", with or without the " PHD_EVENT_PIN_CHANGED " event's words after it; more words than those are -902") \
     X(LV2_WORKER_SET, OMX_VERB_LV2_WORKER_SET, "<uri> <" PHD_LV2_WORKER_MOD_HOST " | " PHD_LV2_WORKER_CLAP_HOST " | " \
-      PHD_LV2_WORKER_AUTO " | " PHD_WORD_NONE ">", OMX_VERB_LV2_WORKER_SET_REPLY, \
+      PHD_WORD_NONE ">", OMX_VERB_LV2_WORKER_SET_REPLY, \
       "the worker of one LV2 plugin, for its adds from now on: it overrides the lv2_worker setting, " PHD_WORD_NONE " takes the " \
       "override back; -902 for a word that is none of these. Like policy_set it is the controller's, not in the ledger, gone with the daemon") \
     X(PIN_ACCEPT, OMX_VERB_PIN_ACCEPT, "<uri>", OMX_VERB_PIN_ACCEPT_REPLY, \
       "pin_mode " PHD_PIN_MODE_FIRST_USE " only: take the plugin's files as they are now as its pin, after a " \
-      PHD_EVENT_PIN_CHANGED " event; the layout is learned again by the next add and the verdict is dropped; -508 when " \
-      "the plugin has no pin, -509 when its files cannot be collected, -516 when its pins_dir pin carries " \
-      PHD_PIN_VERDICT_KEY PHD_PIN_VERDICT_REFUSED ", -902 under pin_mode strict") \
+      PHD_EVENT_PIN_CHANGED " event; the layout is learned again by the next add and the verdict is dropped. Of a plugin " \
+      "whose pin carries " PHD_PIN_VERDICT_KEY PHD_PIN_VERDICT_REFUSED " (pins_dir or pin_file) it is the user's choice to " \
+      "load it anyway: kept beside the pin store, it runs alone in a worker of its own, " OMX_VERB_PIN_CLEAR " takes the " \
+      "choice back; -508 when the plugin has no pin, -509 when its files cannot be collected, -902 under pin_mode strict") \
     X(PIN_LAYOUT, OMX_VERB_PIN_LAYOUT, "<instance>", OMX_VERB_PIN_LAYOUT_REPLY, \
       "sent by the daemon to a worker of a format that checks layouts, after it accepted the add of a plugin whose layout pin is " \
       "still unknown: the layout the worker found after init, which the daemon records in the pin") \
@@ -1010,11 +1007,10 @@ static inline int phd_is_note_verb(const char *verb)
     X(PHD_EVENT_PIN_CHANGED, "<uri> " PHD_PIN_CHANGED_FILES " | " PHD_PIN_CHANGED_LAYOUT, \
       "an add or a replay of a plugin was refused because its files, or the layout the worker found, differ from its " \
       "pin; the pin is as it was until pin_accept or pin_set") \
-    X(PHD_EVENT_LV2_ADAPTER_REFUSED, "<uri> <reason> " PHD_LV2_WORKER_AUTO " | " PHD_LV2_WORKER_CLAP_HOST, \
+    X(PHD_EVENT_LV2_ADAPTER_REFUSED, "<uri> <reason> " PHD_LV2_WORKER_CLAP_HOST, \
       "the LV2 adapter of the " PHD_FORMAT_LV2_CLAP " worker refused a plugin: <reason> is the hosting.* code after -102 on the " \
-      "worker's reply to that add (" PHD_WORD_NONE " when it named none); the last word is the lv2_worker in force, " PHD_LV2_WORKER_AUTO " for a plugin " \
-      "the " PHD_FORMAT_LV2 " row runs from now on, " PHD_LV2_WORKER_CLAP_HOST " for an add answered " \
-      PHD_STR(OMX_REPLY_PLUGIN_HOSTD_LV2_ADAPTER_REFUSED_RESP)) \
+      "worker's reply to that add (" PHD_WORD_NONE " when it named none); the last word is the lv2_worker in force, " \
+      PHD_LV2_WORKER_CLAP_HOST ", and the add is answered " PHD_STR(OMX_REPLY_PLUGIN_HOSTD_LV2_ADAPTER_REFUSED_RESP)) \
     X(PHD_EVENT_REMOTE_PAGES_CHANGED, "<instance>", \
       "relayed from a worker: the plugin changed its remote pages; read them again") \
     X(PHD_EVENT_REMOTE_PAGE_SUGGEST, "<instance> <page_id>", \
@@ -1157,8 +1153,8 @@ static inline int phd_is_note_verb(const char *verb)
     X(clap_host, path, PHD_DEFAULT_CLAP_HOST, "", "worker for " PHD_FORMAT_CLAP) \
     X(lv2_worker, word, PHD_DEFAULT_LV2_WORKER, "", "who runs an LV2 plugin: omx-clap-host (the clap_host program, through " \
       "its LV2 adapter, a plugin it cannot run refused with a code), mod-host (the mod_host program, only when named here or " \
-      "by " OMX_VERB_LV2_WORKER_SET ") or auto (the adapter first, mod-host for what it refuses, each such plugin in a worker " \
-      "of its own unless its add names a placement); " OMX_VERB_LV2_WORKER_SET " overrides it for one plugin") \
+      "by " OMX_VERB_LV2_WORKER_SET "); a plugin the one in force refuses is never handed to the other; " \
+      OMX_VERB_LV2_WORKER_SET " overrides it for one plugin") \
     X(lv2_path, pathlist, PHD_DEFAULT_LV2_PATH, "LV2_PATH", "where bundles are searched") \
     X(lv2_extra, pathlist, "", "", "the site's own bundle folders, searched after lv2_path: the one declaration of them, " \
       "which plugin-qualify and omx-panel read too") \
@@ -1184,7 +1180,8 @@ static inline int phd_is_note_verb(const char *verb)
       "else $HOME/.local/state/plugin-hostd/pins") \
     X(pin_file, path, "", "", "a file of pin lines loaded at start, as plugin-qualify --all --pins writes it; empty is none") \
     X(pins_dir, path, PHD_DEFAULT_PINS_DIR, "", "the read-only pins of packages: every file in it whose name ends in .pins, read at start " \
-      "in name order, under the store, the pin_file and pin_set, except that a pin of verdict=refused there always holds; " \
+      "in name order, under the store, the pin_file and pin_set, except that a pin of verdict=refused there holds over them " \
+      "until the user's pin_accept; " \
       "empty is none") \
     X(descriptor_dir, path, "", "OMX_DESCRIPTOR_DIR", "the scanned descriptors, one file per plugin binary (" \
       PHD_DESCRIPTOR_NAME_SYNTAX ", the hash the binary's SHA-256), written by the scan of an add and read by " OMX_VERB_DESCRIPTOR_GET "; " \
