@@ -1,13 +1,13 @@
-hello 1 errors seq tags
-@_ monitor "" 4 -9
-@- preset_save -104 " " "\"-" "Σ\""
-param_get 9 "\"ϟ"
-param_get_many -97 "\"\"" "" !!
-@_ preset_save 6 "\"" "" ""
-@9__ supervisor_reset э
-@7 history_get hoэ
-@__. param_get_many -49 1m!
-preset_load 2 " "
-track_info 0 ! "!" "U\"" ""
-@7H6 supervisor_reset !
-@. chain_get -2
+hello 1 seq tags
+@__ plan_clear 702
+@J-0 note_off 49 -4 -1 6
+pool_config "v4" 23
+estimate 448 -728 ȄW Ϯ͢! !!ɳ
+bundle_add ""
+@2- param_get 5 ""
+@._ bundle_add !ѣU
+cv_map 3 ! "\"ʓ" -infinity +.2E+88 (
+quarantine_clear "\""
+@. descriptor_get ""
+plan 129 -86
+plan_get 01
