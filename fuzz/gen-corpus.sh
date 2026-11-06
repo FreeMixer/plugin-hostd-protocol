@@ -53,6 +53,13 @@ param_get 99999999999999999999 gain
 param_set -1 gain nan
 zzz %s 5
 add urn:x 5 ... c
+curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct
+curve_points 3 0 128
+curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db
+curve_points 3 0 300
+curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
+curve_bind 3 1 clear extra
+curve_bind 3 0 transfer_curve dynamics threshold=gain:db= ratio=gain:ratio@
 SEEDS
 
 # a verb whose reply carries a value, with a salt that makes the backend succeed

@@ -127,7 +127,7 @@ static const host_backend_t g_backend = { .param_set = b_param_set, .param_get =
    answered one; else the code of the call that refused, which is the last one made, alone. */
 __attribute__((noinline)) static void check_many(const char *got, size_t len, const char *want)
 {
-    /* mutant: src/host-dispatch.c:186 `if (resp < SUCCESS)` -> `if (resp < -100)`
+    /* mutant: src/host-dispatch.c:190 `if (resp < SUCCESS)` -> `if (resp < -100)`
        input: many */
     if (len != strlen(want) + 1 || memcmp(got, want, len) != 0)
         abort();
@@ -137,7 +137,7 @@ __attribute__((noinline)) static void check_many(const char *got, size_t len, co
    checked sets no value at all. */
 __attribute__((noinline)) static void check_set_many(int refused, int unchanged, int checked_refused, unsigned sets)
 {
-    /* mutant: src/host-dispatch.c:234 `if (checked < SUCCESS)` -> `if (0)`
+    /* mutant: src/host-dispatch.c:238 `if (checked < SUCCESS)` -> `if (0)`
        input: setmany */
     if ((refused && !unchanged) || (checked_refused && sets != 0))
         abort();

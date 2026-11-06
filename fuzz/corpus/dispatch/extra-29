@@ -1,0 +1,1 @@
+curve_bind 3 0 eq_response eq band_freq.x=gain:hz band_q.0=:bypass@bell
