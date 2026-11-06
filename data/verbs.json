@@ -7,7 +7,7 @@
   "PLUGIN_HOSTD_REPLY_CODES": {
     "kind": "codes",
     "since": "0.12.0",
-    "doc": "The refusals only plugin-hostd answers by number (include/plugin-hostd/protocol.h PHD_ERRORS). The numbers it answers in common with omx-clap-host are omx-clap-core's HOST_REPLY_CODES.",
+    "doc": "The refusals only plugin-hostd answers by number (include/plugin-hostd/protocol.h PHD_ERRORS), and the curve verbs' own, which any host that registers them through this library answers. The numbers it answers in common with omx-clap-host are omx-clap-core's HOST_REPLY_CODES.",
     "codes": {
       "placementInvalid": {
         "code": "reply.plugin-hostd.placement-invalid",
@@ -153,6 +153,26 @@
         "code": "reply.plugin-hostd.unknown-plugin",
         "resp": -535,
         "doc": "the uri names no plugin installed here"
+      },
+      "curveKindUnknown": {
+        "code": "reply.plugin-hostd.curve-kind-unknown",
+        "resp": -536,
+        "doc": "curve_bind of a family with no closed form for the display's kind, or curve_points of a binding whose values pick a band shape or a head filter slope with no closed form"
+      },
+      "curveTermMissing": {
+        "code": "reply.plugin-hostd.curve-term-missing",
+        "resp": -537,
+        "doc": "curve_points of a display with no binding, or of a binding that lacks a term the model needs"
+      },
+      "curveUnitRefused": {
+        "code": "reply.plugin-hostd.curve-unit-refused",
+        "resp": -538,
+        "doc": "curve_bind of a term in a unit its role does not take"
+      },
+      "curvePointsRange": {
+        "code": "reply.plugin-hostd.curve-points-range",
+        "resp": -539,
+        "doc": "curve_points of fewer than 2 points or more than the most a curve carries, an EQ's three anchors a drawn band counted, or of a band index past what fits"
       }
     }
   },
@@ -757,7 +777,7 @@
   "PLUGIN_HOSTD_PROTOCOL_VERBS": {
     "kind": "verbs",
     "since": "0.3.0",
-    "doc": "The verbs of the protocol itself, which the library answers for any host that registers them: hello (protocol_add_hello) and the bulk verbs, which host_dispatch_register() answers over the host's backend. A client that never sends one is answered exactly as mod-host answers it.",
+    "doc": "The verbs of the protocol itself, which the library answers for any host that registers them: hello (protocol_add_hello), the bulk verbs, which host_dispatch_register() answers over the host's backend, and the curve verbs, which host_dispatch_register_curve() answers over it and the rate the host gives. A client that never sends one is answered exactly as mod-host answers it.",
     "verbs": {
       "hello": {
         "verb": "hello",
@@ -827,6 +847,73 @@
         },
         "since": "0.3.0",
         "doc": "Several parameters of one instance in one line, all or nothing: <instance> <symbol> <value> [<symbol> <value> ...]. Every pair is checked before any is set: a symbol the instance does not have (-103), an instance that does not exist (-3), a value that is not a number or a pair with no value (-902). The first pair refused refuses the line, answered resp <code> <position> with the pair's position from 1, and no value is set. Should the host refuse a value as it sets it, the values set before it are set back, and the line is refused the same way."
+      },
+      "curveBind": {
+        "verb": "curve_bind",
+        "format": "curve_bind %i %i %s ...",
+        "reply": "resp 0",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.instanceNonExists"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.paramSymbolInvalid"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curveKindUnknown"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curveUnitRefused"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.memoryAllocation"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.5.0",
+        "doc": "Bind a display of an instance's panel description to the instance's parameters, for curve_points: <instance> <display> clear, or <instance> <display> <kind> <family> <term> [<term> ...], the display's index in the description, its kind (eq_response or transfer_curve) and family, and each term <role>[.<index>]=<symbol>[:<unit>][@<shape>|<shape>...] as the description gives the role: the parameter that plays it, its unit, and for a band_type the band shape of each choice value from 0 (a band_freq takes one shape, the band's fixed shape). The terms are added to the display's binding, a term of a role and index already bound replacing it; a line of another kind or family starts the binding again, and clear drops it. Every term is checked before any is kept: an instance that does not exist (-3), a symbol it does not have (-103), a family with no closed form for the kind (-536), a unit the role does not take (-538), a term the grammar does not take (-902). The binding lives with the instance and goes with its remove; it is never saved."
+      },
+      "curvePoints": {
+        "verb": "curve_points",
+        "format": "curve_points %i %i %i",
+        "reply": "resp 0 <count> <x>,<y> ...",
+        "codes": [
+          {
+            "ref": "HOST_REPLY_CODES.instanceNonExists"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.paramSymbolInvalid"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curveKindUnknown"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curveTermMissing"
+          },
+          {
+            "ref": "PLUGIN_HOSTD_REPLY_CODES.curvePointsRange"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.memoryAllocation"
+          },
+          {
+            "ref": "HOST_REPLY_CODES.invalidOperation"
+          }
+        ],
+        "implementedBy": {
+          "plugin-hostd": "optional",
+          "omx-clap-host": "optional",
+          "mod-host": "unsupported"
+        },
+        "since": "0.5.0",
+        "doc": "The points of a bound display: <instance> <display> <points>, the grid points asked for. Each bound symbol's value is read from the instance as it is now and the instance's rate with it, and omx-dsp's omx_curve_points draws them: an eq_response x in Hz and y in dB, the bands' anchors added (three a drawn band), a transfer_curve input dB to output dB. The reply is the count and each point x,y, x to four significant digits and y to 0.01 dB, ascending in x; at most curve_points_max (omx-dsp's CURVE_POINTS_MAX, 256) points. A display with no binding, or a binding without a term the model needs (-537); a band shape or slope with no closed form (-536); points outside 2 to curve_points_max, the anchors counted (-539); a value that is not finite or an instance not running at a rate (-902)."
       }
     }
   },
