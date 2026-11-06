@@ -434,7 +434,7 @@ fuzz-sabotage:
 # every check's comment names a one-line change and the seed on which that check aborts, or why it is not a property;
 # each change is applied alone to the plain harness (fuzz/records.sh)
 fuzz-records:
-	FUZZ_BUILD=$(FUZZ_BUILD) FUZZ_CC=$(FUZZ_CC) sh fuzz/records.sh
+	FUZZ_BUILD=$(FUZZ_BUILD) FUZZ_CC=$(FUZZ_CC) FUZZ_SRCS="$(FUZZ_SRCS)" FUZZ_INCS="$(INCS)" sh fuzz/records.sh
 
 # the coverage witness: the same harnesses without sanitizers, instrumented for llvm-cov, each run once over its seed
 # corpus (-runs=0 executes the corpus and nothing else), held to fuzz/coverage-floor.txt (fuzz/coverage.sh)

@@ -1,0 +1,1 @@
+curve_bind 3 0 transfer_curve gate threshold=gain:db range=gain:db ratio=gain:coef knee_start=gain:db knee_end=gain:db

@@ -1,0 +1,1 @@
+curve_bind 3 0 eq_response eq band_type.0=gain@off|bell|lowshelf|- band_freq.0=gain:hz band_gain.0=gain:coef band_q.0=gain:oct

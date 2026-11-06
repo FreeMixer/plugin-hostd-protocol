@@ -39,6 +39,21 @@ param_set_many 3 $PARAM 0.5 no_such_symbol 0.75 $PARAM 0.6 => resp -103 2 | not 
 @param_set_many param_get_many 3 $PARAM => resp 0 0.5000
 @param_set_many param_set 3 $PARAM 0.25 => resp 0
 
+# curves (doc/protocol.md, Curves): a display bound to the instance's parameters, then drawn; a verb mod-host does not
+# know. $PARAM holds 0.25: a 0.25 dB threshold at a ratio of 1 (0.25 is held at 1) draws the diagonal
+curve_bind 3 0 transfer_curve dynamics threshold=$PARAM:db ratio=$PARAM:ratio => resp 0 | resp -902 | not found
+@curve_bind curve_points 3 0 3 => resp 0 3 -80.00,-80.00 -40.00,-40.00 0,0.00
+@curve_bind curve_points 3 1 3 => resp -537
+@curve_bind curve_points 3 0 1 => resp -539
+@curve_bind curve_points 9 0 3 => resp -3
+@curve_bind curve_bind 9 0 transfer_curve dynamics threshold=$PARAM:db => resp -3
+@curve_bind curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db => resp -103
+@curve_bind curve_bind 3 0 transfer_curve reverb threshold=$PARAM:db => resp -536
+@curve_bind curve_bind 3 0 transfer_curve dynamics threshold=$PARAM:hz => resp -538
+@curve_bind curve_bind 3 0 transfer_curve dynamics threshold=$PARAM:db@bell => resp -902
+@curve_bind curve_bind 3 0 clear => resp 0
+@curve_bind curve_points 3 0 3 => resp -537
+
 # presets: a preset the host cannot load is refused as a bad URI or as unloadable state
 preset_load 3 urn:no:such:preset => resp -104 | resp -105 | resp -902
 

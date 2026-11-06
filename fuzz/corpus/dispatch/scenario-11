@@ -1,1 +1,1 @@
-param_get 9 gain
+curve_bind 3 0 transfer_curve dynamics threshold=no_such_symbol:db

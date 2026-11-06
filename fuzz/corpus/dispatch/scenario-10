@@ -1,1 +1,1 @@
-param_get 3 no_such_symbol
+curve_bind 3 0 transfer_curve dynamics threshold=gain:hz

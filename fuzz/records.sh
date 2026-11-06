@@ -18,6 +18,8 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$ROOT"
 B=${FUZZ_BUILD:-build/fuzz}/records
 CC=${FUZZ_CC:-clang}
+# the sources every harness links and the include flags, the Makefile's FUZZ_SRCS and INCS
+: "${FUZZ_SRCS:?make fuzz-records passes FUZZ_SRCS}" "${FUZZ_INCS:?make fuzz-records passes FUZZ_INCS}"
 mkdir -p "$B"
 # every mutant aborts: no core file for any of them
 ulimit -c 0
@@ -49,8 +51,9 @@ static inline void records_abort_at(const char *file, int line)
 EOF
 
 build() {   # build <harness> <output>: every harness links the same sources (FUZZ_SRCS of the Makefile)
-    "$CC" -O0 -g -std=gnu99 -D_GNU_SOURCE -fsanitize=fuzzer -include "$B/abort-at.h" -Iinclude "fuzz/fuzz_$1.c" \
-        src/protocol.c src/utils.c fuzz/socket_fuzz.c src/host-dispatch.c src/host-scenario.c -lpthread -lm -o "$2"
+    # shellcheck disable=SC2086
+    "$CC" -O0 -g -std=gnu99 -D_GNU_SOURCE -fsanitize=fuzzer -include "$B/abort-at.h" $FUZZ_INCS "fuzz/fuzz_$1.c" \
+        $FUZZ_SRCS -lpthread -lm -o "$2"
 }
 
 # runs <binary> <seed>: the exit status, and the abort() it reports in $B/last.log
