@@ -1,5 +1,6 @@
 host_dispatch_output_set
 host_dispatch_register
+host_dispatch_register_curve
 host_dispatch_register_monitor_output
 host_dispatch_register_plugin_info
 host_dispatch_register_unsupported
