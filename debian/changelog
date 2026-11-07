@@ -1,3 +1,12 @@
+plugin-hostd-protocol (0.4.5) unstable; urgency=medium
+
+  * show_external_ui and hide_external_ui are optional of every profile: the
+    daemon sends each to the worker that holds the instance and passes its
+    resp back; a daemon with no display session refuses both with -902
+    hosting.window.no-display; the ledger keeps the latest of the two.
+
+ -- Pau Aliagas <linuxnow@gmail.com>  Sat, 07 Nov 2026 18:00:00 +0100
+
 plugin-hostd-protocol (0.4.4) unstable; urgency=medium
 
   * A second daemon on a busy port is refused instead of silently sharing it:

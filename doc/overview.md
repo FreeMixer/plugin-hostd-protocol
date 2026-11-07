@@ -87,7 +87,7 @@ What each host profile owes each verb a controller sends:
 | `cc_unmap` | mod-ui | absent | absent | absent | absent |
 | `hmi_map` | mod-ui | absent | absent | absent | absent |
 | `hmi_unmap` | mod-ui | absent | absent | absent | absent |
-| `show_external_ui` | mod-ui | absent | absent | absent | absent |
+| `show_external_ui` | mod-ui | optional | optional | optional | optional |
 | `set_midi_program_change_pedalboard_bank_channel` | mod-ui | absent | absent | absent | absent |
 | `set_midi_program_change_pedalboard_snapshot_channel` | mod-ui | absent | absent | absent | absent |
 | `disconnect` | mod-host | required | required | required | required |
@@ -111,6 +111,7 @@ What each host profile owes each verb a controller sends:
 | `note_on` | daemon | optional | optional | optional | optional |
 | `note_off` | daemon | optional | optional | optional | optional |
 | `all_notes_off` | daemon | optional | optional | optional | optional |
+| `hide_external_ui` | daemon | optional | optional | optional | optional |
 | `worker_list` | daemon | required | required | required | required |
 | `instance_info` | daemon | required | required | required | required |
 | `supervisor_reset` | daemon | required | required | required | required |

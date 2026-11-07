@@ -98,6 +98,17 @@ for name, source, levels in rows:
     if name in daemon_answers and set(levels.values()) != {"required"}:
         fail("%s is answered by the daemon itself, so it is required of every profile, not %s" % (name, levels))
 
+# the plugin's own window (protocol.h PHD_RELAY WINDOW): the daemon sends each to the worker that holds
+# the instance, so both are instance verbs, and both are optional of every profile: a worker with no window refuses them
+by_name = {r[0]: r for r in rows}
+for verb in ("show_external_ui", "hide_external_ui"):
+    if verb not in by_name:
+        fail("%s, the plugin's own window, has no row" % verb)
+    elif set(by_name[verb][2].values()) != {"optional"}:
+        fail("%s is optional of every profile, not %s" % (verb, by_name[verb][2]))
+    if verb not in instance:
+        fail("%s goes to the worker that holds the instance, so it is one of PHD_INSTANCE_VERBS" % verb)
+
 if failed:
     sys.exit(1)
 print("ok   verb table: %d rows over %d profiles cover %d mod-host commands, %d controller verbs and %d instance verbs"

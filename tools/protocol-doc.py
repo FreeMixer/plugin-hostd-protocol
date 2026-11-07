@@ -286,10 +286,21 @@ OURS_GROUPS = [
     ("Chains and plans", r"^((chain|plan)(_|$)|estimate$)"),
     ("Descriptors, panels and the running history", r"^(descriptor_|panel_|history_)"),
     ("Presets and notes, by instance", r"^(preset_|note_|all_notes_off$)"),
+    ("The plugin's own window", r"^(show|hide)_external_ui$"),
 ]
 
 # the prose a group opens with, before its table
 GROUP_NOTES = {
+    "The plugin's own window": (
+        "`show_external_ui <instance>` puts the plugin's own window on the display and `hide_external_ui <instance>` "
+        "takes it off, as jalv and mod-host show one; both are optional of every profile. The daemon sends each to the "
+        "worker that holds the instance and returns the worker's resp as it wrote it: omx-clap-host answers `resp 0`, "
+        "or `-404` and a `hosting.window.*` code when no window shows. `-902` comes back when the instance's worker has "
+        "no window (mod-host's, an LV2 instance on the `lv2` row) or the worker does not know the verb. The window "
+        "belongs to the worker's display session, the `WAYLAND_DISPLAY` or `DISPLAY` of the daemon's environment, "
+        "which every worker inherits; a daemon with neither answers `resp -902 hosting.window.no-display` and sends "
+        "the worker nothing. The ledger keeps the latest of the two per instance: a window that was shown is shown "
+        "again after a respawn, after the state, and a hidden one is not."),
     "Pins and qualification": (
         "A path of a pin, and the path of a `clap:` uri, is written percent-encoded (`PHD_PIN_PATH_ESCAPE`): a separator "
         "of `pin_set`'s words, whitespace, `%`, a quote, a backslash and a control byte are `%XX`, so any file name is "

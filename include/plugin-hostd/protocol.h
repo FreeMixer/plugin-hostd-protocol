@@ -31,6 +31,7 @@
 #ifndef PLUGIN_HOSTD_PROTOCOL_H
 #define PLUGIN_HOSTD_PROTOCOL_H
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "omx_clap_core_host_verbs.h"
@@ -54,6 +55,20 @@
  * display. With neither DISPLAY nor WAYLAND_DISPLAY set, QT_QPA_PLATFORM is set to this unless the user set it:
  * phd_headless_qt() of the library (utils.h), called before the host loads a plugin or starts a process that does */
 #define PHD_HEADLESS_QT_PLATFORM "offscreen"
+
+/* whether the process has a display session: DISPLAY or WAYLAND_DISPLAY set and not empty. A host with none gives Qt
+ * PHD_HEADLESS_QT_PLATFORM; a daemon with none refuses show_external_ui and hide_external_ui itself, with
+ * PHD_EXTERNAL_UI_NO_DISPLAY after the -902, since the window would belong to its workers, which inherit its environment */
+static inline int phd_has_display(void)
+{
+    const char *x = getenv("DISPLAY"), *wayland = getenv("WAYLAND_DISPLAY");
+
+    return (x && *x) || (wayland && *wayland);
+}
+
+/* the word after a window verb's -902 from a daemon with no display session: omx-clap-core's hosting.window code for
+ * the same fact (data/hosting.json), the word its worker gives after -404 when no display answers */
+#define PHD_EXTERNAL_UI_NO_DISPLAY "hosting.window.no-display"
 
 /* ---------------------------------------------------------------- constants */
 
@@ -756,6 +771,8 @@ static inline int phd_pin_path_decode(const char *word, char *out, size_t size)
     X(STEPPED, "stepped", "the whole numbers from min to max, step 1")
 
 /* what the ledger keeps of a verb: nothing, or the latest one per instance, replayed after the add */
+/* show_external_ui: mod-host.h declares it as the format SHOW_EXTERNAL_UI, and omx-clap-core's verb table does not */
+#define PHD_VERB_SHOW_EXTERNAL_UI "show_external_ui"
 #define PHD_LEDGER_NONE    0
 #define PHD_LEDGER_REPLACE 1
 
@@ -795,7 +812,17 @@ static inline int phd_pin_path_decode(const char *word, char *out, size_t size)
     X(NOTE_OFF, OMX_VERB_NOTE_OFF, "<instance> <channel> <key> <velocity>", "resp 0", NONE, \
       "release a key, velocity 0 to " PHD_STR(PHD_NOTE_VELOCITY_MAX) ", a MIDI note off; answered as " OMX_VERB_NOTE_ON " is") \
     X(ALL_NOTES_OFF, OMX_VERB_ALL_NOTES_OFF, "<instance>", "resp 0", NONE, \
-      "release every key of every channel, MIDI's all notes off (controller 123) on each; answered as " OMX_VERB_NOTE_ON " is")
+      "release every key of every channel, MIDI's all notes off (controller 123) on each; answered as " OMX_VERB_NOTE_ON " is") \
+    X(SHOW_EXTERNAL_UI, PHD_VERB_SHOW_EXTERNAL_UI, "<instance>", "resp 0", REPLACE, \
+      "put the plugin's own window on the display, as jalv and mod-host show one: the worker that holds the instance " \
+      "answers, and its resp comes back as it wrote it (omx-clap-host: -404 and a hosting.window code when no window " \
+      "shows); -902 for an instance whose worker has no window (mod-host's), and -902 " PHD_EXTERNAL_UI_NO_DISPLAY \
+      " from a daemon with no display session. The ledger keeps the latest of this verb and " OMX_VERB_HIDE_EXTERNAL_UI \
+      " as one setting: a window shown is shown again after a respawn, after the state") \
+    X(HIDE_EXTERNAL_UI, OMX_VERB_HIDE_EXTERNAL_UI, "<instance>", "resp 0", REPLACE, \
+      "take the plugin's own window off the display, kept for the next " PHD_VERB_SHOW_EXTERNAL_UI "; answered as " \
+      PHD_VERB_SHOW_EXTERNAL_UI " is, resp 0 also when no window is shown; in the ledger it takes back the show, so a " \
+      "respawn shows nothing")
 
 /* whether s is a string word: valid UTF-8, at most PHD_STRING_MAX bytes, no byte below 0x20 */
 static inline int phd_string_valid(const char *s)
@@ -983,7 +1010,7 @@ static inline int phd_is_note_verb(const char *verb)
     X("cc_unmap", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
     X("hmi_map", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
     X("hmi_unmap", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
-    X("show_external_ui", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
+    X(PHD_VERB_SHOW_EXTERNAL_UI, MOD_UI, OPTIONAL, OPTIONAL, OPTIONAL, OPTIONAL) \
     X("set_midi_program_change_pedalboard_bank_channel", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
     X("set_midi_program_change_pedalboard_snapshot_channel", MOD_UI, ABSENT, ABSENT, ABSENT, ABSENT) \
     X("disconnect", MOD_HOST, REQUIRED, REQUIRED, REQUIRED, REQUIRED) \
@@ -1007,6 +1034,7 @@ static inline int phd_is_note_verb(const char *verb)
     X(OMX_VERB_NOTE_ON, DAEMON, OPTIONAL, OPTIONAL, OPTIONAL, OPTIONAL) \
     X(OMX_VERB_NOTE_OFF, DAEMON, OPTIONAL, OPTIONAL, OPTIONAL, OPTIONAL) \
     X(OMX_VERB_ALL_NOTES_OFF, DAEMON, OPTIONAL, OPTIONAL, OPTIONAL, OPTIONAL) \
+    X(OMX_VERB_HIDE_EXTERNAL_UI, DAEMON, OPTIONAL, OPTIONAL, OPTIONAL, OPTIONAL) \
     X(OMX_VERB_WORKER_LIST, DAEMON, REQUIRED, REQUIRED, REQUIRED, REQUIRED) \
     X(OMX_VERB_INSTANCE_INFO, DAEMON, REQUIRED, REQUIRED, REQUIRED, REQUIRED) \
     X(OMX_VERB_SUPERVISOR_RESET, DAEMON, REQUIRED, REQUIRED, REQUIRED, REQUIRED) \
@@ -1187,6 +1215,11 @@ static inline int phd_is_note_verb(const char *verb)
                     "respawn replays them after the " PHD_VERB_ADD ", so a respawned instance reports the same outputs, " \
                     "each once, starting again from its first value") \
     X(HANDSHAKE, "output_data_ready names no instance and goes to every worker; each worker's data_finish is relayed") \
+    X(WINDOW, PHD_VERB_SHOW_EXTERNAL_UI " and " OMX_VERB_HIDE_EXTERNAL_UI " go to the worker that holds the instance " \
+              "and its resp comes back unchanged; the window is the worker's, on the display session of the daemon's " \
+              "environment (WAYLAND_DISPLAY, else DISPLAY), which every worker inherits; a daemon with neither refuses " \
+              "both with -902 " PHD_EXTERNAL_UI_NO_DISPLAY " and sends the worker nothing; the ledger keeps the latest " \
+              "of the two per instance, so a respawn shows again a window that was shown") \
     X(NO_CONTROLLER, "with no feedback port, or no controller on it, a line is dropped, as mod-host drops it; the " \
                      "daemon reads every worker's feedback all the time, so no worker waits on it")
 

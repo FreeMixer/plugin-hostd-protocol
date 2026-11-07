@@ -254,8 +254,6 @@ char *str_duplicate(const char *str)
 
 void phd_headless_qt(void)
 {
-    const char *x = getenv("DISPLAY"), *wayland = getenv("WAYLAND_DISPLAY");
-
-    if ((!x || !*x) && (!wayland || !*wayland))
+    if (!phd_has_display())
         setenv("QT_QPA_PLATFORM", PHD_HEADLESS_QT_PLATFORM, 0);
 }
