@@ -1,3 +1,11 @@
+plugin-hostd-protocol (0.4.4) unstable; urgency=medium
+
+  * A second daemon on a busy port is refused instead of silently sharing it:
+    the ports are opened with SO_REUSEADDR, never SO_REUSEPORT, so a port the
+    daemon before left in TIME_WAIT is still taken again at once.
+
+ -- Pau Aliagas <linuxnow@gmail.com>  Sat, 07 Nov 2026 01:00:00 +0100
+
 plugin-hostd-protocol (0.4.3) unstable; urgency=medium
 
   * The descriptor name rule says bytes: each byte of an id's UTF-8 text

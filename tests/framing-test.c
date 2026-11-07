@@ -39,7 +39,7 @@ static void *server_thread(void *arg)
     return NULL;
 }
 
-/* a port nothing listens on now; socket_start() binds it with SO_REUSEPORT */
+/* a port nothing listens on now; socket_start() binds it with SO_REUSEADDR */
 static int free_port(void)
 {
     struct sockaddr_in addr;

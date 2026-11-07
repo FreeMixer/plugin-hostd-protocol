@@ -55,6 +55,10 @@ zzz %s 5
 add urn:x 5 ... c
 SEEDS
 
+# an add of a bare clap: uri of high bytes, a control byte, a CR LF and a NUL: the dispatcher's model read such an
+# add's uri differently from phd_add_uri, and check_value aborted (fixed in 0.4.2); kept byte for byte
+printf '\002add clap:ur\371\371_m\371\371\371\371\371/72 \371& #FF8800\02301  8 \371\371\371\371\371\371\371\371\012\015\012\000\371\371\371371 \371' > "$out/dispatch/add-clap-high-bytes"
+
 # a verb whose reply carries a value, with a salt that makes the backend succeed
 printf '\006param_get 3 gain' > "$out/dispatch/param-get"
 

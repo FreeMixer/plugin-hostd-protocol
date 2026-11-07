@@ -1,5 +1,5 @@
 Name: plugin-hostd-protocol
-Version: 0.4.3
+Version: 0.4.4
 Release: 1%{?dist}
 License: GPL-3.0-or-later
 Summary: The plugin-hostd protocol library, a superset of mod-host's text protocol
@@ -102,6 +102,10 @@ make test
 %{_datadir}/omx-contract/contract.d/3/plugin-hostd-protocol/
 
 %changelog
+* Sat Nov 07 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.4-1
+- A second daemon on a busy port is refused instead of silently sharing it: the ports are
+  opened with SO_REUSEADDR, never SO_REUSEPORT, so a port the daemon before left in
+  TIME_WAIT is still taken again at once
 * Fri Nov 06 2026 Pau Aliagas <linuxnow@gmail.com> - 0.4.3-1
 - The descriptor name rule says bytes: each byte of an id's UTF-8 text
   outside [A-Za-z0-9._-] is one PHD_DESCRIPTOR_SAFE_CHAR, as plugin-hostd

@@ -98,7 +98,7 @@ TEST_PROGS = tests/protocol_test tests/protocol_commands_test tests/host_scenari
              tests/socket-test tests/bind-test tests/utils-test
 
 test: test-protocol test-protocol-commands test-utils test-socket test-bind test-golden test-golden-modhost \
-      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi version-check \
+      test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-bind-sabotage test-install test-abi version-check \
       check-generated check-protocol-doc test-verb-table test-mod-host-json test-generated-sabotage test-default-lv2-worker
 
 # the protocol, the dispatcher and the scenario corpus over a fake backend, as mod-host's test-protocol runs them
@@ -118,6 +118,9 @@ test-socket: tests/socket-test
 	./tests/socket-test
 test-bind: tests/bind-test
 	./tests/bind-test
+# one daemon on a port: tests/bind-sabotage.sh holds test-bind to failing when the rule is broken
+test-bind-sabotage:
+	sh tests/bind-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
 
 tests/socket-test tests/bind-test: tests/%: tests/%.c src/socket.c include/socket.h
 	$(CC) $< -std=gnu99 -D_GNU_SOURCE -O1 -g -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -Iinclude -lpthread -o $@
@@ -195,8 +198,10 @@ test-runner: tests/runner_test
 tests/runner_test: tests/runner_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
 	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
 
+# a port of its own: under make -j it runs beside test-hello, and a port one daemon holds is refused to another
+HELLO_SABOTAGE_PORT ?= 15594
 test-hello-sabotage:
-	HELLO_PORT=$(HELLO_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
+	HELLO_PORT=$(HELLO_SABOTAGE_PORT) sh tests/hello-sabotage.sh "$(CC)" "$(INCS) $(TEST_CFLAGS) $(SAN)"
 
 tests/hello_test: tests/hello_test.c $(SRC) $(HEADERS) $(PROTOCOL_HEADERS) src/session.h
 	$(CC) $(INCS) $(TEST_CFLAGS) $(SAN) -o $@ $< $(SRC) -lpthread -lm
@@ -445,5 +450,5 @@ clean:
         check-protocol-tools install-contract check-contract-dir render-verbs check-rendered test-rendered-sabotage \
         check-schema test-grammar
 .PHONY: all install test test-protocol test-protocol-commands test-utils test-socket test-bind test-golden \
-        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-install test-abi \
+        test-golden-modhost golden-update golden-modhost test-fixes test-fixes-sabotage test-forms test-forms-sabotage test-hello test-runner test-hello-sabotage test-bind-sabotage test-install test-abi \
         abi-symbols abi-stage abi-baseline abi-check version-check fuzz fuzz-run fuzz-corpus fuzz-abnf-corpus test-abnf-corpus fuzz-sabotage fuzz-records fuzz-coverage clean
