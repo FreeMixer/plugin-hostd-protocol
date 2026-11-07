@@ -8,7 +8,7 @@ The plugin-hostd protocol
 
 The plugin-hostd protocol is a superset of mod-host's text protocol: any mod-host client works unchanged.
 
-Protocol `plugin-hostd`, version 1 of its JSON declaration (`protocol/plugin-hostd.json`); mod-host's protocol as the daemon models it is `protocol/mod-host.json`, version 1, written from the mod-host headers `mod-host.h`, `protocol.h`, `host-errors.h` the daemon is built against. The verbs the daemon adds are declared in `data/verbs.json` (since 0.12.0, requiring omx-contract-schema >= 3.3.0, omx-clap-core >= 0.23.0).
+Protocol `plugin-hostd`, version 1 of its JSON declaration (`protocol/plugin-hostd.json`); mod-host's protocol as the daemon models it is `protocol/mod-host.json`, version 1, written from the mod-host headers `mod-host.h`, `protocol.h`, `host-errors.h` the daemon is built against. The verbs the daemon adds are declared in `data/verbs.json` (since 0.12.0, requiring omx-contract-schema >= 3.3.0, omx-clap-core >= 0.30.5).
 
 1. Transport
 ------------
@@ -572,7 +572,7 @@ A path of a pin, and the path of a `clap:` uri, is written percent-encoded (`PHD
 
 | verb | arguments | types | reply | codes | since (the group's) | hosts | meaning |
 |---|---|---|---|---|---|---|---|
-| `hide_external_ui` | `<instance>` | int | `resp 0` | -3 reply.host.instance-non-exists | - | plugin-hostd unsupported, omx-clap-host required, mod-host unsupported | take the plugin's own window off the display, kept for the next show_external_ui; answered as show_external_ui is, resp 0 also when no window is shown; in the ledger it takes back the show, so a respawn shows nothing |
+| `hide_external_ui` | `<instance>` | int | `resp 0` | -3 reply.host.instance-non-exists; -902 reply.host.invalid-operation | - | plugin-hostd optional, omx-clap-host required, mod-host unsupported | take the plugin's own window off the display, kept for the next show_external_ui; answered as show_external_ui is, resp 0 also when no window is shown; in the ledger it takes back the show, so a respawn shows nothing |
 
 `hide_external_ui`:
 
