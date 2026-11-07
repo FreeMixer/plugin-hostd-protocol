@@ -8,7 +8,7 @@ The plugin-hostd protocol
 
 The plugin-hostd protocol is a superset of mod-host's text protocol: any mod-host client works unchanged.
 
-Protocol `plugin-hostd`, version 1 of its JSON declaration (`protocol/plugin-hostd.json`); mod-host's protocol as the daemon models it is `protocol/mod-host.json`, version 1, written from the mod-host headers `mod-host.h`, `protocol.h`, `host-errors.h` the daemon is built against. The verbs the daemon adds are declared in `data/verbs.json` (since 0.12.0, requiring omx-contract-schema >= 3.3.0, omx-clap-core >= 0.23.0).
+Protocol `plugin-hostd`, version 1 of its JSON declaration (`protocol/plugin-hostd.json`); mod-host's protocol as the daemon models it is `protocol/mod-host.json`, version 1, written from the mod-host headers `mod-host.h`, `protocol.h`, `host-errors.h` the daemon is built against. The verbs the daemon adds are declared in `data/verbs.json` (since 0.12.0, requiring omx-contract-schema >= 3.3.0, omx-clap-core >= 0.30.5).
 
 1. Transport
 ------------
@@ -211,6 +211,7 @@ mod-host's templates name no reply codes per verb: a relayed verb answers what i
 | `cv_unmap` | int word | optional (every profile) | same | Path A: as cv_map |
 | `load` | word | optional (every profile) | same | - |
 | `save` | word | optional (every profile) | same | - |
+| `show_external_ui` | int | optional (every profile) | differs | plugin-hostd declares it: `<instance>` → `resp 0`; put the plugin's own window on the display, as jalv and mod-host show one: the worker that holds the instance answers, and its resp comes back as it wrote it (omx-clap-host: -404 and a hosting.window code when no window shows); -902 for an instance whose worker has no window (mod-host's), and -902 hosting.window.no-display from a daemon with no display session. The ledger keeps the latest of this verb and hide_external_ui as one setting: a window shown is shown again after a respawn, after the state<br>Path A: none; no |
 | `output_data_ready` | none | optional (every profile) | same | Path A: CLAP: no<br>relay rule HANDSHAKE: output_data_ready names no instance and goes to every worker; each worker's data_finish is relayed |
 | `track_info` | int word word ... | optional (every profile) | differs | plugin-hostd declares it: `<instance> <name> <#RRGGBB \| -> [bus \| return \| master]` → `resp 0`; the strip's name ("" for none), colour and kind, absent for an input channel; a worker whose plugin format has a track-info extension passes them on; any other word is -902, and so is a name of 256 bytes or more, one that is not UTF-8 as RFC 3629 spells it (an overlong form, a surrogate, a code point past U+10FFFF, a lead byte without its tails) or one that holds a control character of Unicode's class Cc: U+0000 to U+001F, U+007F or U+0080 to U+009F |
 | `remote_pages` | int | optional (every profile) | differs | plugin-hostd declares it: `<instance>` → `resp <count>`; the plugin's remote-control pages, from clap.remote-controls; 0 for an instance of a format whose worker has none |
@@ -227,7 +228,6 @@ mod-host's templates name no reply codes per verb: a relayed verb answers what i
 | `cc_unmap` | int word | absent (every profile) | refused | absent of every profile: refused on purpose<br>Path A: as cc_map |
 | `hmi_map` | int word int int int int int word float float int | absent (every profile) | refused | absent of every profile: refused on purpose<br>Path A: none on Zynthian (no MOD HMI); no |
 | `hmi_unmap` | int word | absent (every profile) | refused | absent of every profile: refused on purpose<br>Path A: as hmi_map |
-| `show_external_ui` | int | absent (every profile) | refused | absent of every profile: refused on purpose<br>Path A: none; no |
 
 Verbs of Zynthian's mod-ui that are no mod-host command, each refused:
 
@@ -566,6 +566,21 @@ A path of a pin, and the path of a `clap:` uri, is written percent-encoded (`PHD
 < resp 0
 ```
 
+### The plugin's own window
+
+`show_external_ui <instance>` puts the plugin's own window on the display and `hide_external_ui <instance>` takes it off, as jalv and mod-host show one; both are optional of every profile. The daemon sends each to the worker that holds the instance and returns the worker's resp as it wrote it: omx-clap-host answers `resp 0`, or `-404` and a `hosting.window.*` code when no window shows. `-902` comes back when the instance's worker has no window (mod-host's, an LV2 instance on the `lv2` row) or the worker does not know the verb. The window belongs to the worker's display session, the `WAYLAND_DISPLAY` or `DISPLAY` of the daemon's environment, which every worker inherits; a daemon with neither answers `resp -902 hosting.window.no-display` and sends the worker nothing. The ledger keeps the latest of the two per instance: a window that was shown is shown again after a respawn, after the state, and a hidden one is not.
+
+| verb | arguments | types | reply | codes | since (the group's) | hosts | meaning |
+|---|---|---|---|---|---|---|---|
+| `hide_external_ui` | `<instance>` | int | `resp 0` | -3 reply.host.instance-non-exists; -902 reply.host.invalid-operation | - | plugin-hostd optional, omx-clap-host required, mod-host unsupported | take the plugin's own window off the display, kept for the next show_external_ui; answered as show_external_ui is, resp 0 also when no window is shown; in the ledger it takes back the show, so a respawn shows nothing |
+
+`hide_external_ui`:
+
+```
+> hide_external_ui 0
+< resp 0
+```
+
 4. Events and feedback
 ----------------------
 
@@ -609,6 +624,7 @@ The relay rules:
 - ORDER: a worker's lines go out in the order it wrote them, and what a worker wrote before it died goes out before its worker_died event; an instance lives in one worker at a time, so its lines keep their order across a respawn; the lines of different workers interleave
 - SUBSCRIPTION: monitor_output is in the ledger, one line per output, and param_monitor as it was sent; a respawn replays them after the add, so a respawned instance reports the same outputs, each once, starting again from its first value
 - HANDSHAKE: output_data_ready names no instance and goes to every worker; each worker's data_finish is relayed
+- WINDOW: show_external_ui and hide_external_ui go to the worker that holds the instance and its resp comes back unchanged; the window is the worker's, on the display session of the daemon's environment (WAYLAND_DISPLAY, else DISPLAY), which every worker inherits; a daemon with neither refuses both with -902 hosting.window.no-display and sends the worker nothing; the ledger keeps the latest of the two per instance, so a respawn shows again a window that was shown
 - NO_CONTROLLER: with no feedback port, or no controller on it, a line is dropped, as mod-host drops it; the daemon reads every worker's feedback all the time, so no worker waits on it
 
 ### Host settings
@@ -687,7 +703,7 @@ The codes the daemon adds:
 |---|---|---|---|---|---|
 | `protocol/plugin-hostd.schema.json` | `/usr/share/plugin-hostd-protocol/plugin-hostd.schema.json` | `https://github.com/FreeMixer/plugin-hostd-protocol/protocol/plugin-hostd.schema.json` | The protocol surface plugin-hostd owns | - | Generated from include/plugin-hostd/protocol.h, which is the declaration; this file says the shape of the JSON. |
 
-Counts: 48 mod-host commands, 34 same, 8 differs, 6 refused; 32 verbs mod-host does not have.
+Counts: 48 mod-host commands, 34 same, 9 differs, 5 refused; 33 verbs mod-host does not have.
 
 Appendix: mod-host's command reference
 --------------------------------------

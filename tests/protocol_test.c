@@ -468,6 +468,29 @@ static int run_scenarios(const char *path, const host_backend_t *backend)
     return 0;
 }
 
+/* the plugin's own window: a host with only the backend table behind it has no window, and refuses both verbs with
+ * -902, the answer an optional verb owes when it is not served; never "not found", never misread */
+static int run_window_verbs(void)
+{
+    static const char *const lines[] = { "show_external_ui 3", "hide_external_ui 3" };
+    host_scenario_direct_t direct;
+    char reply[64];
+    size_t n;
+    int failures = 0;
+
+    memset(g_ref, 0, sizeof(g_ref));
+    if (host_scenario_direct_open(&direct, &g_ref_backend) != 0)
+    {
+        printf("FAIL direct exchange for the window verbs\n");
+        return 1;
+    }
+    for (n = 0; n < sizeof(lines) / sizeof(lines[0]); n++)
+        if (host_scenario_direct_exchange(&direct, lines[n], reply, sizeof(reply)) < 0 || strcmp(reply, "resp -902"))
+            failures++, printf("FAIL '%s': got '%s', want 'resp -902'\n", lines[n], reply);
+    host_scenario_direct_close(&direct);
+    return failures;
+}
+
 static int read_reply(int fd, char *buf, size_t size)
 {
     size_t got = 0;
@@ -849,6 +872,7 @@ int main(void)
         g_failures++;
     if (run_scenarios(scenarios, &g_ref_bare_backend) != 0)
         g_failures++;
+    g_failures += run_window_verbs();
 
     printf("%s\n", g_failures == 0 ? "protocol test ok" : "protocol test FAILED");
     return g_failures == 0 ? 0 : 1;
